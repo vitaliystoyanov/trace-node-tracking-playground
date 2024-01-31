@@ -17,8 +17,7 @@ import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
+Remove import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
 
@@ -41,6 +40,7 @@ class NetworkForegroundService : LifecycleService() {
     @Inject
     @IoDispatcher
     lateinit var ioDispatcher: CoroutineDispatcher
+    private val job = Job()
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
@@ -88,7 +88,6 @@ class NetworkForegroundService : LifecycleService() {
     }
 
     @SuppressLint("WakelockTimeout")
-    @OptIn(DelicateCoroutinesApi::class)
     private fun startService() {
         if (isServiceStarted) return
         isServiceStarted = true
@@ -104,7 +103,7 @@ class NetworkForegroundService : LifecycleService() {
                 }
             }
 
-        GlobalScope.launch(ioDispatcher) {
+        CoroutineScope(ioDispatcher + job).launch {
             diversRepository.getStreamDiverTraces()
                 .onEach { Log.d("SERVICE", "getStreamDiverTraces: Trace - $it") }
                 .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
@@ -126,6 +125,11 @@ class NetworkForegroundService : LifecycleService() {
         }
         isServiceStarted = false
         setServiceState(this, ServiceState.STOPPED)
+    }
+
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
     }
 
     private fun createNotification(): Notification {
