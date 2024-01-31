@@ -1,4 +1,5 @@
 # Gradle files
+.idea
 .gradle/
 app/build/
 
