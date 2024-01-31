@@ -11,13 +11,14 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.flowWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.data.DiverTraceRepository
 import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-Remove import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
 
@@ -107,6 +108,7 @@ class NetworkForegroundService : LifecycleService() {
             diversRepository.getStreamDiverTraces()
                 .onEach { Log.d("SERVICE", "getStreamDiverTraces: Trace - $it") }
                 .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
+                .flowWithLifecycle(lifecycle)
                 .collect()
         }
     }
