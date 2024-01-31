@@ -10,12 +10,14 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
+import androidx.lifecycle.LifecycleService
 import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.data.DiverTraceRepository
 import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
@@ -31,7 +33,7 @@ enum class ServiceState {
 }
 
 @AndroidEntryPoint
-class NetworkForegroundService : Service() {
+class NetworkForegroundService : LifecycleService() {
 
     @Inject
     lateinit var diversRepository: DiverTraceRepository
@@ -44,10 +46,12 @@ class NetworkForegroundService : Service() {
     private var isServiceStarted = false
 
     override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         if (intent != null) {
             when (intent.action) {
                 Actions.START.name -> startService()

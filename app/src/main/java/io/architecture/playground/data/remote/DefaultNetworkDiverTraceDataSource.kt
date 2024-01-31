@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class DiverTraceNetworkDataSource @Inject constructor(
+class DefaultNetworkDiverTraceDataSource @Inject constructor(
     private val webSocketDiverService: WebSocketDiverService
-) : NetworkDataSource {
+) : NetworkDiverTraceDataSource {
 
     override fun observeConnection() = webSocketDiverService.observeConnection().consumeAsFlow()
         .map { it.toExternal() }

@@ -63,6 +63,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)
+    implementation(libs.androidx.lifecycle.service)
 
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)

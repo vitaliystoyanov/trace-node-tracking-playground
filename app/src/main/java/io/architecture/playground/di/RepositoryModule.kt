@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
-    @Singleton
     @Binds
     abstract fun bindDiverTraceRepository(repository: DefaultDiverTraceRepository): DiverTraceRepository
 }

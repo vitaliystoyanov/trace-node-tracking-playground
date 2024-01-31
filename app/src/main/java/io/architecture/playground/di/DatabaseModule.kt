@@ -19,7 +19,7 @@ object DatabaseModule {
     @Provides
     fun provideDataBase(@ApplicationContext context: Context): DiverDatabase {
         return Room.databaseBuilder(
-            context.applicationContext,
+            context,
             DiverDatabase::class.java,
             "DiverTraces.db"
         ).build()

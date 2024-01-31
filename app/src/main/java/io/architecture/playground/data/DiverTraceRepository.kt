@@ -12,5 +12,4 @@ interface DiverTraceRepository {
 
     fun getStreamDiverTraceHistory(): Flow<List<DiverTrace>>
 
-    suspend fun removeAllTraces()
 }
