@@ -1,9 +1,7 @@
 package io.architecture.playground.feature.map
 
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,46 +12,39 @@ import io.architecture.playground.model.DiverTrace
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @Stable
-interface DiverUiState {
-    val trace: DiverTrace
-    val historyTraces: List<DiverTrace>
-    val connection: NetworkConnectionEvent
-}
-
-class MutableDiverUiState : DiverUiState {
-    override var trace: DiverTrace by mutableStateOf(DiverTrace()) // diver trace from websockets data in real-time
-    override var historyTraces: List<DiverTrace> by mutableStateOf(ArrayList()) // locally from Room database
-    override var connection: NetworkConnectionEvent by mutableStateOf(NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosed))
-}
+data class DiverUiState(
+    var trace: DiverTrace,
+    var historyTraces: List<DiverTrace>,
+    var connection: NetworkConnectionEvent
+)
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val diversRepository: DiverTraceRepository
 ) : ViewModel() {
 
-    // State production pipeline: Stream APIs as sources of state change
-    val uiState: StateFlow<DiverUiState> = diversRepository.getStreamDiverTraces()
-        .map {
-            val state = MutableDiverUiState()
-            state.trace = it
-            return@map state
-        }
-        .combine(diversRepository.getStreamDiverTraceHistory()) { state, history ->
-            state.historyTraces = history.toMutableList()
-            return@combine state
-        }
-        .combine(diversRepository.observeConnection()) { state, connectionEvent ->
-            state.connection = connectionEvent
-            return@combine state
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = MutableDiverUiState()
-        )
+    private var trace = snapshotFlow { DiverTrace() }
+    private var historyTraces = diversRepository.getStreamDiverTraceHistory()
+    private var connection = diversRepository.observeConnection()
+
+    val uiState: StateFlow<DiverUiState> =
+        combine(trace, historyTraces, connection) { trace, history, connection ->
+            DiverUiState(trace, history, connection)
+        }.filter { it.historyTraces.isNotEmpty() }
+            .map { it.trace = it.historyTraces.last(); it }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = DiverUiState(
+                    DiverTrace(),
+                    emptyList(),
+                    NetworkConnectionEvent(NetworkConnectionEventType.ConnectionUndefined)
+                )
+            )
 }

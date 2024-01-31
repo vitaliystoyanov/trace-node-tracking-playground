@@ -1,6 +1,7 @@
 package io.architecture.playground.di
 
 import android.app.Application
+import androidx.lifecycle.LifecycleOwner
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
@@ -11,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.architecture.playground.NetworkForegroundService
 import io.architecture.playground.data.remote.websocket.WebSocketDiverService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,7 +37,7 @@ object WebSocketModule {
     ) =
         Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(WEBSOCKET_URL))
-            .lifecycle(lifecycle)
+//            .lifecycle(lifecycle) TODO Pass LifecycleService as LifecycleOwner to Scarlet in order to manage ws connection
             .addMessageAdapterFactory(GsonMessageAdapter.Factory())
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .build()

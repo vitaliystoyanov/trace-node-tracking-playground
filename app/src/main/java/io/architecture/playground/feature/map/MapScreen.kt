@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -47,7 +47,6 @@ import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
-import io.architecture.playground.model.DiverTrace
 
 object MapBoxParams {
     const val ZOOM = 15.0
@@ -64,7 +63,7 @@ object MapBoxParams {
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsState()
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -147,7 +146,13 @@ fun MapScreen(
                     val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
                     source?.featureCollection(
                         FeatureCollection.fromFeatures(
-                            listOf(Feature.fromGeometry(Point.fromLngLat(state.value.trace.lon, state.value.trace.lat)),
+                            listOf(
+                                Feature.fromGeometry(
+                                    Point.fromLngLat(
+                                        state.value.trace.lon,
+                                        state.value.trace.lat
+                                    )
+                                ),
                                 Feature.fromGeometry(lineString)
                             )
                         )

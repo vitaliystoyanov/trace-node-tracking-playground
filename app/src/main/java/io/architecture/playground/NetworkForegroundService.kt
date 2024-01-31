@@ -10,15 +10,35 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
+import dagger.hilt.android.AndroidEntryPoint
+import io.architecture.playground.data.DiverTraceRepository
+import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import java.util.*
+import javax.inject.Inject
 
 enum class Actions {
     START,
     STOP
 }
 
+enum class ServiceState {
+    STARTED,
+    STOPPED,
+}
+
+@AndroidEntryPoint
 class NetworkForegroundService : Service() {
+
+    @Inject
+    lateinit var diversRepository: DiverTraceRepository
+
+    @Inject
+    @IoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
@@ -80,12 +100,11 @@ class NetworkForegroundService : Service() {
                 }
             }
 
-        GlobalScope.launch(Dispatchers.IO) {
-            while (isServiceStarted) {
-                launch(Dispatchers.IO) {
-
-                }
-            }
+        GlobalScope.launch(ioDispatcher) {
+            diversRepository.getStreamDiverTraces()
+                .onEach { Log.d("SERVICE", "getStreamDiverTraces: Trace - $it") }
+                .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
+                .collect()
         }
     }
 
@@ -144,13 +163,8 @@ class NetworkForegroundService : Service() {
     }
 }
 
-enum class ServiceState {
-    STARTED,
-    STOPPED,
-}
-
-private const val name = "SPYSERVICE_KEY"
-private const val key = "SPYSERVICE_STATE"
+private const val name = "SERVICE_KEY"
+private const val key = "SERVICE_STATE"
 
 fun setServiceState(context: Context, state: ServiceState) {
     val sharedPrefs = getPreferences(context)

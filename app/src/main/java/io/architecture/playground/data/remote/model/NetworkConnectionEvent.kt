@@ -5,6 +5,7 @@ data class NetworkConnectionEvent(
 )
 
 enum class NetworkConnectionEventType {
+    ConnectionUndefined,
     ConnectionOpened,
     ConnectionClosed,
     ConnectionClosing,

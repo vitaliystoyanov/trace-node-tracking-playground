@@ -25,13 +25,14 @@ class MainActivity : ComponentActivity() {
             MapScreen()
         }
 
-//        Intent(this, NetworkForegroundService::class.java).also {
-//            it.action = Actions.START.name
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                startForegroundService(it)
-//                return
-//            }
-//            startService(it)
-//        }
+        // TODO Maybe it's violation of best practices in term of MVVM arch
+        Intent(this, NetworkForegroundService::class.java).also {
+            it.action = Actions.START.name
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(it)
+                return
+            }
+            startService(it)
+        }
     }
 }

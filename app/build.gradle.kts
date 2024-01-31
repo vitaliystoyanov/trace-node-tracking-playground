@@ -58,47 +58,45 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.compose.uiTooling)
 
-    implementation(libs.squareRetrofit)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.lifecycleKtx)
+
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.lifecycle.viewModelCompose)
+
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.multidex)
-    androidTestUtil(libs.androidx.orchestrator)
-    androidTestImplementation(libs.bundles.base.dependenciesAndroidTests)
-    androidTestImplementation(libs.androidx.testJUnit)
-    androidTestImplementation(libs.androidx.uiAutomator)
-    testImplementation(libs.junit)
 
-    val room_version = "2.6.1"
-
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    // Room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.androidx.room.room.compiler)
 
     //  Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation(libs.androidx.room.ktx)
 
     // Hilt
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation("com.google.dagger:hilt-android:2.46")
-    kapt("com.google.dagger:hilt-android-compiler:2.46")
-    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.kotlinx.metadata.jvm)
 
     // Mapbox Maps SDK
-    implementation("com.mapbox.maps:android:11.1.0")
+    implementation(libs.android)
     // Note that Compose extension is compatible with Maps SDK v11.0+.
-    implementation("com.mapbox.extension:maps-compose:0.1.0")
-    implementation("com.mapbox.extension:maps-style:11.1.0")
+    implementation(libs.maps.compose)
+    implementation(libs.maps.style)
 
     // scarlet
-    implementation("com.tinder.scarlet:scarlet:0.1.12")
-    implementation("com.tinder.scarlet:lifecycle-android:0.1.12")
-    implementation("com.tinder.scarlet:websocket-okhttp:0.1.12")
-    implementation("com.tinder.scarlet:message-adapter-gson:0.1.12")
-    implementation("com.tinder.scarlet:stream-adapter-coroutines:0.1.12")
+    implementation(libs.scarlet)
+    implementation(libs.lifecycle.android)
+    implementation(libs.websocket.okhttp)
+    implementation(libs.message.adapter.gson)
+    implementation(libs.stream.adapter.coroutines)
 
     // okhttp
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
 }

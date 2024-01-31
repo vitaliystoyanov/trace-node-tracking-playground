@@ -23,6 +23,7 @@ Nothing special :)
 * Stores trace nodes to Room database
 * Reactive rendering GeoJSON source and a real-time trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
 * Adds style layers to MapBox at runtime
+* Supports retrieving traces in background
 
 ## Design layered architecture
 * The single source of truth principle: its database layer*
@@ -30,7 +31,6 @@ Nothing special :)
 * The data and business layer expose suspend functions and Flows
 * A model per layer: ViewModels include data layer models, repositories map DAO models to simpler data classes, a remote data source maps the model that it receives through the network to a simpler class
 * ViewModels at screen level
-* 
 * A single-activity application
 * Follows Unidirectional Data Flow (UDF) principles
 * The data layer exposes application data using a repository
@@ -72,5 +72,5 @@ wss://websockets-diver.glitch.me
 
 ## Improvements
 
-* Foreground service to keep alive web socket connection when app moves to background.
 * Paging for Room
+* MemCache for traces
