@@ -21,11 +21,11 @@ Nothing special :)
 ## Functionality
 * Opens WebSocket connection on app launch
 * Stores trace nodes to Room database
-* Reactive rendering GeoJSON route and a realtime trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
+* Reactive rendering GeoJSON source and a real-time trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
 * Adds style layers to MapBox at runtime
 
 ## Design
-* The single source of truth principle: it's database layer*
+* The single source of truth principle: its database layer*
 * Kotlin Flow API as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
 
 ## Streaming WebSocket GPS trace nodes with Glitch
@@ -33,7 +33,7 @@ Nothing special :)
 Simple Node.js back-end produces GPS trace nodes from a raw file every 250-1000 milliseconds (randomly). On web socket connection starts to send the raw file line-by-line.
 
 
-Here is sample trace node:
+Here is a sample trace node:
 ```
 {
    "ept":0.001,
@@ -53,7 +53,7 @@ Here is sample trace node:
 }
 ```
 
-'class' field is UIID generated per trace node.
+'class' field is UIID per trace node
 
 
 [Code project is publicly available on Glitch.com](https://glitch.com/edit/#!/websockets-diver)
@@ -65,5 +65,5 @@ wss://websockets-diver.glitch.me
 
 ## Improvements
 
-* Foreground service to persist web socket connection when app moves to background.
+* Foreground service to keep alive web socket connection when app moves to background.
 * Paging for Room
