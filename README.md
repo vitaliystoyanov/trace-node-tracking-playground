@@ -1,12 +1,12 @@
 # Real-time diver trace tracking application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
-This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON in runtime.
+This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source in runtime.
 
 <img src="/docs/demo.gif" width="420">
 
 ## Tech stack
 
-Nothing usual :)
+Nothing special :)
 
 * Jetpack Compose
 * Kotlin Flows API
