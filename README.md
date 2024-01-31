@@ -1,6 +1,6 @@
-# GPS trace tracking playground application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+# GPS trace node tracking playground application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
-This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source in runtime.
+This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source at runtime.
 
 <img src="/docs/demo.gif" width="420">
 
@@ -24,9 +24,9 @@ Nothing special :)
 * Reactive rendering GeoJSON route and a realtime trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
 * Adds style layers to MapBox at runtime
 
-## Design implementation
+## Design
 * The single source of truth principle: it's database layer*
-* Kotlin Flow API as communication between arch layers: **websocket datasource** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
+* Kotlin Flow API as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
 
 ## Streaming WebSocket GPS trace nodes with Glitch
 
@@ -66,3 +66,4 @@ wss://websockets-diver.glitch.me
 ## Improvements
 
 * Foreground service to persist web socket connection when app moves to background.
+* Paging for Room
