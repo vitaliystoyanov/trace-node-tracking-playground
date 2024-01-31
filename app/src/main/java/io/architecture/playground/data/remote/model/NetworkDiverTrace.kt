@@ -1,4 +1,4 @@
-package io.architecture.playground.data.remote
+package io.architecture.playground.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 

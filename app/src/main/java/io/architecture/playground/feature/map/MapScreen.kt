@@ -171,6 +171,12 @@ fun MapScreen(
             modifier = Modifier.padding(16.dp),
         ) {
             Text(
+                text = "Connection: ${state.value.connection.type.name}",
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
                 text = "Collected trace: ${state.value.historyTraces.size}",
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,

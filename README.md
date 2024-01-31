@@ -27,6 +27,7 @@ Nothing special :)
 ## Design
 * The single source of truth principle: its database layer*
 * Kotlin Flow API as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
+* The data and business layer expose suspend functions and Flows
 
 ## Streaming WebSocket GPS trace nodes with Glitch
 

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.playground.data.DiverTraceRepository
+import io.architecture.playground.data.remote.model.NetworkConnectionEvent
+import io.architecture.playground.data.remote.model.NetworkConnectionEventType
 import io.architecture.playground.model.DiverTrace
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +22,13 @@ import javax.inject.Inject
 interface DiverUiState {
     val trace: DiverTrace
     val historyTraces: List<DiverTrace>
+    val connection: NetworkConnectionEvent
 }
 
 class MutableDiverUiState : DiverUiState {
     override var trace: DiverTrace by mutableStateOf(DiverTrace()) // diver trace from websockets data in real-time
     override var historyTraces: List<DiverTrace> by mutableStateOf(ArrayList()) // locally from Room database
+    override var connection: NetworkConnectionEvent by mutableStateOf(NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosed))
 }
 
 @HiltViewModel
@@ -41,6 +45,10 @@ class MapViewModel @Inject constructor(
         }
         .combine(diversRepository.getStreamDiverTraceHistory()) { state, history ->
             state.historyTraces = history.toMutableList()
+            return@combine state
+        }
+        .combine(diversRepository.observeConnection()) { state, connectionEvent ->
+            state.connection = connectionEvent
             return@combine state
         }
         .stateIn(

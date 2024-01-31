@@ -1,8 +1,19 @@
 package io.architecture.playground.data.mapping
 
+import com.tinder.scarlet.WebSocket
 import io.architecture.playground.data.local.LocalDiverTrace
-import io.architecture.playground.data.remote.NetworkDiverTrace
+import io.architecture.playground.data.remote.model.NetworkDiverTrace
+import io.architecture.playground.data.remote.model.NetworkConnectionEvent
+import io.architecture.playground.data.remote.model.NetworkConnectionEventType
 import io.architecture.playground.model.DiverTrace
+
+fun WebSocket.Event.toExternal(): NetworkConnectionEvent = when(this) {
+    is WebSocket.Event.OnConnectionOpened<*> -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionOpened)
+    is WebSocket.Event.OnConnectionClosed ->  NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosed)
+    is WebSocket.Event.OnConnectionClosing -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosing)
+    is WebSocket.Event.OnConnectionFailed -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionFailed)
+    is WebSocket.Event.OnMessageReceived -> NetworkConnectionEvent(NetworkConnectionEventType.MessageReceived)
+}
 
 fun DiverTrace.toLocal() = LocalDiverTrace(
     id = id,
