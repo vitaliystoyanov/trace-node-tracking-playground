@@ -1,4 +1,4 @@
-# Real-time diver trace tracking playground application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+# GPS trace tracking playground application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
 This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source in runtime.
 
