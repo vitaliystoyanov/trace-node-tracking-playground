@@ -24,10 +24,16 @@ Nothing special :)
 * Reactive rendering GeoJSON source and a real-time trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
 * Adds style layers to MapBox at runtime
 
-## Design
+## Design layered architecture
 * The single source of truth principle: its database layer*
-* Kotlin Flow API as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
+* Kotlin Coroutines and channels, flows as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
 * The data and business layer expose suspend functions and Flows
+* A model per layer: ViewModels include data layer models, repositories map DAO models to simpler data classes, a remote data source maps the model that it receives through the network to a simpler class
+* ViewModels at screen level
+* 
+* A single-activity application
+* Follows Unidirectional Data Flow (UDF) principles
+* The data layer exposes application data using a repository
 
 ## Streaming WebSocket GPS trace nodes with Glitch
 

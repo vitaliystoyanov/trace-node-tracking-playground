@@ -1,94 +1,171 @@
 package io.architecture.playground
 
-import android.app.ActivityManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.annotation.SuppressLint
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
+import kotlinx.coroutines.*
+import java.util.*
+
+enum class Actions {
+    START,
+    STOP
+}
 
 class NetworkForegroundService : Service() {
 
-    private val TAG = NetworkForegroundService::class.java.simpleName
+    private var wakeLock: PowerManager.WakeLock? = null
+    private var isServiceStarted = false
 
-    private val CHANNEL_ID = "ForegroundService"
-    private val NOTIF_ID = 1
-
-    companion object {
-        val instance: NetworkForegroundService by lazy {
-            NetworkForegroundService()
-        }
+    override fun onBind(intent: Intent): IBinder? {
+        return null
     }
 
-    fun startService(context: Context, message: String) {
-        if (!isServiceStarted(context)) {
-            val startIntent = Intent(context, NetworkForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
-            ContextCompat.startForegroundService(context, startIntent)
-        }
-    }
-
-    fun stopService(context: Context) {
-        val stopIntent = Intent(context, NetworkForegroundService::class.java)
-        context.stopService(stopIntent)
-    }
-
-    private fun isServiceStarted(context: Context): Boolean {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (NetworkForegroundService::class.java.name.equals(service.service.className)) {
-                return true
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent != null) {
+            when (intent.action) {
+                Actions.START.name -> startService()
+                Actions.STOP.name -> stopService()
+                else -> Log.d("TAG", "No action in the received intent")
             }
         }
-        return false
-    }
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
+        return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "Create")
+        startForeground(1, createNotification())
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val input = intent?.getStringExtra("inputExtra")
-        createNotificationChannel()
-
-        val notificationIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Foreground Service")
-            .setContentText(input)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentIntent(pendingIntent)
-            .build()
-        startForeground(NOTIF_ID, notification)
-        //stopSelf()
-        return START_NOT_STICKY
+    override fun onTaskRemoved(rootIntent: Intent) {
+        val restartServiceIntent =
+            Intent(applicationContext, NetworkForegroundService::class.java).also {
+                it.setPackage(packageName)
+            };
+        val restartServicePendingIntent: PendingIntent =
+            PendingIntent.getService(
+                this, 1, restartServiceIntent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            );
+        applicationContext.getSystemService(Context.ALARM_SERVICE);
+        val alarmService: AlarmManager =
+            applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+        alarmService.set(
+            AlarmManager.ELAPSED_REALTIME,
+            SystemClock.elapsedRealtime() + 1000,
+            restartServicePendingIntent
+        );
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
-                "Foreground Service Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(serviceChannel)
+    @SuppressLint("WakelockTimeout")
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun startService() {
+        if (isServiceStarted) return
+        isServiceStarted = true
+        setServiceState(this, ServiceState.STARTED)
+
+        wakeLock =
+            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    "NetworkForegroundService::lock"
+                ).apply {
+                    acquire()
+                }
+            }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            while (isServiceStarted) {
+                launch(Dispatchers.IO) {
+
+                }
+            }
         }
     }
+
+    private fun stopService() {
+        try {
+            wakeLock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
+            }
+            stopForeground(true)
+            stopSelf()
+        } catch (e: Exception) {
+            Log.d("SERVICE", "Service stopped without being started: ${e.message}")
+        }
+        isServiceStarted = false
+        setServiceState(this, ServiceState.STOPPED)
+    }
+
+    private fun createNotification(): Notification {
+        val notificationChannelId = "NETWORK SERVICE CHANNEL"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channel = NotificationChannel(
+                notificationChannelId,
+                "Network Service notifications channel",
+                NotificationManager.IMPORTANCE_HIGH
+            ).let {
+                it.description = "Network Service channel"
+                it
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val pendingIntent: PendingIntent =
+            Intent(this, MainActivity::class.java).let { notificationIntent ->
+                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+            }
+
+        val builder: Notification.Builder =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(
+                this,
+                notificationChannelId
+            ) else Notification.Builder(this)
+
+        return builder
+            .setContentTitle("Network Service")
+            .setContentText("Keep alive websocket connection...")
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setTicker("Websocket connection")
+            .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
+            .build()
+    }
+}
+
+enum class ServiceState {
+    STARTED,
+    STOPPED,
+}
+
+private const val name = "SPYSERVICE_KEY"
+private const val key = "SPYSERVICE_STATE"
+
+fun setServiceState(context: Context, state: ServiceState) {
+    val sharedPrefs = getPreferences(context)
+    sharedPrefs.edit().let {
+        it.putString(key, state.name)
+        it.apply()
+    }
+}
+
+fun getServiceState(context: Context): ServiceState {
+    val sharedPrefs = getPreferences(context)
+    val value = sharedPrefs.getString(key, ServiceState.STOPPED.name)
+    return ServiceState.valueOf(value!!)
+}
+
+private fun getPreferences(context: Context): SharedPreferences {
+    return context.getSharedPreferences(name, 0)
 }
