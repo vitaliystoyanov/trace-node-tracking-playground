@@ -18,6 +18,7 @@ import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
@@ -108,7 +109,6 @@ class NetworkForegroundService : LifecycleService() {
             diversRepository.getStreamDiverTraces()
                 .onEach { Log.d("SERVICE", "getStreamDiverTraces: Trace - $it") }
                 .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
-                .flowWithLifecycle(lifecycle)
                 .collect()
         }
     }

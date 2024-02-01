@@ -2,12 +2,9 @@ package io.architecture.playground.data
 
 import android.util.Log
 import io.architecture.playground.data.local.DefaultLocalDiverTraceDataSource
-import io.architecture.playground.data.local.DiverTraceDao
-import io.architecture.playground.data.local.LocalDiverTraceDataSource
 import io.architecture.playground.data.mapping.toExternal
 import io.architecture.playground.data.mapping.toLocal
 import io.architecture.playground.data.remote.DefaultNetworkDiverTraceDataSource
-import io.architecture.playground.data.remote.NetworkDiverTraceDataSource
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
 import io.architecture.playground.data.remote.model.NetworkConnectionEventType
 import io.architecture.playground.model.DiverTrace
@@ -23,8 +20,9 @@ class DefaultDiverTraceRepository @Inject constructor(
     private val localDataSource: DefaultLocalDiverTraceDataSource
 ) : DiverTraceRepository {
 
-    override fun observeConnection(): Flow<NetworkConnectionEvent> = networkDataSource.observeConnection()
-        .filter { it.type != NetworkConnectionEventType.MessageReceived }
+    override fun observeConnection(): Flow<NetworkConnectionEvent> =
+        networkDataSource.observeConnection()
+            .filter { it.type != NetworkConnectionEventType.MessageReceived }
 
     override fun getStreamDiverTraces(): Flow<DiverTrace> {
         return networkDataSource.streamDiverTraces()
@@ -36,5 +34,4 @@ class DefaultDiverTraceRepository @Inject constructor(
     override fun getStreamDiverTraceHistory(): Flow<List<DiverTrace>> {
         return localDataSource.observeAll().map { it.toExternal() }
     }
-
 }
