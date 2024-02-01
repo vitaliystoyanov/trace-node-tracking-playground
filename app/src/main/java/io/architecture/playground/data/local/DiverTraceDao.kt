@@ -15,6 +15,9 @@ interface DiverTraceDao {
     @Query("SELECT * FROM diver_traces WHERE id = :diverId")
     fun observeById(diverId: String): Flow<LocalDiverTrace>
 
+    @Query("SELECT * FROM diver_traces ORDER BY datetime(time) DESC LIMIT 1")
+    fun observeLatest(): Flow<LocalDiverTrace>
+
     @Query("SELECT * FROM diver_traces")
     suspend fun getAll(): List<LocalDiverTrace>
 

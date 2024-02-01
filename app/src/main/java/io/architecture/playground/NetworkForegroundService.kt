@@ -11,15 +11,11 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.flowWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.data.DiverTraceRepository
-import io.architecture.playground.di.IoDispatcher
+import io.architecture.playground.di.ApplicationIoScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
 
@@ -40,8 +36,9 @@ class NetworkForegroundService : LifecycleService() {
     lateinit var diversRepository: DiverTraceRepository
 
     @Inject
-    @IoDispatcher
-    lateinit var ioDispatcher: CoroutineDispatcher
+    @ApplicationIoScope
+    lateinit var appScope: CoroutineScope
+
     private val job = Job()
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -105,11 +102,12 @@ class NetworkForegroundService : LifecycleService() {
                 }
             }
 
-        CoroutineScope(ioDispatcher + job).launch {
+        appScope.launch {
             diversRepository.getStreamDiverTraces()
-                .onEach { Log.d("SERVICE", "getStreamDiverTraces: Trace - $it") }
                 .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
-                .collect()
+                .collect {
+                    Log.d("SERVICE", "getStreamDiverTraces: Trace - $it")
+                }
         }
     }
 

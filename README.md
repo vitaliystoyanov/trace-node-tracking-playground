@@ -24,6 +24,7 @@ Nothing special :)
 * Reactive rendering GeoJSON source and a real-time trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
 * Adds style layers to MapBox at runtime
 * Supports retrieving traces in background
+* Supports simple in-memory cache for traces 
 
 ## Design layered architecture
 * The single source of truth principle: its database layer*
