@@ -1,7 +1,6 @@
 package io.architecture.playground.di
 
 import android.app.Application
-import androidx.lifecycle.LifecycleOwner
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
@@ -12,8 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.NetworkForegroundService
-import io.architecture.playground.data.remote.websocket.WebSocketDiverService
+import io.architecture.playground.data.remote.websocket.WebSocketTraceService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
@@ -22,12 +20,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object WebSocketModule {
 
-    private const val WEBSOCKET_URL = "wss://websockets-diver.glitch.me"
+    private const val WEBSOCKET_URL = "wss://websockets-diver.glitch.me/nodes/traces"
 
     @Singleton
     @Provides
     fun provideWebSocketService(scarlet: Scarlet) =
-        scarlet.create(WebSocketDiverService::class.java)
+        scarlet.create(WebSocketTraceService::class.java)
 
     @Singleton
     @Provides
@@ -37,7 +35,7 @@ object WebSocketModule {
     ) =
         Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(WEBSOCKET_URL))
-//            .lifecycle(lifecycle) TODO Pass LifecycleService as LifecycleOwner to Scarlet in order to manage ws connection
+//            .lifecycle(lifecycle) // TODO Pass LifecycleService as LifecycleOwner to Scarlet in order to manage ws connection
             .addMessageAdapterFactory(GsonMessageAdapter.Factory())
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .build()

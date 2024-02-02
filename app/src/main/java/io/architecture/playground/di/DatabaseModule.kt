@@ -7,8 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.local.DiverTraceDao
-import io.architecture.playground.data.local.DiverDatabase
+import io.architecture.playground.data.local.TraceDao
+import io.architecture.playground.data.local.TraceDatabase
 import javax.inject.Singleton
 
 @Module
@@ -17,14 +17,13 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDataBase(@ApplicationContext context: Context): DiverDatabase {
-        return Room.databaseBuilder(
+    fun provideDataBase(@ApplicationContext context: Context): TraceDatabase {
+        return Room.inMemoryDatabaseBuilder(
             context,
-            DiverDatabase::class.java,
-            "DiverTraces.db"
+            TraceDatabase::class.java
         ).build()
     }
 
     @Provides
-    fun provideDiverDao(database: DiverDatabase): DiverTraceDao = database.diverTraceDao()
+    fun provideTraceDao(database: TraceDatabase): TraceDao = database.traceDao()
 }

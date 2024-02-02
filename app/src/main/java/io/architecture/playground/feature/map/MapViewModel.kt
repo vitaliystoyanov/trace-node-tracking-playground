@@ -3,45 +3,40 @@ package io.architecture.playground.feature.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.architecture.playground.data.DiverTraceRepository
+import io.architecture.playground.data.TraceRepository
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
 import io.architecture.playground.data.remote.model.NetworkConnectionEventType
-import io.architecture.playground.model.DiverTrace
+import io.architecture.playground.model.Trace
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 data class DiverUiState(
-    var trace: DiverTrace,
-    var historyTraces: List<DiverTrace>,
+    var latestTraces: List<Trace>,
+    var tracesCount: Long,
     var connection: NetworkConnectionEvent
 )
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val diverTraceRepository: DiverTraceRepository
+    private val traceRepository: TraceRepository
 ) : ViewModel() {
 
-    private var trace = flowOf(DiverTrace())
-    private var historyTraces = diverTraceRepository.getStreamDiverTraceHistory()
-    private var connection = diverTraceRepository.observeConnection()
+    private var connection = traceRepository.getStreamConnectionEvents()
+    private var countTraces = traceRepository.getStreamCountTraces()
+    private var latestTracesByNodeIds = traceRepository.getStreamLatestTraceByUniqNodeIds()
 
     val uiState: StateFlow<DiverUiState> =
-        combine(trace, historyTraces, connection) { trace, history, connection ->
-            DiverUiState(trace, history, connection)
-        }.filter { it.historyTraces.isNotEmpty() }
-            .map { it.trace = it.historyTraces.last(); it }
-            .stateIn(
+        combine(latestTracesByNodeIds, connection, countTraces) { traces, connection, count ->
+            DiverUiState(traces, count, connection)
+        }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = DiverUiState(
-                    DiverTrace(),
                     emptyList(),
+                    0,
                     NetworkConnectionEvent(NetworkConnectionEventType.ConnectionUndefined)
                 )
             )

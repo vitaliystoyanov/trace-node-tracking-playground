@@ -1,11 +1,11 @@
 package io.architecture.playground.data.mapping
 
 import com.tinder.scarlet.WebSocket
-import io.architecture.playground.data.local.LocalDiverTrace
-import io.architecture.playground.data.remote.model.NetworkDiverTrace
+import io.architecture.playground.data.local.LocalTrace
+import io.architecture.playground.data.remote.model.NetworkTrace
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
 import io.architecture.playground.data.remote.model.NetworkConnectionEventType
-import io.architecture.playground.model.DiverTrace
+import io.architecture.playground.model.Trace
 
 fun WebSocket.Event.toExternal(): NetworkConnectionEvent = when(this) {
     is WebSocket.Event.OnConnectionOpened<*> -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionOpened)
@@ -15,92 +15,71 @@ fun WebSocket.Event.toExternal(): NetworkConnectionEvent = when(this) {
     is WebSocket.Event.OnMessageReceived -> NetworkConnectionEvent(NetworkConnectionEventType.MessageReceived)
 }
 
-fun DiverTrace.toLocal() = LocalDiverTrace(
+fun Trace.toLocal() = LocalTrace(
     id = id,
-    ept = ept,
-    eps = eps,
-    epv = epv,
     lon = lon,
     time = time,
-    epd = epd,
-    epx = epx,
     speed = speed,
+    bearing = bearing,
     alt = alt,
-    epy = epy,
-    track = track,
     lat = lat,
+    nodeId = nodeId,
     mode = mode
 )
 
-fun LocalDiverTrace.toExternal() = DiverTrace(
+fun LocalTrace.toExternal() = Trace(
     id = id,
-    ept = ept,
-    eps = eps,
-    epv = epv,
     lon = lon,
     time = time,
-    epd = epd,
-    epx = epx,
     speed = speed,
+    bearing = bearing,
     alt = alt,
-    epy = epy,
-    track = track,
     lat = lat,
+    nodeId = nodeId,
     mode = mode
 )
 
-fun NetworkDiverTrace.toLocal() = LocalDiverTrace(
-    id = id,
-    ept = ept,
-    eps = eps,
-    epv = epv,
+fun NetworkTrace.toLocal() = LocalTrace(
+    id = 0,
     lon = lon,
     time = time,
-    epd = epd,
-    epx = epx,
     speed = speed,
+    bearing = bearing,
     alt = alt,
-    epy = epy,
-    track = track,
     lat = lat,
+    nodeId = nodeId,
     mode = mode
 )
 
 
 
-fun LocalDiverTrace.toNetwork() = NetworkDiverTrace(
-    id = id,
-    ept = ept,
-    eps = eps,
-    epv = epv,
+fun LocalTrace.toNetwork() = NetworkTrace(
     lon = lon,
     time = time,
-    epd = epd,
-    epx = epx,
     speed = speed,
+    bearing = bearing,
     alt = alt,
-    epy = epy,
-    track = track,
     lat = lat,
+    nodeId = nodeId,
     mode = mode
 )
 
-fun DiverTrace.toNetwork() = toLocal().toNetwork()
+fun Trace.toNetwork() = toLocal().toNetwork()
 
-fun NetworkDiverTrace.toExternal() = toLocal().toExternal()
+fun NetworkTrace.toExternal() = toLocal().toExternal()
 
-fun List<LocalDiverTrace>.toNetwork() = map(LocalDiverTrace::toNetwork)
+fun List<LocalTrace>.toNetwork() = map(LocalTrace::toNetwork)
 
-fun List<DiverTrace>.toLocal() = map(DiverTrace::toLocal)
+fun List<Trace>.toLocal() = map(Trace::toLocal)
 
 @JvmName("localToExternal")
-fun List<LocalDiverTrace>.toExternal() = map(LocalDiverTrace::toExternal)
+fun List<LocalTrace>.toExternal() = map(LocalTrace::toExternal)
 
 @JvmName("networkToLocal")
-fun List<NetworkDiverTrace>.toLocal() = map(NetworkDiverTrace::toLocal)
+fun List<NetworkTrace>.toLocal() = map(NetworkTrace::toLocal)
 
 @JvmName("externalToNetwork")
-fun List<DiverTrace>.toNetwork() = map(DiverTrace::toNetwork)
+fun List<Trace>.toNetwork() = map(Trace::toNetwork)
 
 @JvmName("networkToExternal")
-fun List<NetworkDiverTrace>.toExternal() = map(NetworkDiverTrace::toExternal)
+fun List<NetworkTrace>.toExternal() = map(NetworkTrace::toExternal)

@@ -12,7 +12,7 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import dagger.hilt.android.AndroidEntryPoint
-import io.architecture.playground.data.DiverTraceRepository
+import io.architecture.playground.data.TraceRepository
 import io.architecture.playground.di.ApplicationIoScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
@@ -33,7 +33,7 @@ enum class ServiceState {
 class NetworkForegroundService : LifecycleService() {
 
     @Inject
-    lateinit var diversRepository: DiverTraceRepository
+    lateinit var diversRepository: TraceRepository
 
     @Inject
     @ApplicationIoScope
@@ -103,7 +103,7 @@ class NetworkForegroundService : LifecycleService() {
             }
 
         appScope.launch {
-            diversRepository.getStreamDiverTraces()
+            diversRepository.getStreamTraces()
                 .catch { error -> Log.d("SERVICE", "getStreamDiverTraces: Error - $error") }
                 .collect {
                     Log.d("SERVICE", "getStreamDiverTraces: Trace - $it")

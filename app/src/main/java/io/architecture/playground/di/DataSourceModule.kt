@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.remote.DefaultNetworkDiverTraceDataSource
-import io.architecture.playground.data.remote.NetworkDiverTraceDataSource
+import io.architecture.playground.data.remote.DefaultNetworkTraceDataSource
+import io.architecture.playground.data.remote.NetworkTraceDataSource
 import javax.inject.Singleton
 
 @Module
@@ -14,5 +14,5 @@ abstract class DataSourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindNetworkDataSource(dataSource: DefaultNetworkDiverTraceDataSource): NetworkDiverTraceDataSource
+    abstract fun bindNetworkDataSource(dataSource: DefaultNetworkTraceDataSource): NetworkTraceDataSource
 }

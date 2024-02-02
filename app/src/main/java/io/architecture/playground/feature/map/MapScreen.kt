@@ -49,9 +49,9 @@ import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 
 object MapBoxParams {
-    const val ZOOM = 15.0
+    const val ZOOM = 4.5
     const val PITCH = 0.0
-    const val CIRCLE_RADIUS = 5.0
+    const val CIRCLE_RADIUS = 2.0
     const val LINE_WIDTH = 2.9
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
@@ -67,7 +67,7 @@ fun MapScreen(
 
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
-            center(Point.fromLngLat(0.0, 0.0))
+            center(Point.fromLngLat(34.0828899, 44.1541579))
             zoom(ZOOM)
             pitch(PITCH)
         }
@@ -122,7 +122,7 @@ fun MapScreen(
                     )
                     it.addLayer(
                         lineLayer(LAYER_LINE_ID, SOURCE_ID) {
-                            lineColor(Color.BLACK)
+                            lineColor(Color.GRAY)
                             lineWidth(LINE_WIDTH)
                             filter(
                                 eq {
@@ -136,39 +136,47 @@ fun MapScreen(
             }
 
             MapEffect(state.value) { view ->
-                val lineString: LineString =
-                    LineString.fromLngLats(
-                        state.value.historyTraces
-                            .map { Point.fromLngLat(it.lon, it.lat) }
-                    )
+//                val lineString: LineString =
+//                    LineString.fromLngLats(
+//                        state.value.historyTraces
+//                            .map { Point.fromLngLat(it.lon, it.lat) }
+//                    )
 
                 view.mapboxMap.getStyle {
                     val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
                     source?.featureCollection(
                         FeatureCollection.fromFeatures(
-                            listOf(
+//                            listOf(
+//                                Feature.fromGeometry(
+//                                    Point.fromLngLat(
+//                                        state.value.trace.lon,
+//                                        state.value.trace.lat
+//                                    )
+//                                ),
+//                                Feature.fromGeometry(lineString)
+//                            )
+                            state.value.latestTraces.map {
                                 Feature.fromGeometry(
                                     Point.fromLngLat(
-                                        state.value.trace.lon,
-                                        state.value.trace.lat
+                                        it.lon,
+                                        it.lat
                                     )
-                                ),
-                                Feature.fromGeometry(lineString)
-                            )
+                                )
+                            }
                         )
                     )
                 }
             }
 
-            LaunchedEffect(state.value) {
-                mapViewportState.flyTo(
-                    cameraOptions = cameraOptions {
-                        center(Point.fromLngLat(state.value.trace.lon, state.value.trace.lat))
-                        zoom(ZOOM)
-                    },
-                    animationOptions = MapAnimationOptions.mapAnimationOptions { duration(1000) },
-                )
-            }
+//            LaunchedEffect(state.value) {
+//                mapViewportState.flyTo(
+//                    cameraOptions = cameraOptions {
+//                        center(Point.fromLngLat(state.value.trace.lon, state.value.trace.lat))
+////                        zoom(ZOOM)
+//                    },
+//                    animationOptions = MapAnimationOptions.mapAnimationOptions { duration(100) },
+//                )
+//            }
         }
 
 
@@ -182,43 +190,13 @@ fun MapScreen(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Collected trace: ${state.value.historyTraces.size}",
+                text = "Collected trace: ${state.value.tracesCount}",
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Last ID trace: ${state.value.trace.id}",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Seed: ${state.value.trace.speed}",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Long: ${state.value.trace.lon}",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Lat: ${state.value.trace.lat}",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Track: ${state.value.trace.track}",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Time: ${state.value.trace.time}",
+                text = "Track nodes: ${state.value.latestTraces.size}",
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
