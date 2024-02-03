@@ -29,6 +29,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.dsl.generated.match
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
@@ -127,7 +128,31 @@ fun MapScreen(
                             })
                             circleStrokeColor(Color.BLACK)
                             circleStrokeWidth(1.0)
-                            circleRadius(CIRCLE_RADIUS)
+                            circleRadius(
+                                // Produce a continuous, smooth series of values
+                                // between pairs of input and output values
+                                interpolate {
+                                    // Set the interpolation type
+                                    exponential {
+                                        literal(1.75)
+                                    }
+                                    // Get current zoom level
+                                    zoom()
+                                    // If the map is at zoom level 0 or below,
+                                    // set circle radius to 1
+                                    stop {
+                                        literal(4.5)
+                                        literal(1)
+                                    }
+                                    // If the map is at zoom level 15 or above,
+                                    // set circle radius to 2
+                                    stop {
+                                        literal(10)
+                                        literal(CIRCLE_RADIUS)
+                                    }
+                                }
+
+                            )
                             filter(
                                 eq {
                                     literal("\$type")
@@ -156,7 +181,30 @@ fun MapScreen(
                             textOptional(true)
                             textColor(Color.BLACK)
                             textEmissiveStrength(4.0)
-                            textSize(7.5)
+                            textSize(
+                                // Produce a continuous, smooth series of values
+                                // between pairs of input and output values
+                                interpolate {
+                                    // Set the interpolation type
+                                    exponential {
+                                        literal(1.75)
+                                    }
+                                    // Get current zoom level
+                                    zoom()
+                                    // If the map is at zoom level 0 or below,
+                                    // set circle radius to 1
+                                    stop {
+                                        literal(4.5)
+                                        literal(2)
+                                    }
+                                    // If the map is at zoom level 15 or above,
+                                    // set circle radius to 2
+                                    stop {
+                                        literal(10)
+                                        literal(7.5)
+                                    }
+                                }
+                            )
                             textAllowOverlap(true)
                             filter(
                                 eq {
