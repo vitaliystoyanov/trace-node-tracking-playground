@@ -3,6 +3,7 @@
 This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source at runtime.
 
 <img src="/docs/demo.gif" width="420">
+<img src="/docs/demo1.gif" width="420">
 
 ## Tech stack
 
