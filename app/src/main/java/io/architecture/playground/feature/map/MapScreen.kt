@@ -1,5 +1,6 @@
 package io.architecture.playground.feature.map
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,8 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
-import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.dsl.generated.match
@@ -45,7 +44,9 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.attribution.generated.AttributionSettings
 import com.mapbox.maps.plugin.compass.generated.CompassSettings
+import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
+import io.architecture.playground.R
 import io.architecture.playground.feature.map.MapBoxParams.CIRCLE_RADIUS
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_CIRCLE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_LINE_ID
@@ -53,7 +54,9 @@ import io.architecture.playground.feature.map.MapBoxParams.LAYER_TEXT_ID
 import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
+import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
+import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
 import io.architecture.playground.util.bearingAzimuthToDirection
 
 object MapBoxParams {
@@ -65,6 +68,7 @@ object MapBoxParams {
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
     const val LAYER_TEXT_ID = "layer-text-id"
+    const val TRIANGLE_IMAGE_ID = "triangle-image-id"
 }
 
 @OptIn(MapboxExperimental::class)
@@ -90,6 +94,10 @@ fun MapScreen(
         mutableStateOf(ScaleBarSettings { enabled = false })
     }
 
+    val gesturesSettings: GesturesSettings by remember {
+        mutableStateOf(GesturesSettings { rotateEnabled = false })
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         MapboxMap(
             Modifier.fillMaxSize(),
@@ -102,14 +110,15 @@ fun MapScreen(
             mapViewportState = mapViewportState,
             compassSettings = compassSettings,
             scaleBarSettings = scaleBarSetting,
+            gesturesSettings = gesturesSettings,
             attributionSettings = AttributionSettings {
                 enabled = false
             },
         ) {
             // TODO Migrate to MapBox Style Extension
             MapEffect(Unit) { it ->
-                it.mapboxMap.getStyle {
-                    it.addSource(
+                it.mapboxMap.getStyle { style ->
+                    style.addSource(
                         geoJsonSource(SOURCE_ID) {
                             featureCollection(
                                 FeatureCollection.fromFeature(
@@ -118,7 +127,10 @@ fun MapScreen(
                             )
                         }
                     )
-                    it.addLayer(
+                    bitmapFromDrawableRes(it.context, R.drawable.triangle)?.let { bitmap ->
+                        style.addImage(TRIANGLE_IMAGE_ID, bitmap)
+                    }
+                    style.addLayer(
                         circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
                             circleColor(match {
                                 get("mode")
@@ -134,6 +146,7 @@ fun MapScreen(
                             })
                             circleStrokeColor(Color.BLACK)
                             circleStrokeWidth(1.0)
+                            circleOpacity(1.0) // Temp
                             circleRadius(
                                 interpolate {
                                     exponential {
@@ -158,7 +171,7 @@ fun MapScreen(
                             )
                         }
                     )
-                    it.addLayerBelow(
+                    style.addLayerBelow(
                         lineLayer(LAYER_LINE_ID, SOURCE_ID) {
                             lineColor(Color.BLACK)
                             lineWidth(LINE_WIDTH)
@@ -170,9 +183,30 @@ fun MapScreen(
                             )
                         }, below = LAYER_CIRCLE_ID
                     )
-                    it.addLayer(
+                    style.addLayer(
                         symbolLayer(LAYER_TEXT_ID, SOURCE_ID) {
-                            textField(get { literal("text-field") })
+                            iconImage(TRIANGLE_IMAGE_ID)
+                            iconIgnorePlacement(true)
+                            iconAllowOverlap(true)
+                            iconOffset(listOf(0.0, -2.0))
+                            iconSize(
+                                interpolate {
+                                    exponential {
+                                        literal(1.75)
+                                    }
+                                    zoom()
+                                    stop {
+                                        literal(4.5)
+                                        literal(1)
+                                    }
+                                    stop {
+                                        literal(10)
+                                        literal(2)
+                                    }
+                                }
+                            )
+                            iconRotate( get("bearing"))
+                            textField(get { literal("text-field") } )
                             textAnchor(TextAnchor.TOP_RIGHT)
                             textPadding(5.0)
                             textOptional(true)
@@ -221,10 +255,16 @@ fun MapScreen(
                                 ).also { feature ->
                                     feature.addStringProperty(
                                         "text-field",
-                                        String.format("\n%s: %d°\n%d m/s", bearingAzimuthToDirection(it.bearing), it.bearing.toInt(), it.speed)
+                                        String.format(
+                                            "\n%s: %d°\n%d m/s",
+                                            bearingAzimuthToDirection(it.bearing),
+                                            it.bearing.toInt(),
+                                            it.speed
+                                        )
                                     )
                                     feature.addNumberProperty("mode", it.mode)
                                     feature.addStringProperty("nodeId", it.nodeId)
+                                    feature.addNumberProperty("bearing", it.bearing)
                                 }
                             }.toMutableList()
                                 .also {
