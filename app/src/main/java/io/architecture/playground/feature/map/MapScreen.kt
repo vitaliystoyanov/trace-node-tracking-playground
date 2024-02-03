@@ -201,7 +201,7 @@ fun MapScreen(
                                     }
                                     stop {
                                         literal(10)
-                                        literal(2)
+                                        literal(3)
                                     }
                                 }
                             )
