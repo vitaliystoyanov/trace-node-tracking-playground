@@ -23,14 +23,18 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.Style
+import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.dsl.generated.match
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
@@ -50,6 +54,7 @@ import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
+import io.architecture.playground.util.bearingAzimuthToDirection
 
 object MapBoxParams {
     const val ZOOM = 4.5
@@ -78,7 +83,7 @@ fun MapScreen(
     }
 
     val compassSettings: CompassSettings by remember {
-        mutableStateOf(CompassSettings { enabled = false })
+        mutableStateOf(CompassSettings { enabled = true })
     }
 
     val scaleBarSetting: ScaleBarSettings by remember {
@@ -90,7 +95,8 @@ fun MapScreen(
             Modifier.fillMaxSize(),
             mapInitOptionsFactory = { context ->
                 MapInitOptions(
-                    context = context
+                    context = context,
+                    styleUri = Style.LIGHT
                 )
             },
             mapViewportState = mapViewportState,
@@ -101,7 +107,7 @@ fun MapScreen(
             },
         ) {
             // TODO Migrate to MapBox Style Extension
-            MapEffect(Unit) {
+            MapEffect(Unit) { it ->
                 it.mapboxMap.getStyle {
                     it.addSource(
                         geoJsonSource(SOURCE_ID) {
@@ -143,7 +149,6 @@ fun MapScreen(
                                         literal(CIRCLE_RADIUS)
                                     }
                                 }
-
                             )
                             filter(
                                 eq {
@@ -153,7 +158,7 @@ fun MapScreen(
                             )
                         }
                     )
-                    it.addLayer(
+                    it.addLayerBelow(
                         lineLayer(LAYER_LINE_ID, SOURCE_ID) {
                             lineColor(Color.BLACK)
                             lineWidth(LINE_WIDTH)
@@ -163,7 +168,7 @@ fun MapScreen(
                                     literal("LineString")
                                 }
                             )
-                        }
+                        }, below = LAYER_CIRCLE_ID
                     )
                     it.addLayer(
                         symbolLayer(LAYER_TEXT_ID, SOURCE_ID) {
@@ -172,7 +177,7 @@ fun MapScreen(
                             textPadding(5.0)
                             textOptional(true)
                             textColor(Color.BLACK)
-                            textEmissiveStrength(4.0)
+                            textEmissiveStrength(10.0)
                             textSize(
                                 interpolate {
                                     exponential {
@@ -185,7 +190,7 @@ fun MapScreen(
                                     }
                                     stop {
                                         literal(10)
-                                        literal(7.5)
+                                        literal(9.0)
                                     }
                                 }
                             )
@@ -216,9 +221,10 @@ fun MapScreen(
                                 ).also { feature ->
                                     feature.addStringProperty(
                                         "text-field",
-                                        String.format("%d m/s\n %.2f", it.speed, it.bearing)
+                                        String.format("\n%s: %d°\n%d m/s", bearingAzimuthToDirection(it.bearing), it.bearing.toInt(), it.speed)
                                     )
                                     feature.addNumberProperty("mode", it.mode)
+                                    feature.addStringProperty("nodeId", it.nodeId)
                                 }
                             }.toMutableList()
                                 .also {
