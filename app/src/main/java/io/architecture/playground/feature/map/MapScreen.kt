@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -150,53 +149,26 @@ fun BottomSheetContent(state: State<DiverUiState>, selectedNode: String) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        Text(
-            text = String.format(
+        listOf(
+            String.format(
                 "%s: %f°",
                 lastNode?.let { bearingAzimuthToDirection(it.bearing) },
                 lastNode?.bearing,
             ),
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Speed: ${lastNode?.speed} m/s",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Lon: ${lastNode?.lon}",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Lat: ${lastNode?.lat}",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.fillMaxWidth())
-        Text(
-            text = "All collected trace: ${selectedNodeTracesList?.size}",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Last traced timestamp: ${lastNode?.time}",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Node ID: $selectedNode\n\n",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
+            "Speed: ${lastNode?.speed} m/s",
+            "Lon: ${lastNode?.lon}",
+            "Lat: ${lastNode?.lat}",
+            "All collected trace: ${selectedNodeTracesList?.size}",
+            "Last traced timestamp: ${lastNode?.time}",
+            "Node ID: $selectedNode\n\n"
+        ).forEach { text ->
+            Text(
+                text = text,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -448,14 +420,14 @@ fun TopStatusBar(state: State<DiverUiState>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(24.dp)
+            .height(20.dp)
             .background(colorResource(id = bgColor)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         if (state.value.connection.type === SocketConnectionEventType.Opened) { // Dirty, very dirty
             Text(
-                text = "Collected trace: ${state.value.tracesCount}",
+                text = "Collected trace: ${state.value.tracesCount} ",
                 color = colorResource(id = R.color.white),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold
