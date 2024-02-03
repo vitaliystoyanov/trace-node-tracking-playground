@@ -27,6 +27,7 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
+import com.mapbox.maps.extension.style.expressions.dsl.generated.match
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
@@ -112,7 +113,20 @@ fun MapScreen(
                     )
                     it.addLayer(
                         circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
-                            circleColor(Color.BLACK)
+                            circleColor(match {
+                                get("mode")
+                                stop {
+                                    literal(1) // moving
+                                    color(Color.GREEN)
+                                }
+                                stop {
+                                    literal(0) // not moving
+                                    color(Color.RED)
+                                }
+                                color(Color.BLACK)
+                            })
+                            circleStrokeColor(Color.BLACK)
+                            circleStrokeWidth(1.0)
                             circleRadius(CIRCLE_RADIUS)
                             filter(
                                 eq {
@@ -124,7 +138,7 @@ fun MapScreen(
                     )
                     it.addLayer(
                         lineLayer(LAYER_LINE_ID, SOURCE_ID) {
-                            lineColor(Color.DKGRAY)
+                            lineColor(Color.BLACK)
                             lineWidth(LINE_WIDTH)
                             filter(
                                 eq {
@@ -138,7 +152,7 @@ fun MapScreen(
                         symbolLayer(LAYER_TEXT_ID, SOURCE_ID) {
                             textField(get { literal("text-field") })
                             textAnchor(TextAnchor.TOP_RIGHT)
-                            textPadding(4.0)
+                            textPadding(5.0)
                             textOptional(true)
                             textColor(Color.BLACK)
                             textEmissiveStrength(4.0)
@@ -172,6 +186,7 @@ fun MapScreen(
                                         "text-field",
                                         String.format("%d m/s\n %.2f", it.speed, it.bearing)
                                     )
+                                    feature.addNumberProperty("mode", it.mode)
                                 }
                             }.toMutableList()
                                 .also {
