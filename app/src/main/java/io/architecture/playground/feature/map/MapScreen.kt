@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,13 +84,15 @@ object MapBoxParams {
     const val PITCH = 0.0
     const val CIRCLE_RADIUS = 2.8
     const val LINE_WIDTH = 2.0
+
+    // GEOJson layers' and image ids
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
     const val LAYER_SYMBOL_ID = "symbol-text-id"
     const val TRIANGLE_IMAGE_ID = "triangle-image-id"
 
-    // Feature properties
+    // GEOJson Feature properties
     const val TEXT_FIELD_KEY_PROPERTY = "text-field"
     const val NODE_ID_KEY_PROPERTY = "node-id"
     const val MODE_KEY_PROPERTY = "mode"
@@ -105,26 +106,29 @@ fun MapScreen(
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
-    val sheetState = rememberModalBottomSheetState()
+    var renderNodeRoutesEnabled by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNode by remember { mutableStateOf("") }
-    var renderNodeRoutesEnabled by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Scaffold { contentPadding ->
-        MapNodesContent(contentPadding, state, renderNodeRoutesEnabled, onNodeClick = { nodeId ->
-            selectedNode = nodeId
-            showBottomSheet = true
-        })
+        MapNodesContent(contentPadding,
+            state,
+            renderNodeRoutesEnabled,
+            onNodeClick = { nodeId ->
+                selectedNode = nodeId
+                showBottomSheet = true
+            }
+        )
         Column {
             TopStatusBar(state)
             TextButton(
                 modifier = Modifier.padding(6.dp),
                 onClick = { renderNodeRoutesEnabled = !renderNodeRoutesEnabled }) {
-                if (!renderNodeRoutesEnabled) {
-                    Text(text = "Enable route rendering", fontSize = 12.sp)
-                } else {
-                    Text(text = "Disable route rendering", fontSize = 12.sp)
-                }
+                Text(
+                    text = "${if (!renderNodeRoutesEnabled) "Enable" else "Disable"} route rendering",
+                    fontSize = 12.sp
+                )
             }
         }
     }
@@ -156,15 +160,14 @@ fun BottomSheetContent(state: State<DiverUiState>, selectedNode: String) {
                 lastNode?.bearing,
             ),
             "Speed: ${lastNode?.speed} m/s",
-            "Lon: ${lastNode?.lon}",
-            "Lat: ${lastNode?.lat}",
-            "All collected trace: ${selectedNodeTracesList?.size}",
+            "Longitude: ${lastNode?.lon}",
+            "Latitude: ${lastNode?.lat}",
+            "All collected traces: ${selectedNodeTracesList?.size}",
             "Last traced timestamp: ${lastNode?.time}",
-            "Node ID: $selectedNode\n\n"
+            "Node ID: $selectedNode"
         ).forEach { text ->
             Text(
                 text = text,
-                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -209,11 +212,8 @@ fun MapNodesContent(
         compassSettings = compassSettings,
         scaleBarSettings = scaleBarSetting,
         gesturesSettings = gesturesSettings,
-        attributionSettings = AttributionSettings {
-            enabled = false
-        },
+        attributionSettings = AttributionSettings { enabled = false },
     ) {
-
         // TODO Migrate to MapBox Style Extension
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.getStyle { style ->
@@ -339,13 +339,12 @@ fun MapNodesContent(
                         onNodeClick(q.queriedFeature.feature.getStringProperty(NODE_ID_KEY_PROPERTY))
                     }
                 }
-                return@OnMapClickListener true
+                true
             })
         }
 
         MapEffect(state.value) { view ->
             view.mapboxMap.getStyle {
-
                 val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
                 source?.featureCollection(
                     FeatureCollection.fromFeatures(
@@ -390,20 +389,6 @@ fun MapNodesContent(
                 )
             }
         }
-
-//            LaunchedEffect(selectedNodeId) {
-//                mapViewportState.flyTo(
-//                    cameraOptions = cameraOptions {
-//                        val latestNode = state.value.latestTraceRoutes[selectedNodeId]
-//                        if (latestNode != null && latestNode.lastOrNull() != null) {
-//                            center(Point.fromLngLat(latestNode.last().lon, latestNode.last().lat,))
-//                        } else {
-//                            center(Point.fromLngLat(34.0828899, 44.1541579))
-//                        }
-//                    },
-//                    animationOptions = MapAnimationOptions.mapAnimationOptions { duration(100) },
-//                )
-//            }
     }
 }
 
@@ -421,23 +406,22 @@ fun TopStatusBar(state: State<DiverUiState>) {
         modifier = Modifier
             .fillMaxWidth()
             .height(20.dp)
-            .background(colorResource(id = bgColor)),
+            .background(colorResource(bgColor)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         if (state.value.connection.type === SocketConnectionEventType.Opened) { // Dirty, very dirty
-            Text(
-                text = "Collected trace: ${state.value.tracesCount} ",
-                color = colorResource(id = R.color.white),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Track nodes: ${state.value.latestTraces.size}",
-                color = colorResource(id = R.color.white),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
+            listOf(
+                "Collected trace: ${state.value.tracesCount} ",
+                "Track nodes: ${state.value.latestTraces.size}"
+            ).forEach { text ->
+                Text(
+                    text = text,
+                    color = colorResource(id = R.color.white),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         } else if (state.value.connection.type === SocketConnectionEventType.Undefined) {
             Text(
                 text = "Connecting...",
