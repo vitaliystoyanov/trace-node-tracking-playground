@@ -1,5 +1,6 @@
 package io.architecture.playground.data.local
 
+import io.architecture.playground.model.Trace
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -15,8 +16,8 @@ class DefaultLocalTraceDataSource @Inject constructor(
     override fun observeLatestTraceByUniqNodeIds(): Flow<List<LocalTrace>> =
         dao.observeLatestTraceByUniqNodeIds()
 
-
     override suspend fun getAll(): List<LocalTrace> = dao.getAll()
     override fun deleteAllTraces() = dao.deleteAll()
+    suspend fun getAllTracesByNodeId(nodeId: String): List<LocalTrace> = dao.getAllById(nodeId)
 
 }

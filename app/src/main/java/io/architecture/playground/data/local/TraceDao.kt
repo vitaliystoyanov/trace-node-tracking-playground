@@ -26,8 +26,8 @@ interface TraceDao {
     @Query("SELECT * FROM traces")
     suspend fun getAll(): List<LocalTrace>
 
-    @Query("SELECT * FROM traces WHERE id = :nodeId")
-    suspend fun getById(nodeId: String): LocalTrace?
+    @Query("SELECT * FROM traces WHERE nodeId = :nodeId")
+    suspend fun getAllById(nodeId: String): List<LocalTrace>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(trace: LocalTrace)

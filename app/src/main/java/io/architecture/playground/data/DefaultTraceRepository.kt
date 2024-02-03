@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DefaultTraceRepository @Inject constructor(
@@ -27,7 +25,6 @@ class DefaultTraceRepository @Inject constructor(
 ) : TraceRepository {
 
     private val coroutineScope = CoroutineScope(ioDispatcher)
-    private var cacheTraces = mutableListOf<Trace>()
 
     override fun getStreamConnectionEvents(): Flow<NetworkConnectionEvent> =
         networkDataSource.observeConnection()
@@ -51,23 +48,16 @@ class DefaultTraceRepository @Inject constructor(
     }
 
     override fun getStreamTraceHistory(): Flow<List<Trace>> {
-        coroutineScope.launch {
-            localDataSource.getAll()
-                .map { it.toExternal() }
-                .also {
-                    cacheTraces = it.toMutableList()
-                }
-        }
         return localDataSource.observeAll()
             .map { it.toExternal() }
-            .onEach { if (it.lastOrNull() != null) cacheTraces.add(it.last()) }
-            .transform { emit(cacheTraces) }
     }
 
     override fun getStreamLatestTraceByUniqNodeIds(): Flow<List<Trace>> {
         return localDataSource.observeLatestTraceByUniqNodeIds()
             .map { it.toExternal() }
-//            .onEach { if (it.lastOrNull() != null) cacheTraces.add(it.last()) }
-//            .transform { emit(cacheTraces) }
+    }
+
+    override suspend fun getAllTracesByNodeId(nodeId: String): List<Trace> {
+        return localDataSource.getAllTracesByNodeId(nodeId).map { it.toExternal() }
     }
 }

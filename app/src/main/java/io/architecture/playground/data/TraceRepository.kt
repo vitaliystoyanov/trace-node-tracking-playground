@@ -18,4 +18,6 @@ interface TraceRepository {
 
     fun getStreamLatestTraceByUniqNodeIds(): Flow<List<Trace>>
 
+    suspend fun getAllTracesByNodeId(nodeId: String): List<Trace>
+
 }

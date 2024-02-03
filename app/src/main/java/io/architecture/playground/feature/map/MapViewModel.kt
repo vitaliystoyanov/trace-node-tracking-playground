@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 data class DiverUiState(
     var latestTraces: List<Trace>,
+    var latestTraceRoutes: Map<String, List<Trace>>,
     var tracesCount: Long,
     var connection: NetworkConnectionEvent
 )
@@ -30,12 +31,20 @@ class MapViewModel @Inject constructor(
 
     val uiState: StateFlow<DiverUiState> =
         combine(latestTracesByNodeIds, connection, countTraces) { traces, connection, count ->
-            DiverUiState(traces, count, connection)
-        }.stateIn(
+            val map = mutableMapOf<String, List<Trace>>()
+
+            traces.forEach {
+                map[it.nodeId] = traceRepository.getAllTracesByNodeId(it.nodeId)
+            }
+
+            DiverUiState(traces, map, count, connection)
+        }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = DiverUiState(
                     emptyList(),
+                    emptyMap(),
                     0,
                     NetworkConnectionEvent(NetworkConnectionEventType.ConnectionUndefined)
                 )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +23,6 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
@@ -36,7 +34,6 @@ import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
-import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.attribution.generated.AttributionSettings
 import com.mapbox.maps.plugin.compass.generated.CompassSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
@@ -51,8 +48,8 @@ import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 object MapBoxParams {
     const val ZOOM = 4.5
     const val PITCH = 0.0
-    const val CIRCLE_RADIUS = 2.0
-    const val LINE_WIDTH = 2.9
+    const val CIRCLE_RADIUS = 3.0
+    const val LINE_WIDTH = 2.0
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
@@ -110,7 +107,7 @@ fun MapScreen(
                     )
                     it.addLayer(
                         circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
-                            circleColor(Color.BLACK)
+                            circleColor(Color.GREEN)
                             circleRadius(CIRCLE_RADIUS)
                             filter(
                                 eq {
@@ -122,7 +119,7 @@ fun MapScreen(
                     )
                     it.addLayer(
                         lineLayer(LAYER_LINE_ID, SOURCE_ID) {
-                            lineColor(Color.GRAY)
+                            lineColor(Color.DKGRAY)
                             lineWidth(LINE_WIDTH)
                             filter(
                                 eq {
@@ -135,26 +132,13 @@ fun MapScreen(
                 }
             }
 
-            MapEffect(state.value) { view ->
-//                val lineString: LineString =
-//                    LineString.fromLngLats(
-//                        state.value.historyTraces
-//                            .map { Point.fromLngLat(it.lon, it.lat) }
-//                    )
 
+
+            MapEffect(state.value) { view ->
                 view.mapboxMap.getStyle {
                     val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
                     source?.featureCollection(
                         FeatureCollection.fromFeatures(
-//                            listOf(
-//                                Feature.fromGeometry(
-//                                    Point.fromLngLat(
-//                                        state.value.trace.lon,
-//                                        state.value.trace.lat
-//                                    )
-//                                ),
-//                                Feature.fromGeometry(lineString)
-//                            )
                             state.value.latestTraces.map {
                                 Feature.fromGeometry(
                                     Point.fromLngLat(
@@ -162,7 +146,21 @@ fun MapScreen(
                                         it.lat
                                     )
                                 )
-                            }
+                            }.toMutableList()
+                                .also {
+                                    state.value.latestTraceRoutes.forEach { (_, value) ->
+                                        run {
+                                            val lineString: LineString =
+                                                LineString.fromLngLats(value.map {
+                                                    Point.fromLngLat(
+                                                        it.lon,
+                                                        it.lat
+                                                    )
+                                                })
+                                            it.add(Feature.fromGeometry(lineString))
+                                        }
+                                    }
+                                }
                         )
                     )
                 }
