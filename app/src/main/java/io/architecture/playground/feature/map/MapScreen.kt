@@ -26,10 +26,13 @@ import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
@@ -40,6 +43,7 @@ import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
 import io.architecture.playground.feature.map.MapBoxParams.CIRCLE_RADIUS
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_CIRCLE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_LINE_ID
+import io.architecture.playground.feature.map.MapBoxParams.LAYER_TEXT_ID
 import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
@@ -48,11 +52,12 @@ import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 object MapBoxParams {
     const val ZOOM = 4.5
     const val PITCH = 0.0
-    const val CIRCLE_RADIUS = 3.0
+    const val CIRCLE_RADIUS = 2.8
     const val LINE_WIDTH = 2.0
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
+    const val LAYER_TEXT_ID = "layer-text-id"
 }
 
 @OptIn(MapboxExperimental::class)
@@ -107,7 +112,7 @@ fun MapScreen(
                     )
                     it.addLayer(
                         circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
-                            circleColor(Color.GREEN)
+                            circleColor(Color.BLACK)
                             circleRadius(CIRCLE_RADIUS)
                             filter(
                                 eq {
@@ -129,13 +134,30 @@ fun MapScreen(
                             )
                         }
                     )
+                    it.addLayer(
+                        symbolLayer(LAYER_TEXT_ID, SOURCE_ID) {
+                            textField(get { literal("text-field") })
+                            textAnchor(TextAnchor.TOP_RIGHT)
+                            textPadding(4.0)
+                            textOptional(true)
+                            textColor(Color.BLACK)
+                            textEmissiveStrength(4.0)
+                            textSize(7.5)
+                            textAllowOverlap(true)
+                            filter(
+                                eq {
+                                    literal("\$type")
+                                    literal("Point")
+                                }
+                            )
+                        }
+                    )
                 }
             }
 
-
-
             MapEffect(state.value) { view ->
                 view.mapboxMap.getStyle {
+
                     val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
                     source?.featureCollection(
                         FeatureCollection.fromFeatures(
@@ -145,7 +167,12 @@ fun MapScreen(
                                         it.lon,
                                         it.lat
                                     )
-                                )
+                                ).also { feature ->
+                                    feature.addStringProperty(
+                                        "text-field",
+                                        String.format("%d m/s\n %.2f", it.speed, it.bearing)
+                                    )
+                                }
                             }.toMutableList()
                                 .also {
                                     state.value.latestTraceRoutes.forEach { (_, value) ->
@@ -176,6 +203,7 @@ fun MapScreen(
 //                )
 //            }
         }
+
 
 
         Column(
