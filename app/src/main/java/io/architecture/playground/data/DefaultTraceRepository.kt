@@ -6,11 +6,8 @@ import io.architecture.playground.data.mapping.toExternal
 import io.architecture.playground.data.mapping.toLocal
 import io.architecture.playground.data.remote.DefaultNetworkTraceDataSource
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
-import io.architecture.playground.data.remote.model.NetworkConnectionEventType
-import io.architecture.playground.di.IoDispatcher
+import io.architecture.playground.data.remote.model.SocketConnectionEventType
 import io.architecture.playground.model.Trace
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
@@ -20,15 +17,12 @@ import javax.inject.Inject
 
 class DefaultTraceRepository @Inject constructor(
     private val networkDataSource: DefaultNetworkTraceDataSource,
-    private val localDataSource: DefaultLocalTraceDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val localDataSource: DefaultLocalTraceDataSource
 ) : TraceRepository {
-
-    private val coroutineScope = CoroutineScope(ioDispatcher)
 
     override fun getStreamConnectionEvents(): Flow<NetworkConnectionEvent> =
         networkDataSource.observeConnection()
-            .filter { it.type != NetworkConnectionEventType.MessageReceived }
+            .filter { it.type != SocketConnectionEventType.MessageReceived }
 
     override fun getStreamTraces(): Flow<Trace> {
         return networkDataSource.streamTraces()

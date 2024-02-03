@@ -20,6 +20,7 @@ interface TraceDao {
 
     @Query("SELECT MAX(id) as id,lon,lat,speed,bearing,alt,time,nodeId,mode FROM traces GROUP BY nodeId")
     fun observeLatestTraceByUniqNodeIds(): Flow<List<LocalTrace>>
+
     @Query("SELECT COUNT(id) FROM traces")
     fun observeCountTraces(): Flow<Long>
 

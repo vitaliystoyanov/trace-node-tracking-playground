@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.playground.data.TraceRepository
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
-import io.architecture.playground.data.remote.model.NetworkConnectionEventType
+import io.architecture.playground.data.remote.model.SocketConnectionEventType
 import io.architecture.playground.model.Trace
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -46,7 +46,7 @@ class MapViewModel @Inject constructor(
                     emptyList(),
                     emptyMap(),
                     0,
-                    NetworkConnectionEvent(NetworkConnectionEventType.ConnectionUndefined)
+                    NetworkConnectionEvent(SocketConnectionEventType.Undefined)
                 )
             )
 }

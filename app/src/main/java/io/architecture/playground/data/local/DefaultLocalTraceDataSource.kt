@@ -10,9 +10,11 @@ class DefaultLocalTraceDataSource @Inject constructor(
     override suspend fun add(trace: LocalTrace) = dao.insert(trace)
 
     override fun observeAll(): Flow<List<LocalTrace>> = dao.observeAll()
+
     override fun observeCountTraces(): Flow<Long> = dao.observeCountTraces()
 
     override fun observeTraceLatest(): Flow<LocalTrace> = dao.observeLatest()
+
     override fun observeLatestTraceByUniqNodeIds(): Flow<List<LocalTrace>> =
         dao.observeLatestTraceByUniqNodeIds()
 

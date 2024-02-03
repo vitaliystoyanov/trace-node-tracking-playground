@@ -14,7 +14,7 @@ object BitmapUtils {
     fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
         drawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
-    fun drawableToBitmap(
+    private fun drawableToBitmap(
         sourceDrawable: Drawable?,
         flipX: Boolean = false,
         flipY: Boolean = false,

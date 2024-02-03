@@ -4,15 +4,15 @@ import com.tinder.scarlet.WebSocket
 import io.architecture.playground.data.local.LocalTrace
 import io.architecture.playground.data.remote.model.NetworkTrace
 import io.architecture.playground.data.remote.model.NetworkConnectionEvent
-import io.architecture.playground.data.remote.model.NetworkConnectionEventType
+import io.architecture.playground.data.remote.model.SocketConnectionEventType
 import io.architecture.playground.model.Trace
 
 fun WebSocket.Event.toExternal(): NetworkConnectionEvent = when(this) {
-    is WebSocket.Event.OnConnectionOpened<*> -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionOpened)
-    is WebSocket.Event.OnConnectionClosed ->  NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosed)
-    is WebSocket.Event.OnConnectionClosing -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionClosing)
-    is WebSocket.Event.OnConnectionFailed -> NetworkConnectionEvent(NetworkConnectionEventType.ConnectionFailed)
-    is WebSocket.Event.OnMessageReceived -> NetworkConnectionEvent(NetworkConnectionEventType.MessageReceived)
+    is WebSocket.Event.OnConnectionOpened<*> -> NetworkConnectionEvent(SocketConnectionEventType.Opened)
+    is WebSocket.Event.OnConnectionClosed ->  NetworkConnectionEvent(SocketConnectionEventType.Closed)
+    is WebSocket.Event.OnConnectionClosing -> NetworkConnectionEvent(SocketConnectionEventType.Closing)
+    is WebSocket.Event.OnConnectionFailed -> NetworkConnectionEvent(SocketConnectionEventType.Failed)
+    is WebSocket.Event.OnMessageReceived -> NetworkConnectionEvent(SocketConnectionEventType.MessageReceived)
 }
 
 fun Trace.toLocal() = LocalTrace(

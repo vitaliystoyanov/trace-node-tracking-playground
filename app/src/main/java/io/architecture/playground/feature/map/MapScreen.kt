@@ -58,13 +58,17 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
 import io.architecture.playground.R
+import io.architecture.playground.feature.map.MapBoxParams.BEARING_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.CIRCLE_RADIUS
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_CIRCLE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_LINE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_SYMBOL_ID
 import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
+import io.architecture.playground.feature.map.MapBoxParams.MODE_KEY_PROPERTY
+import io.architecture.playground.feature.map.MapBoxParams.NODE_ID_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
+import io.architecture.playground.feature.map.MapBoxParams.TEXT_FIELD_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
@@ -80,8 +84,13 @@ object MapBoxParams {
     const val LAYER_LINE_ID = "layer-line-id"
     const val LAYER_SYMBOL_ID = "symbol-text-id"
     const val TRIANGLE_IMAGE_ID = "triangle-image-id"
-}
 
+    // Feature properties
+    const val TEXT_FIELD_KEY_PROPERTY = "text-field"
+    const val NODE_ID_KEY_PROPERTY = "node-id"
+    const val MODE_KEY_PROPERTY = "mode"
+    const val BEARING_KEY_PROPERTY = "bearing"
+}
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -213,13 +222,7 @@ fun MapNodesContent(
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.getStyle { style ->
                 style.addSource(
-                    geoJsonSource(SOURCE_ID) {
-                        featureCollection(
-                            FeatureCollection.fromFeature(
-                                Feature.fromGeometry(Point.fromLngLat(0.0, 0.0))
-                            )
-                        )
-                    }
+                    geoJsonSource(SOURCE_ID)
                 )
                 bitmapFromDrawableRes(mapView.context, R.drawable.triangle)?.let { bitmap ->
                     style.addImage(TRIANGLE_IMAGE_ID, bitmap)
@@ -227,7 +230,7 @@ fun MapNodesContent(
                 style.addLayer(
                     circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
                         circleColor(match {
-                            get("mode")
+                            get(MODE_KEY_PROPERTY)
                             stop {
                                 literal(1) // moving
                                 color(Color.GREEN)
@@ -240,7 +243,6 @@ fun MapNodesContent(
                         })
                         circleStrokeColor(Color.BLACK)
                         circleStrokeWidth(1.0)
-                        circleOpacity(1.0) // Temp
                         circleRadius(
                             interpolate {
                                 exponential {
@@ -299,8 +301,8 @@ fun MapNodesContent(
                                 }
                             }
                         )
-                        iconRotate(get("bearing"))
-                        textField(get { literal("text-field") })
+                        iconRotate(get(BEARING_KEY_PROPERTY))
+                        textField(get { literal(TEXT_FIELD_KEY_PROPERTY) })
                         textAnchor(TextAnchor.TOP_RIGHT)
                         textPadding(5.0)
                         textOptional(true)
@@ -338,7 +340,7 @@ fun MapNodesContent(
                     RenderedQueryOptions(listOf(LAYER_SYMBOL_ID, LAYER_CIRCLE_ID), null)
                 ) {
                     it.value?.forEach { q ->
-                        onNodeClick(q.queriedFeature.feature.getStringProperty("node-id"))
+                        onNodeClick(q.queriedFeature.feature.getStringProperty(NODE_ID_KEY_PROPERTY))
                     }
                 }
                 return@OnMapClickListener true
@@ -359,7 +361,7 @@ fun MapNodesContent(
                                 )
                             ).also { feature ->
                                 feature.addStringProperty(
-                                    "text-field",
+                                    TEXT_FIELD_KEY_PROPERTY,
                                     String.format(
                                         "\n%s: %d°\n%d m/s",
                                         bearingAzimuthToDirection(it.bearing),
@@ -367,9 +369,9 @@ fun MapNodesContent(
                                         it.speed
                                     )
                                 )
-                                feature.addNumberProperty("mode", it.mode)
-                                feature.addStringProperty("node-id", it.nodeId)
-                                feature.addNumberProperty("bearing", it.bearing)
+                                feature.addNumberProperty(MODE_KEY_PROPERTY, it.mode)
+                                feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
+                                feature.addNumberProperty(BEARING_KEY_PROPERTY, it.bearing)
                             }
                         }.toMutableList()
 //                                .also {
