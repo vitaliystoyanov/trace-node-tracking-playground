@@ -52,7 +52,6 @@ dependencies {
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
-    implementation(libs.compose.material)
     implementation(libs.androidx.activityCompose)
     implementation(libs.googleMaterialDesign)
     implementation(libs.compose.uiToolingPreview)
@@ -70,6 +69,7 @@ dependencies {
 
     // Room
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.material3)
     annotationProcessor(libs.androidx.room.compiler)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.room.compiler)
