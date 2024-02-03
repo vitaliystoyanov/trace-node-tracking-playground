@@ -1,7 +1,7 @@
 package io.architecture.playground.feature.map
 
-import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +20,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -44,13 +45,15 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.attribution.generated.AttributionSettings
 import com.mapbox.maps.plugin.compass.generated.CompassSettings
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
 import io.architecture.playground.R
 import io.architecture.playground.feature.map.MapBoxParams.CIRCLE_RADIUS
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_CIRCLE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_LINE_ID
-import io.architecture.playground.feature.map.MapBoxParams.LAYER_TEXT_ID
+import io.architecture.playground.feature.map.MapBoxParams.LAYER_SYMBOL_ID
 import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
@@ -67,7 +70,7 @@ object MapBoxParams {
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
-    const val LAYER_TEXT_ID = "layer-text-id"
+    const val LAYER_SYMBOL_ID = "symbol-text-id"
     const val TRIANGLE_IMAGE_ID = "triangle-image-id"
 }
 
@@ -98,6 +101,8 @@ fun MapScreen(
         mutableStateOf(GesturesSettings { rotateEnabled = false })
     }
 
+    var selectedNodeId: String? = null;
+
     Box(modifier = Modifier.fillMaxSize()) {
         MapboxMap(
             Modifier.fillMaxSize(),
@@ -115,9 +120,10 @@ fun MapScreen(
                 enabled = false
             },
         ) {
+
             // TODO Migrate to MapBox Style Extension
-            MapEffect(Unit) { it ->
-                it.mapboxMap.getStyle { style ->
+            MapEffect(Unit) { mapView ->
+                mapView.mapboxMap.getStyle { style ->
                     style.addSource(
                         geoJsonSource(SOURCE_ID) {
                             featureCollection(
@@ -127,7 +133,7 @@ fun MapScreen(
                             )
                         }
                     )
-                    bitmapFromDrawableRes(it.context, R.drawable.triangle)?.let { bitmap ->
+                    bitmapFromDrawableRes(mapView.context, R.drawable.triangle)?.let { bitmap ->
                         style.addImage(TRIANGLE_IMAGE_ID, bitmap)
                     }
                     style.addLayer(
@@ -184,7 +190,7 @@ fun MapScreen(
                         }, below = LAYER_CIRCLE_ID
                     )
                     style.addLayer(
-                        symbolLayer(LAYER_TEXT_ID, SOURCE_ID) {
+                        symbolLayer(LAYER_SYMBOL_ID, SOURCE_ID) {
                             iconImage(TRIANGLE_IMAGE_ID)
                             iconIgnorePlacement(true)
                             iconAllowOverlap(true)
@@ -192,7 +198,7 @@ fun MapScreen(
                             iconSize(
                                 interpolate {
                                     exponential {
-                                        literal(1.75)
+                                        literal(1.2)
                                     }
                                     zoom()
                                     stop {
@@ -205,8 +211,8 @@ fun MapScreen(
                                     }
                                 }
                             )
-                            iconRotate( get("bearing"))
-                            textField(get { literal("text-field") } )
+                            iconRotate(get("bearing"))
+                            textField(get { literal("text-field") })
                             textAnchor(TextAnchor.TOP_RIGHT)
                             textPadding(5.0)
                             textOptional(true)
@@ -223,7 +229,7 @@ fun MapScreen(
                                         literal(2)
                                     }
                                     stop {
-                                        literal(10)
+                                        literal(9)
                                         literal(9.0)
                                     }
                                 }
@@ -238,6 +244,20 @@ fun MapScreen(
                         }
                     )
                 }
+                mapView.mapboxMap.addOnMapClickListener(OnMapClickListener { point ->
+                    mapView.mapboxMap.queryRenderedFeatures(
+                        RenderedQueryGeometry(mapView.mapboxMap.pixelForCoordinate(point)),
+                        RenderedQueryOptions(listOf(LAYER_SYMBOL_ID, LAYER_CIRCLE_ID), null)
+                    ) {
+                        it.value?.forEach { q ->
+                            Log.d("MAP_SCREEN",
+                                "MapScreen: on click map -> node-id =" +
+                                        " ${q.queriedFeature.feature.getStringProperty("node-id")}"
+                            )
+                        }
+                    }
+                    return@OnMapClickListener true
+                })
             }
 
             MapEffect(state.value) { view ->
@@ -263,34 +283,38 @@ fun MapScreen(
                                         )
                                     )
                                     feature.addNumberProperty("mode", it.mode)
-                                    feature.addStringProperty("nodeId", it.nodeId)
+                                    feature.addStringProperty("node-id", it.nodeId)
                                     feature.addNumberProperty("bearing", it.bearing)
                                 }
                             }.toMutableList()
-                                .also {
-                                    state.value.latestTraceRoutes.forEach { (_, value) ->
-                                        run {
-                                            val lineString: LineString =
-                                                LineString.fromLngLats(value.map {
-                                                    Point.fromLngLat(
-                                                        it.lon,
-                                                        it.lat
-                                                    )
-                                                })
-                                            it.add(Feature.fromGeometry(lineString))
-                                        }
-                                    }
-                                }
+//                                .also {
+//                                    state.value.latestTraceRoutes.forEach { (_, value) ->
+//                                        run {
+//                                            val lineString: LineString =
+//                                                LineString.fromLngLats(value.map {
+//                                                    Point.fromLngLat(
+//                                                        it.lon,
+//                                                        it.lat
+//                                                    )
+//                                                })
+//                                            it.add(Feature.fromGeometry(lineString))
+//                                        }
+//                                    }
+//                                }
                         )
                     )
                 }
             }
 
-//            LaunchedEffect(state.value) {
+//            LaunchedEffect(selectedNodeId) {
 //                mapViewportState.flyTo(
 //                    cameraOptions = cameraOptions {
-//                        center(Point.fromLngLat(state.value.trace.lon, state.value.trace.lat))
-////                        zoom(ZOOM)
+//                        val latestNode = state.value.latestTraceRoutes[selectedNodeId]
+//                        if (latestNode != null && latestNode.lastOrNull() != null) {
+//                            center(Point.fromLngLat(latestNode.last().lon, latestNode.last().lat,))
+//                        } else {
+//                            center(Point.fromLngLat(34.0828899, 44.1541579))
+//                        }
 //                    },
 //                    animationOptions = MapAnimationOptions.mapAnimationOptions { duration(100) },
 //                )
