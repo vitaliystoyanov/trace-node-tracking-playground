@@ -17,4 +17,5 @@ interface LocalTraceDataSource {
     fun observeTraceLatest(): Flow<LocalTrace>
 
     fun observeLatestTraceByUniqNodeIds(): Flow<List<LocalTrace>>
+
 }

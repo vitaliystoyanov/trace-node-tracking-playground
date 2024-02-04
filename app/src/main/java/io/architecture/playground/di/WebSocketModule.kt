@@ -49,4 +49,5 @@ object WebSocketModule {
     @Provides
     fun provideLifeCycle(application: Application) =
         AndroidLifecycle.ofApplicationForeground(application)
+
 }

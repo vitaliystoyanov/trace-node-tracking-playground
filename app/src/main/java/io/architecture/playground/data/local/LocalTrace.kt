@@ -11,7 +11,7 @@ data class LocalTrace(
     val lon: Double,
     val lat: Double,
     val speed: Int,
-    val bearing: Double,
+    val azimuth: Double,
     val alt: Double,
     val time: Long,
     val nodeId: String,

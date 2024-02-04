@@ -15,4 +15,5 @@ abstract class DataSourceModule {
     @Singleton
     @Binds
     abstract fun bindNetworkDataSource(dataSource: DefaultNetworkTraceDataSource): NetworkTraceDataSource
+
 }

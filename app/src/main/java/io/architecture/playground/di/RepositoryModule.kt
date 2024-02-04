@@ -13,5 +13,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindDiverTraceRepository(repository: DefaultTraceRepository): TraceRepository
+
 }
 

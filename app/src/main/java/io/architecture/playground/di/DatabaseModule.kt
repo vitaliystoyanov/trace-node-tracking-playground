@@ -26,4 +26,5 @@ object DatabaseModule {
 
     @Provides
     fun provideTraceDao(database: TraceDatabase): TraceDao = database.traceDao()
+
 }

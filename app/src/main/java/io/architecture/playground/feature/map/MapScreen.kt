@@ -81,7 +81,7 @@ import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.NodeMode
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
-import io.architecture.playground.util.bearingAzimuthToDirection
+import io.architecture.playground.util.azimuthToQuadrant
 import io.architecture.playground.util.toDatetime
 
 object MapBoxParams {
@@ -163,8 +163,8 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
                 append(
                     String.format(
                         "%s: %f°",
-                        lastNode?.let { bearingAzimuthToDirection(it.bearing) },
-                        lastNode?.bearing,
+                        lastNode?.let { azimuthToQuadrant(it.azimuth) },
+                        lastNode?.azimuth,
                     )
                 )
             },
@@ -408,14 +408,14 @@ fun MapNodesContent(
                                 TEXT_FIELD_KEY_PROPERTY,
                                 String.format(
                                     "\n%s: %d°\n%d m/s",
-                                    bearingAzimuthToDirection(it.bearing),
-                                    it.bearing.toInt(),
+                                    azimuthToQuadrant(it.azimuth),
+                                    it.azimuth.toInt(),
                                     it.speed
                                 )
                             )
                             feature.addStringProperty(MODE_KEY_PROPERTY, it.mode.name)
                             feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
-                            feature.addNumberProperty(BEARING_KEY_PROPERTY, it.bearing)
+                            feature.addNumberProperty(BEARING_KEY_PROPERTY, it.azimuth)
                         }
                     }.toMutableList()
                         .also {

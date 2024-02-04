@@ -52,4 +52,5 @@ object CoroutinesModule {
     fun providesUiCoroutineScope(
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
+
 }
