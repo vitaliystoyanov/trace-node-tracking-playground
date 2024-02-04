@@ -3,16 +3,17 @@ package io.architecture.playground.data.mapping
 import com.tinder.scarlet.WebSocket
 import io.architecture.playground.data.local.LocalTrace
 import io.architecture.playground.data.remote.model.NetworkTrace
-import io.architecture.playground.data.remote.model.NetworkConnectionEvent
-import io.architecture.playground.data.remote.model.SocketConnectionEventType
+import io.architecture.playground.data.remote.model.ConnectionState
+import io.architecture.playground.data.remote.model.SocketConnectionState
+import io.architecture.playground.model.NodeMode
 import io.architecture.playground.model.Trace
 
-fun WebSocket.Event.toExternal(): NetworkConnectionEvent = when(this) {
-    is WebSocket.Event.OnConnectionOpened<*> -> NetworkConnectionEvent(SocketConnectionEventType.Opened)
-    is WebSocket.Event.OnConnectionClosed ->  NetworkConnectionEvent(SocketConnectionEventType.Closed)
-    is WebSocket.Event.OnConnectionClosing -> NetworkConnectionEvent(SocketConnectionEventType.Closing)
-    is WebSocket.Event.OnConnectionFailed -> NetworkConnectionEvent(SocketConnectionEventType.Failed)
-    is WebSocket.Event.OnMessageReceived -> NetworkConnectionEvent(SocketConnectionEventType.MessageReceived)
+fun WebSocket.Event.toExternal(): ConnectionState = when(this) {
+    is WebSocket.Event.OnConnectionOpened<*> -> ConnectionState(SocketConnectionState.OPENED)
+    is WebSocket.Event.OnConnectionClosed ->  ConnectionState(SocketConnectionState.CLOSED)
+    is WebSocket.Event.OnConnectionClosing -> ConnectionState(SocketConnectionState.CLOSING)
+    is WebSocket.Event.OnConnectionFailed -> ConnectionState(SocketConnectionState.FAILED)
+    is WebSocket.Event.OnMessageReceived -> ConnectionState(SocketConnectionState.MESSAGE_RECEIVED)
 }
 
 fun Trace.toLocal() = LocalTrace(
@@ -24,7 +25,7 @@ fun Trace.toLocal() = LocalTrace(
     alt = alt,
     lat = lat,
     nodeId = nodeId,
-    mode = mode
+    mode = mode.valueInt
 )
 
 fun LocalTrace.toExternal() = Trace(
@@ -36,7 +37,7 @@ fun LocalTrace.toExternal() = Trace(
     alt = alt,
     lat = lat,
     nodeId = nodeId,
-    mode = mode
+    mode = NodeMode.entries.first { it.valueInt == mode }
 )
 
 fun NetworkTrace.toLocal() = LocalTrace(
@@ -50,8 +51,6 @@ fun NetworkTrace.toLocal() = LocalTrace(
     nodeId = nodeId,
     mode = mode
 )
-
-
 
 fun LocalTrace.toNetwork() = NetworkTrace(
     lon = lon,

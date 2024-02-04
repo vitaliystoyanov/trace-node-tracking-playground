@@ -1,14 +1,14 @@
 package io.architecture.playground.data.remote.model
 
-data class NetworkConnectionEvent(
-    val type: SocketConnectionEventType
+data class ConnectionState(
+    val type: SocketConnectionState
 )
 
-enum class SocketConnectionEventType {
-    Undefined,
-    Opened,
-    Closed,
-    Closing,
-    Failed,
-    MessageReceived,
+enum class SocketConnectionState {
+    UNDEFINED,
+    OPENED,
+    CLOSED,
+    CLOSING,
+    FAILED,
+    MESSAGE_RECEIVED,
 }

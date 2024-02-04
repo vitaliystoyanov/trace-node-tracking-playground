@@ -24,7 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -62,7 +65,7 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
 import io.architecture.playground.R
-import io.architecture.playground.data.remote.model.SocketConnectionEventType
+import io.architecture.playground.data.remote.model.SocketConnectionState
 import io.architecture.playground.feature.map.MapBoxParams.BEARING_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.CIRCLE_RADIUS
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_CIRCLE_ID
@@ -76,8 +79,10 @@ import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.TEXT_FIELD_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
+import io.architecture.playground.model.NodeMode
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
 import io.architecture.playground.util.bearingAzimuthToDirection
+import io.architecture.playground.util.toDatetime
 
 object MapBoxParams {
     const val ZOOM = 4.5
@@ -147,29 +152,74 @@ fun MapScreen(
 }
 
 @Composable
-fun BottomSheetContent(state: State<DiverUiState>, selectedNode: String) {
+fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
     val selectedNodeTracesList = state.value.latestTraceRoutes[selectedNode]
     val lastNode = selectedNodeTracesList?.last()
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
         listOf(
-            String.format(
-                "%s: %f°",
-                lastNode?.let { bearingAzimuthToDirection(it.bearing) },
-                lastNode?.bearing,
-            ),
-            "Speed: ${lastNode?.speed} m/s",
-            "Longitude: ${lastNode?.lon}",
-            "Latitude: ${lastNode?.lat}",
-            "All collected traces: ${selectedNodeTracesList?.size}",
-            "Last traced timestamp: ${lastNode?.time}",
-            "Node ID: $selectedNode"
+            buildAnnotatedString {
+                append(
+                    String.format(
+                        "%s: %f°",
+                        lastNode?.let { bearingAzimuthToDirection(it.bearing) },
+                        lastNode?.bearing,
+                    )
+                )
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Attitude: ")
+                }
+                append(lastNode?.alt.toString())
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Speed: ")
+                }
+                append("${lastNode?.speed} m/s")
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Longitude: ")
+                }
+                append(lastNode?.lon.toString())
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Latitude: ")
+                }
+                append(lastNode?.lat.toString())
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Mode: ")
+                }
+                append(lastNode?.mode.toString())
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("All collected traces: ")
+                }
+                append(selectedNodeTracesList?.size.toString())
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Last traced timestamp: ")
+                }
+                append(lastNode?.time?.let { toDatetime(it).toString() })
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Node ID: ")
+                }
+                append(selectedNode)
+            }
         ).forEach { text ->
             Text(
                 text = text,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 14.sp
             )
         }
     }
@@ -179,7 +229,7 @@ fun BottomSheetContent(state: State<DiverUiState>, selectedNode: String) {
 @Composable
 fun MapNodesContent(
     padding: PaddingValues,
-    state: State<DiverUiState>,
+    state: State<MapNodesUiState>,
     renderNodeRoutesEnabled: Boolean,
     onNodeClick: (String) -> Unit
 ) {
@@ -228,11 +278,11 @@ fun MapNodesContent(
                         circleColor(match {
                             get(MODE_KEY_PROPERTY)
                             stop {
-                                literal(1) // moving
+                                literal(NodeMode.ACTIVE.toString())
                                 color(Color.GREEN)
                             }
                             stop {
-                                literal(0) // not moving
+                                literal(NodeMode.INACTIVE.toString())
                                 color(Color.RED)
                             }
                             color(Color.BLACK)
@@ -344,63 +394,61 @@ fun MapNodesContent(
         }
 
         MapEffect(state.value) { view ->
-            view.mapboxMap.getStyle {
-                val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
-                source?.featureCollection(
-                    FeatureCollection.fromFeatures(
-                        state.value.latestTraces.map {
-                            Feature.fromGeometry(
-                                Point.fromLngLat(
-                                    it.lon,
-                                    it.lat
+            val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
+            source?.featureCollection(
+                FeatureCollection.fromFeatures(
+                    state.value.latestTraces.map {
+                        Feature.fromGeometry(
+                            Point.fromLngLat(
+                                it.lon,
+                                it.lat
+                            )
+                        ).also { feature ->
+                            feature.addStringProperty(
+                                TEXT_FIELD_KEY_PROPERTY,
+                                String.format(
+                                    "\n%s: %d°\n%d m/s",
+                                    bearingAzimuthToDirection(it.bearing),
+                                    it.bearing.toInt(),
+                                    it.speed
                                 )
-                            ).also { feature ->
-                                feature.addStringProperty(
-                                    TEXT_FIELD_KEY_PROPERTY,
-                                    String.format(
-                                        "\n%s: %d°\n%d m/s",
-                                        bearingAzimuthToDirection(it.bearing),
-                                        it.bearing.toInt(),
-                                        it.speed
-                                    )
-                                )
-                                feature.addNumberProperty(MODE_KEY_PROPERTY, it.mode)
-                                feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
-                                feature.addNumberProperty(BEARING_KEY_PROPERTY, it.bearing)
-                            }
-                        }.toMutableList()
-                            .also {
-                                if (renderNodeRoutesEnabled) {
-                                    state.value.latestTraceRoutes.forEach { (_, value) ->
-                                        run {
-                                            val lineString: LineString =
-                                                LineString.fromLngLats(value.map {
-                                                    Point.fromLngLat(
-                                                        it.lon,
-                                                        it.lat
-                                                    )
-                                                })
-                                            it.add(Feature.fromGeometry(lineString))
-                                        }
+                            )
+                            feature.addStringProperty(MODE_KEY_PROPERTY, it.mode.name)
+                            feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
+                            feature.addNumberProperty(BEARING_KEY_PROPERTY, it.bearing)
+                        }
+                    }.toMutableList()
+                        .also {
+                            if (renderNodeRoutesEnabled) {
+                                state.value.latestTraceRoutes.forEach { (_, value) ->
+                                    run {
+                                        val lineString: LineString =
+                                            LineString.fromLngLats(value.map {
+                                                Point.fromLngLat(
+                                                    it.lon,
+                                                    it.lat
+                                                )
+                                            })
+                                        it.add(Feature.fromGeometry(lineString))
                                     }
                                 }
                             }
-                    )
+                        }
                 )
-            }
+            )
         }
     }
 }
 
 @Composable
-fun TopStatusBar(state: State<DiverUiState>) {
-    val bgColor = when (state.value.connection.type) {
-        SocketConnectionEventType.Undefined -> R.color.black
-        SocketConnectionEventType.Opened -> R.color.teal_700
-        SocketConnectionEventType.Closed -> R.color.teal_red
-        SocketConnectionEventType.Closing -> R.color.teal_700
-        SocketConnectionEventType.Failed -> R.color.teal_red
-        SocketConnectionEventType.MessageReceived -> R.color.teal_700
+fun TopStatusBar(state: State<MapNodesUiState>) {
+    val bgColor = when (state.value.connectionState.type) {
+        SocketConnectionState.UNDEFINED -> R.color.black
+        SocketConnectionState.OPENED -> R.color.teal_700
+        SocketConnectionState.CLOSED -> R.color.teal_red
+        SocketConnectionState.CLOSING -> R.color.teal_700
+        SocketConnectionState.FAILED -> R.color.teal_red
+        SocketConnectionState.MESSAGE_RECEIVED -> R.color.teal_700
     }
     Row(
         modifier = Modifier
@@ -410,7 +458,7 @@ fun TopStatusBar(state: State<DiverUiState>) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        if (state.value.connection.type === SocketConnectionEventType.Opened) { // Dirty, very dirty
+        if (state.value.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
             listOf(
                 "Collected trace: ${state.value.tracesCount} ",
                 "Track nodes: ${state.value.latestTraces.size}"
@@ -422,7 +470,7 @@ fun TopStatusBar(state: State<DiverUiState>) {
                     fontWeight = FontWeight.Bold
                 )
             }
-        } else if (state.value.connection.type === SocketConnectionEventType.Undefined) {
+        } else if (state.value.connectionState.type === SocketConnectionState.UNDEFINED) {
             Text(
                 text = "Connecting...",
                 color = colorResource(id = R.color.white),
@@ -432,7 +480,7 @@ fun TopStatusBar(state: State<DiverUiState>) {
         } else {
             Text(
                 text = "Connection status: ${
-                    state.value.connection.type.toString().lowercase()
+                    state.value.connectionState.type.toString().lowercase()
                 }!",
                 color = colorResource(id = R.color.white),
                 fontSize = 10.sp,

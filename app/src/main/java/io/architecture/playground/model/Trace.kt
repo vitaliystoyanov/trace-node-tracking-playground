@@ -10,6 +10,11 @@ data class Trace(
     val alt: Double = 0.0,
     val time: Long = 0,
     val nodeId: String = "",
-    val mode: Int = 0
+    val mode: NodeMode = NodeMode.INACTIVE
 
 )
+
+enum class NodeMode(var valueInt: Int) {
+    ACTIVE(1),
+    INACTIVE(0)
+}
