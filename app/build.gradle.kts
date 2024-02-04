@@ -88,7 +88,7 @@ dependencies {
     // Note that Compose extension is compatible with Maps SDK v11.0+.
     implementation(libs.maps.compose)
     implementation(libs.maps.style)
-//    implementation(libs.mapbox.android.plugin.annotation.v9)
+    implementation(libs.mapbox.sdk.turf)
 
     // scarlet
     implementation(libs.scarlet)

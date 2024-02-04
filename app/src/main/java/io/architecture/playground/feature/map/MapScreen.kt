@@ -53,12 +53,14 @@ import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
+import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.vectorSource
 import com.mapbox.maps.extension.style.sources.getSource
-import com.mapbox.maps.plugin.attribution.generated.AttributionSettings
 import com.mapbox.maps.plugin.compass.generated.CompassSettings
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -80,8 +82,9 @@ import io.architecture.playground.feature.map.MapBoxParams.TEXT_FIELD_KEY_PROPER
 import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.NodeMode
+import io.architecture.playground.model.Trace
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
-import io.architecture.playground.util.azimuthToQuadrant
+import io.architecture.playground.util.azimuthToDirection
 import io.architecture.playground.util.toDatetime
 
 object MapBoxParams {
@@ -120,6 +123,7 @@ fun MapScreen(
         MapNodesContent(contentPadding,
             state,
             renderNodeRoutesEnabled,
+            selectedNode,
             onNodeClick = { nodeId ->
                 selectedNode = nodeId
                 showBottomSheet = true
@@ -153,7 +157,7 @@ fun MapScreen(
 
 @Composable
 fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
-    val selectedNodeTracesList = state.value.latestTraceRoutes[selectedNode]
+    val selectedNodeTracesList = state.value.latestNodeTraces[selectedNode]
     val lastNode = selectedNodeTracesList?.last()
     Column(
         modifier = Modifier.padding(16.dp)
@@ -162,8 +166,8 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
             buildAnnotatedString {
                 append(
                     String.format(
-                        "%s: %f°",
-                        lastNode?.let { azimuthToQuadrant(it.azimuth) },
+                        "%s: %f° (reference plane is true north)",
+                        lastNode?.let { azimuthToDirection(it.azimuth) },
                         lastNode?.azimuth,
                     )
                 )
@@ -231,6 +235,7 @@ fun MapNodesContent(
     padding: PaddingValues,
     state: State<MapNodesUiState>,
     renderNodeRoutesEnabled: Boolean,
+    selectedNode: String,
     onNodeClick: (String) -> Unit
 ) {
     val mapViewportState = rememberMapViewportState {
@@ -262,13 +267,25 @@ fun MapNodesContent(
         compassSettings = compassSettings,
         scaleBarSettings = scaleBarSetting,
         gesturesSettings = gesturesSettings,
-        attributionSettings = AttributionSettings { enabled = false },
     ) {
         // TODO Migrate to MapBox Style Extension
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.getStyle { style ->
                 style.addSource(
+                    vectorSource("terrain-data") {
+                        url("mapbox://mapbox.mapbox-terrain-v2")
+                    })
+                style.addSource(
                     geoJsonSource(SOURCE_ID)
+                )
+                style.addLayer(
+                    lineLayer("terrain-data", "terrain-data") {
+                        sourceLayer("contour")
+                        lineJoin(LineJoin.ROUND)
+                        lineCap(LineCap.ROUND)
+                        lineColor(Color.parseColor("#ff69b4"))
+                        lineWidth(1.9)
+                    }
                 )
                 bitmapFromDrawableRes(mapView.context, R.drawable.triangle)?.let { bitmap ->
                     style.addImage(TRIANGLE_IMAGE_ID, bitmap)
@@ -408,7 +425,7 @@ fun MapNodesContent(
                                 TEXT_FIELD_KEY_PROPERTY,
                                 String.format(
                                     "\n%s: %d°\n%d m/s",
-                                    azimuthToQuadrant(it.azimuth),
+                                    azimuthToDirection(it.azimuth),
                                     it.azimuth.toInt(),
                                     it.speed
                                 )
@@ -418,19 +435,15 @@ fun MapNodesContent(
                             feature.addNumberProperty(BEARING_KEY_PROPERTY, it.azimuth)
                         }
                     }.toMutableList()
-                        .also {
+                        .also { listFeatures ->
                             if (renderNodeRoutesEnabled) {
-                                state.value.latestTraceRoutes.forEach { (_, value) ->
-                                    run {
-                                        val lineString: LineString =
-                                            LineString.fromLngLats(value.map {
-                                                Point.fromLngLat(
-                                                    it.lon,
-                                                    it.lat
-                                                )
-                                            })
-                                        it.add(Feature.fromGeometry(lineString))
-                                    }
+                                state.value.latestNodeTraces.forEach { (_, traces) ->
+                                    generateLineStringFeaturesBy(traces, listFeatures)
+                                }
+                            }
+                            if (selectedNode.isNotEmpty()) {
+                                state.value.latestNodeTraces[selectedNode]?.let { traces ->
+                                    generateLineStringFeaturesBy(traces, listFeatures)
                                 }
                             }
                         }
@@ -438,6 +451,20 @@ fun MapNodesContent(
             )
         }
     }
+}
+
+private fun generateLineStringFeaturesBy(
+    value: List<Trace>,
+    destinationList: MutableList<Feature>
+) {
+    val lineString: LineString =
+        LineString.fromLngLats(value.map {
+            Point.fromLngLat(
+                it.lon,
+                it.lat
+            )
+        })
+    destinationList.add(Feature.fromGeometry(lineString))
 }
 
 @Composable
@@ -460,7 +487,7 @@ fun TopStatusBar(state: State<MapNodesUiState>) {
     ) {
         if (state.value.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
             listOf(
-                "Collected trace: ${state.value.tracesCount} ",
+                "Collected traces: ${state.value.tracesCount} ",
                 "Track nodes: ${state.value.latestTraces.size}"
             ).forEach { text ->
                 Text(

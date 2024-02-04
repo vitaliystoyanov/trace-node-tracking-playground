@@ -24,6 +24,7 @@ hiltAndroidCompilerVersion = "2.46"
 kotlinxMetadataJvmVersion = "0.6.0"
 lifecycleAndroidVersion = "0.1.12"
 loggingInterceptorVersion = "4.12.0"
+mapboxSdkTurfVersion = "6.15.0"
 mapsComposeVersion = "0.1.0"
 mapsStyleVersion = "11.1.0"
 messageAdapterGsonVersion = "0.1.12"
@@ -75,6 +76,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinxMetadataJvmVersion" }
 lifecycle-android = { module = "com.tinder.scarlet:lifecycle-android", version.ref = "lifecycleAndroidVersion" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptorVersion" }
+mapbox-sdk-turf = { module = "com.mapbox.mapboxsdk:mapbox-sdk-turf", version.ref = "mapboxSdkTurfVersion" }
 maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsComposeVersion" }
 maps-style = { module = "com.mapbox.extension:maps-style", version.ref = "mapsStyleVersion" }
 message-adapter-gson = { module = "com.tinder.scarlet:message-adapter-gson", version.ref = "messageAdapterGsonVersion" }

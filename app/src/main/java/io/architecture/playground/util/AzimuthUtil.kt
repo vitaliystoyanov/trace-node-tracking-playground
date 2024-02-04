@@ -1,6 +1,6 @@
 package io.architecture.playground.util
 
-fun azimuthToQuadrant(azimuth: Double):String = when (azimuth) {
+fun azimuthToDirection(azimuth: Double):String = when (azimuth) {
     in 0.0..22.5 -> "N"
     in 22.5..45.0 -> "NNE"
     in 45.0..67.5 -> "ENE"

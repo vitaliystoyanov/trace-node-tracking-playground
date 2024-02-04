@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 data class MapNodesUiState(
     var latestTraces: List<Trace>,
-    var latestTraceRoutes: Map<String, List<Trace>>,
+    var latestNodeTraces: Map<String, List<Trace>>,
     var tracesCount: Long,
     var connectionState: ConnectionState
 )
