@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -78,11 +77,13 @@ import io.architecture.playground.feature.map.MapBoxParams.MODE_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.NODE_ID_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
+import io.architecture.playground.feature.map.MapBoxParams.TERRAIN_DATA_SOURCE_ID
+import io.architecture.playground.feature.map.MapBoxParams.TERRAIN_SOURCE_LAYER_ID
 import io.architecture.playground.feature.map.MapBoxParams.TEXT_FIELD_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
+import io.architecture.playground.model.Node
 import io.architecture.playground.model.NodeMode
-import io.architecture.playground.model.Trace
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
 import io.architecture.playground.util.azimuthToDirection
 import io.architecture.playground.util.toDatetime
@@ -93,12 +94,16 @@ object MapBoxParams {
     const val CIRCLE_RADIUS = 2.8
     const val LINE_WIDTH = 2.0
 
+    // GEOJson data sources' ids
+    const val TERRAIN_DATA_SOURCE_ID = "terrain-data-source-id"
+
     // GEOJson layers' and image ids
     const val SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
     const val LAYER_SYMBOL_ID = "symbol-text-id"
     const val TRIANGLE_IMAGE_ID = "triangle-image-id"
+    const val TERRAIN_SOURCE_LAYER_ID = "contour"
 
     // GEOJson Feature properties
     const val TEXT_FIELD_KEY_PROPERTY = "text-field"
@@ -114,7 +119,6 @@ fun MapScreen(
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
-    var renderNodeRoutesEnabled by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNode by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
@@ -122,24 +126,13 @@ fun MapScreen(
     Scaffold { contentPadding ->
         MapNodesContent(contentPadding,
             state,
-            renderNodeRoutesEnabled,
             selectedNode,
             onNodeClick = { nodeId ->
                 selectedNode = nodeId
                 showBottomSheet = true
             }
         )
-        Column {
-            TopStatusBar(state)
-            TextButton(
-                modifier = Modifier.padding(6.dp),
-                onClick = { renderNodeRoutesEnabled = !renderNodeRoutesEnabled }) {
-                Text(
-                    text = "${if (!renderNodeRoutesEnabled) "Enable" else "Disable"} route rendering",
-                    fontSize = 12.sp
-                )
-            }
-        }
+        TopConnectionStatusBar(state)
     }
 
     if (showBottomSheet) {
@@ -223,7 +216,7 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
         ).forEach { text ->
             Text(
                 text = text,
-                fontSize = 14.sp
+                fontSize = 13.sp
             )
         }
     }
@@ -234,7 +227,6 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
 fun MapNodesContent(
     padding: PaddingValues,
     state: State<MapNodesUiState>,
-    renderNodeRoutesEnabled: Boolean,
     selectedNode: String,
     onNodeClick: (String) -> Unit
 ) {
@@ -272,15 +264,15 @@ fun MapNodesContent(
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.getStyle { style ->
                 style.addSource(
-                    vectorSource("terrain-data") {
+                    vectorSource(TERRAIN_DATA_SOURCE_ID) {
                         url("mapbox://mapbox.mapbox-terrain-v2")
                     })
                 style.addSource(
                     geoJsonSource(SOURCE_ID)
                 )
                 style.addLayer(
-                    lineLayer("terrain-data", "terrain-data") {
-                        sourceLayer("contour")
+                    lineLayer(TERRAIN_DATA_SOURCE_ID, TERRAIN_DATA_SOURCE_ID) {
+                        sourceLayer(TERRAIN_SOURCE_LAYER_ID)
                         lineJoin(LineJoin.ROUND)
                         lineCap(LineCap.ROUND)
                         lineColor(Color.parseColor("#ff69b4"))
@@ -414,7 +406,7 @@ fun MapNodesContent(
             val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
             source?.featureCollection(
                 FeatureCollection.fromFeatures(
-                    state.value.latestTraces.map {
+                    state.value.latestNodes.map {
                         Feature.fromGeometry(
                             Point.fromLngLat(
                                 it.lon,
@@ -436,11 +428,6 @@ fun MapNodesContent(
                         }
                     }.toMutableList()
                         .also { listFeatures ->
-                            if (renderNodeRoutesEnabled) {
-                                state.value.latestNodeTraces.forEach { (_, traces) ->
-                                    generateLineStringFeaturesBy(traces, listFeatures)
-                                }
-                            }
                             if (selectedNode.isNotEmpty()) {
                                 state.value.latestNodeTraces[selectedNode]?.let { traces ->
                                     generateLineStringFeaturesBy(traces, listFeatures)
@@ -454,21 +441,23 @@ fun MapNodesContent(
 }
 
 private fun generateLineStringFeaturesBy(
-    value: List<Trace>,
+    value: List<Node>,
     destinationList: MutableList<Feature>
 ) {
-    val lineString: LineString =
-        LineString.fromLngLats(value.map {
-            Point.fromLngLat(
-                it.lon,
-                it.lat
-            )
-        })
-    destinationList.add(Feature.fromGeometry(lineString))
+    run {
+        val lineString: LineString =
+            LineString.fromLngLats(value.map {
+                Point.fromLngLat(
+                    it.lon,
+                    it.lat
+                )
+            })
+        destinationList.add(Feature.fromGeometry(lineString))
+    }
 }
 
 @Composable
-fun TopStatusBar(state: State<MapNodesUiState>) {
+fun TopConnectionStatusBar(state: State<MapNodesUiState>) {
     val bgColor = when (state.value.connectionState.type) {
         SocketConnectionState.UNDEFINED -> R.color.black
         SocketConnectionState.OPENED -> R.color.teal_700
@@ -485,34 +474,35 @@ fun TopStatusBar(state: State<MapNodesUiState>) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        if (state.value.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
-            listOf(
-                "Collected traces: ${state.value.tracesCount} ",
-                "Track nodes: ${state.value.latestTraces.size}"
-            ).forEach { text ->
+        with(state.value) {
+            if (this.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
+                listOf(
+                    "Track nodes: ${this.nodeCount}"
+                ).forEach { text ->
+                    Text(
+                        text = text,
+                        color = colorResource(id = R.color.white),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            } else if (this.connectionState.type === SocketConnectionState.UNDEFINED) {
                 Text(
-                    text = text,
+                    text = "Connecting...",
+                    color = colorResource(id = R.color.white),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Text(
+                    text = "Connection status: ${
+                        this.connectionState.type.toString().lowercase()
+                    }!",
                     color = colorResource(id = R.color.white),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
-        } else if (state.value.connectionState.type === SocketConnectionState.UNDEFINED) {
-            Text(
-                text = "Connecting...",
-                color = colorResource(id = R.color.white),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
-        } else {
-            Text(
-                text = "Connection status: ${
-                    state.value.connectionState.type.toString().lowercase()
-                }!",
-                color = colorResource(id = R.color.white),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }

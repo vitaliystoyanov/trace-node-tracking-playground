@@ -4,15 +4,15 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.DefaultTraceRepository
-import io.architecture.playground.data.TraceRepository
+import io.architecture.playground.data.DefaultNodeRepository
+import io.architecture.playground.data.NodeRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindDiverTraceRepository(repository: DefaultTraceRepository): TraceRepository
+    abstract fun bindNodeRepository(repository: DefaultNodeRepository): NodeRepository
 
 }
 

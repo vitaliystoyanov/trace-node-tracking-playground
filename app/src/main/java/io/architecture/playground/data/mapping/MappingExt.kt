@@ -1,84 +1,81 @@
 package io.architecture.playground.data.mapping
 
 import com.tinder.scarlet.WebSocket
-import io.architecture.playground.data.local.LocalTrace
-import io.architecture.playground.data.remote.model.NetworkTrace
+import io.architecture.playground.data.local.LocalNode
 import io.architecture.playground.data.remote.model.ConnectionState
+import io.architecture.playground.data.remote.model.NetworkNode
 import io.architecture.playground.data.remote.model.SocketConnectionState
 import io.architecture.playground.model.NodeMode
-import io.architecture.playground.model.Trace
+import io.architecture.playground.model.Node
 
-fun WebSocket.Event.toExternal(): ConnectionState = when(this) {
+fun WebSocket.Event.toExternal(): ConnectionState = when (this) {
     is WebSocket.Event.OnConnectionOpened<*> -> ConnectionState(SocketConnectionState.OPENED)
-    is WebSocket.Event.OnConnectionClosed ->  ConnectionState(SocketConnectionState.CLOSED)
+    is WebSocket.Event.OnConnectionClosed -> ConnectionState(SocketConnectionState.CLOSED)
     is WebSocket.Event.OnConnectionClosing -> ConnectionState(SocketConnectionState.CLOSING)
     is WebSocket.Event.OnConnectionFailed -> ConnectionState(SocketConnectionState.FAILED)
     is WebSocket.Event.OnMessageReceived -> ConnectionState(SocketConnectionState.MESSAGE_RECEIVED)
 }
 
-fun Trace.toLocal() = LocalTrace(
-    id = id,
+fun Node.toLocal() = LocalNode(
+    nodeId = nodeId,
     lon = lon,
     time = time,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
     lat = lat,
-    nodeId = nodeId,
     mode = mode.valueInt
 )
 
-fun LocalTrace.toExternal() = Trace(
-    id = id,
+fun LocalNode.toExternal() = Node(
+    nodeId = nodeId,
     lon = lon,
     time = time,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
     lat = lat,
-    nodeId = nodeId,
     mode = NodeMode.entries.first { it.valueInt == mode }
 )
 
-fun NetworkTrace.toLocal() = LocalTrace(
-    id = 0,
+fun NetworkNode.toLocal() = LocalNode(
+    nodeId = nodeId,
     lon = lon,
     time = time,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
     lat = lat,
-    nodeId = nodeId,
     mode = mode
 )
 
-fun LocalTrace.toNetwork() = NetworkTrace(
+fun LocalNode.toNetwork() = NetworkNode(
+    nodeId = nodeId,
     lon = lon,
     time = time,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
     lat = lat,
-    nodeId = nodeId,
     mode = mode
 )
 
-fun Trace.toNetwork() = toLocal().toNetwork()
+fun Node.toNetwork() = toLocal().toNetwork()
 
-fun NetworkTrace.toExternal() = toLocal().toExternal()
+fun NetworkNode.toExternal() = toLocal().toExternal()
 
-fun List<LocalTrace>.toNetwork() = map(LocalTrace::toNetwork)
+fun List<LocalNode>.toNetwork() = map(LocalNode::toNetwork)
 
-fun List<Trace>.toLocal() = map(Trace::toLocal)
+fun List<Node>.toLocal() = map(Node::toLocal)
 
 @JvmName("localToExternal")
-fun List<LocalTrace>.toExternal() = map(LocalTrace::toExternal)
+fun List<LocalNode>.toExternal() = map(LocalNode::toExternal)
 
 @JvmName("networkToLocal")
-fun List<NetworkTrace>.toLocal() = map(NetworkTrace::toLocal)
+fun List<NetworkNode>.toLocal() = map(NetworkNode::toLocal)
 
 @JvmName("externalToNetwork")
-fun List<Trace>.toNetwork() = map(Trace::toNetwork)
+fun List<Node>.toNetwork() = map(Node::toNetwork)
 
 @JvmName("networkToExternal")
-fun List<NetworkTrace>.toExternal() = map(NetworkTrace::toExternal)
+fun List<NetworkNode>.toExternal() = map(NetworkNode::toExternal)

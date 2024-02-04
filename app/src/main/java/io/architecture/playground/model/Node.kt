@@ -1,7 +1,8 @@
 package io.architecture.playground.model
 
-data class Trace(
+data class Node(
 
+    val nodeId: String = "",
     val id: Long = 0,
     val lon: Double = 0.0,
     val lat: Double = 0.0,
@@ -9,7 +10,6 @@ data class Trace(
     val azimuth: Double = 0.0,
     val alt: Double = 0.0,
     val time: Long = 0,
-    val nodeId: String = "",
     val mode: NodeMode = NodeMode.INACTIVE
 
 )

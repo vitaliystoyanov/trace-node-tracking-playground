@@ -4,16 +4,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "traces"
+    tableName = "nodes"
 )
-data class LocalTrace(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+data class LocalNode(
+    @PrimaryKey val nodeId: String,
     val lon: Double,
     val lat: Double,
     val speed: Int,
     val azimuth: Double,
     val alt: Double,
     val time: Long,
-    val nodeId: String,
     val mode: Int
 )
