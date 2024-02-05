@@ -1,52 +1,66 @@
 package io.architecture.playground.feature.map
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.architecture.playground.data.NodeRepository
 import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.SocketConnectionState
+import io.architecture.playground.data.repository.interfaces.NodeRepository
+import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.model.Node
+import io.architecture.playground.model.Route
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MapNodesUiState(
     var latestNodes: List<Node>,
-    var latestNodeTraces: Map<String, List<Node>>,
     var nodeCount: Long,
+    var displayRoute: Route?,
     var connectionState: ConnectionState
 )
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val traceRepository: NodeRepository
+    private val nodeRepository: NodeRepository,
+    private val routeRepository: RouteRepository
 ) : ViewModel() {
 
-    private var connectionState = traceRepository.getStreamConnectionState()
-    private var countNodes = traceRepository.getStreamCountNodes()
-    private var latestTracesByNodeIds = traceRepository.getStreamLatestNodes()
+    private var displayRoute: Route? by mutableStateOf(null)
+    private var latestNodes = nodeRepository.observeLatestNodes()
+    private var connectionState = nodeRepository.observeConnectionState()
+    private var countNodes = nodeRepository.observeNodesCount()
 
     val uiState: StateFlow<MapNodesUiState> =
-        combine(latestTracesByNodeIds, connectionState, countNodes) { traces, connection, count ->
-            val map = mutableMapOf<String, List<Node>>()
-
-            traces.forEach {
-                map[it.nodeId] = traceRepository.getAllTracesBy(it.nodeId)
-            }
-
-            MapNodesUiState(traces, map, count, connection)
+        combine(
+            latestNodes,
+            connectionState,
+            snapshotFlow { displayRoute },
+            countNodes
+        ) { nodes, connection, displayRoute, count ->
+            MapNodesUiState(nodes, count, displayRoute, connection)
         }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = MapNodesUiState(
                     emptyList(),
-                    emptyMap(),
                     0,
+                    null,
                     ConnectionState(SocketConnectionState.UNDEFINED)
                 )
             )
+
+    fun onLoadNodeRoute(nodeId: String) = viewModelScope.launch {
+        displayRoute = routeRepository.getRouteBy(nodeId)
+        Log.d("DEBUG", "onLoadNodeRoute: $displayRoute")
+    }
 }

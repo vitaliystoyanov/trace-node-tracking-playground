@@ -1,5 +1,6 @@
 package io.architecture.playground.feature.map
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -86,7 +86,9 @@ import io.architecture.playground.model.Node
 import io.architecture.playground.model.NodeMode
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
 import io.architecture.playground.util.azimuthToDirection
-import io.architecture.playground.util.toDatetime
+import java.text.SimpleDateFormat
+
+const val DEFAULT_DATETIME_FORMAT: String = "yyyy-MM-dd HH:mm:ss:SSSSSSS"
 
 object MapBoxParams {
     const val ZOOM = 4.5
@@ -117,7 +119,7 @@ object MapBoxParams {
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNode by remember { mutableStateOf("") }
@@ -126,9 +128,9 @@ fun MapScreen(
     Scaffold { contentPadding ->
         MapNodesContent(contentPadding,
             state,
-            selectedNode,
             onNodeClick = { nodeId ->
                 selectedNode = nodeId
+                viewModel.onLoadNodeRoute(nodeId)
                 showBottomSheet = true
             }
         )
@@ -143,15 +145,15 @@ fun MapScreen(
             },
             sheetState = sheetState
         ) {
-            BottomSheetContent(state, selectedNode)
+            val node = state.latestNodes.find { it.nodeId == selectedNode }
+            BottomSheetContent(node, selectedNode)
         }
     }
 }
 
+@SuppressLint("SimpleDateFormat")
 @Composable
-fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
-    val selectedNodeTracesList = state.value.latestNodeTraces[selectedNode]
-    val lastNode = selectedNodeTracesList?.last()
+fun BottomSheetContent(node: Node?, selectedNode: String) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -160,52 +162,48 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
                 append(
                     String.format(
                         "%s: %f° (reference plane is true north)",
-                        lastNode?.let { azimuthToDirection(it.azimuth) },
-                        lastNode?.azimuth,
+                        node?.let { azimuthToDirection(it.azimuth) },
+                        node?.azimuth,
                     )
                 )
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Mode: ")
+                }
+                withStyle(style = SpanStyle(color = colorResource(id = R.color.teal_700))) {
+                    append(node?.mode.toString())
+                }
+            },
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Attitude: ")
                 }
-                append(lastNode?.alt.toString())
+                append(node?.alt.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Speed: ")
                 }
-                append("${lastNode?.speed} m/s")
+                append("${node?.speed} m/s")
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Longitude: ")
                 }
-                append(lastNode?.lon.toString())
+                append(node?.lon.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Latitude: ")
                 }
-                append(lastNode?.lat.toString())
+                append(node?.lat.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("Mode: ")
+                    append("Last node timestamp: ")
                 }
-                append(lastNode?.mode.toString())
-            },
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("All collected traces: ")
-                }
-                append(selectedNodeTracesList?.size.toString())
-            },
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("Last traced timestamp: ")
-                }
-                append(lastNode?.time?.let { toDatetime(it).toString() })
+                append(node?.time?.let { SimpleDateFormat(DEFAULT_DATETIME_FORMAT).format(it) })
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -226,8 +224,7 @@ fun BottomSheetContent(state: State<MapNodesUiState>, selectedNode: String) {
 @Composable
 fun MapNodesContent(
     padding: PaddingValues,
-    state: State<MapNodesUiState>,
-    selectedNode: String,
+    state: MapNodesUiState,
     onNodeClick: (String) -> Unit
 ) {
     val mapViewportState = rememberMapViewportState {
@@ -324,7 +321,7 @@ fun MapNodesContent(
                 )
                 style.addLayerBelow(
                     lineLayer(LAYER_LINE_ID, SOURCE_ID) {
-                        lineColor(Color.BLACK)
+                        lineColor(Color.parseColor("#ff69b4"))
                         lineWidth(LINE_WIDTH)
                         filter(
                             eq {
@@ -402,11 +399,11 @@ fun MapNodesContent(
             })
         }
 
-        MapEffect(state.value) { view ->
+        MapEffect(state) { view ->
             val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
             source?.featureCollection(
                 FeatureCollection.fromFeatures(
-                    state.value.latestNodes.map {
+                    state.latestNodes.map {
                         Feature.fromGeometry(
                             Point.fromLngLat(
                                 it.lon,
@@ -428,9 +425,16 @@ fun MapNodesContent(
                         }
                     }.toMutableList()
                         .also { listFeatures ->
-                            if (selectedNode.isNotEmpty()) {
-                                state.value.latestNodeTraces[selectedNode]?.let { traces ->
-                                    generateLineStringFeaturesBy(traces, listFeatures)
+                            if (state.displayRoute != null) {
+                                run {
+                                    val lineString: LineString =
+                                        LineString.fromLngLats(state.displayRoute!!.route.map {
+                                            Point.fromLngLat(
+                                                it.lon,
+                                                it.lat
+                                            )
+                                        })
+                                    listFeatures.add(Feature.fromGeometry(lineString))
                                 }
                             }
                         }
@@ -440,25 +444,9 @@ fun MapNodesContent(
     }
 }
 
-private fun generateLineStringFeaturesBy(
-    value: List<Node>,
-    destinationList: MutableList<Feature>
-) {
-    run {
-        val lineString: LineString =
-            LineString.fromLngLats(value.map {
-                Point.fromLngLat(
-                    it.lon,
-                    it.lat
-                )
-            })
-        destinationList.add(Feature.fromGeometry(lineString))
-    }
-}
-
 @Composable
-fun TopConnectionStatusBar(state: State<MapNodesUiState>) {
-    val bgColor = when (state.value.connectionState.type) {
+fun TopConnectionStatusBar(state: MapNodesUiState) {
+    val bgColor = when (state.connectionState.type) {
         SocketConnectionState.UNDEFINED -> R.color.black
         SocketConnectionState.OPENED -> R.color.teal_700
         SocketConnectionState.CLOSED -> R.color.teal_red
@@ -474,7 +462,7 @@ fun TopConnectionStatusBar(state: State<MapNodesUiState>) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        with(state.value) {
+        with(state) {
             if (this.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
                 listOf(
                     "Track nodes: ${this.nodeCount}"

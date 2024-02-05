@@ -5,9 +5,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.architecture.playground.data.local.DefaultLocalNodesDataSource
-import io.architecture.playground.data.local.LocalNodesDataSource
-import io.architecture.playground.data.remote.DefaultNetworkNodeDataSource
-import io.architecture.playground.data.remote.NetworkNodeDataSource
+import io.architecture.playground.data.local.LocalNodeRouteDataSource
+import io.architecture.playground.data.remote.DefaultNetworkDataSource
+import io.architecture.playground.data.remote.interfaces.NetworkDataSource
 import javax.inject.Singleton
 
 @Module
@@ -16,10 +16,10 @@ abstract class DataSourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindNetworkDataSource(dataSource: DefaultNetworkNodeDataSource): NetworkNodeDataSource
+    abstract fun bindNetworkDataSource(dataSource: DefaultNetworkDataSource): NetworkDataSource
 
 
     @Singleton
     @Binds
-    abstract fun bindLocalDataSource(dataSource: DefaultLocalNodesDataSource): LocalNodesDataSource
+    abstract fun bindLocalDataSource(dataSource: DefaultLocalNodesDataSource): LocalNodeRouteDataSource
 }

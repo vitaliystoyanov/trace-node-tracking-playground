@@ -1,7 +1,6 @@
 package io.architecture.playground.di
 
 import android.app.Application
-import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
@@ -11,31 +10,60 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.remote.websocket.NodeWebSocketService
+import io.architecture.playground.data.remote.websocket.RoutesService
+import io.architecture.playground.data.remote.websocket.NodeService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class NodeTracesScarlet
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class NodeRoutesScarlet
 
 @Module
 @InstallIn(SingletonComponent::class)
 object WebSocketModule {
 
-    private const val WEBSOCKET_URL = "wss://websockets-diver.glitch.me/nodes/traces"
+    private const val BASE_URL = "wss://websockets-diver.glitch.me"
+    private const val NODE_TRACES_WEBSOCKET_URL = "$BASE_URL/nodes/traces"
+    private const val NODE_ROUTES_WEBSOCKET_URL = "$BASE_URL/nodes/routes"
 
     @Singleton
     @Provides
-    fun provideWebSocketService(scarlet: Scarlet) =
-        scarlet.create(NodeWebSocketService::class.java)
+    fun provideNodeTracesService(@NodeTracesScarlet scarlet: Scarlet) =
+        scarlet.create(NodeService::class.java)
 
     @Singleton
     @Provides
-    fun provideScarlet(
-        client: OkHttpClient,
-        lifecycle: Lifecycle
+    fun provideNodeRoutesService(@NodeRoutesScarlet scarlet: Scarlet) =
+        scarlet.create(RoutesService::class.java)
+
+    @Singleton
+    @Provides
+    @NodeTracesScarlet
+    fun provideNodeTracesScarlet(
+        client: OkHttpClient
     ) =
         Scarlet.Builder()
-            .webSocketFactory(client.newWebSocketFactory(WEBSOCKET_URL))
-//            .lifecycle(lifecycle) // TODO Pass LifecycleService as LifecycleOwner to Scarlet in order to manage ws connection
+            .webSocketFactory(client.newWebSocketFactory(NODE_TRACES_WEBSOCKET_URL))
+            .addMessageAdapterFactory(GsonMessageAdapter.Factory())
+            .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
+            .build()
+
+    @Singleton
+    @Provides
+    @NodeRoutesScarlet
+    fun provideNodeRoutesScarlet(
+        client: OkHttpClient
+    ) =
+        Scarlet.Builder()
+            .webSocketFactory(client.newWebSocketFactory(NODE_ROUTES_WEBSOCKET_URL))
             .addMessageAdapterFactory(GsonMessageAdapter.Factory())
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .build()

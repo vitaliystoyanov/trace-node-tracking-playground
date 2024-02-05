@@ -36,3 +36,5 @@ google-services.json
 server/
 
 app/src/main/res/values/developer-config.xml
+
+/TODO.md

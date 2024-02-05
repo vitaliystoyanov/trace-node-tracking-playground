@@ -12,10 +12,13 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import dagger.hilt.android.AndroidEntryPoint
-import io.architecture.playground.data.NodeRepository
+import io.architecture.playground.data.repository.interfaces.NodeRepository
+import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.di.ApplicationIoScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
 
@@ -34,6 +37,10 @@ class NetworkForegroundService : LifecycleService() {
 
     @Inject
     lateinit var nodesRepository: NodeRepository
+
+    @Inject
+    lateinit var routeRepository: RouteRepository
+
 
     @Inject
     @ApplicationIoScope
@@ -103,9 +110,18 @@ class NetworkForegroundService : LifecycleService() {
             }
 
         appScope.launch {
-            nodesRepository.getStreamNodes()
+            nodesRepository.observeAndStoreNodes()
                 .catch { error -> Log.d("SERVICE", "Error - $error") }
-                .collect {}
+                .collect()
+        }
+        appScope.launch {
+            delay(1000)
+            routeRepository.observeAndStoreRoutes()
+                .onEach {
+                    Log.d("SERVICE", "route - $it")
+                }
+                .catch { error -> Log.d("SERVICE", "Error - $error") }
+                .collect()
         }
     }
 
