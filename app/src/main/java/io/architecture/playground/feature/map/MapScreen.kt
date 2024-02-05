@@ -85,10 +85,6 @@ import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.NodeMode
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
-import io.architecture.playground.util.azimuthToDirection
-import java.text.SimpleDateFormat
-
-const val DEFAULT_DATETIME_FORMAT: String = "yyyy-MM-dd HH:mm:ss:SSSSSSS"
 
 object MapBoxParams {
     const val ZOOM = 4.5
@@ -145,7 +141,7 @@ fun MapScreen(
             },
             sheetState = sheetState
         ) {
-            val node = state.latestNodes.find { it.nodeId == selectedNode }
+            val node = state.nodes.find { it.nodeId == selectedNode }
             BottomSheetContent(node, selectedNode)
         }
     }
@@ -162,7 +158,7 @@ fun BottomSheetContent(node: Node?, selectedNode: String) {
                 append(
                     String.format(
                         "%s: %f° (reference plane is true north)",
-                        node?.let { azimuthToDirection(it.azimuth) },
+                        node?.direction,
                         node?.azimuth,
                     )
                 )
@@ -203,7 +199,7 @@ fun BottomSheetContent(node: Node?, selectedNode: String) {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Last node timestamp: ")
                 }
-                append(node?.time?.let { SimpleDateFormat(DEFAULT_DATETIME_FORMAT).format(it) })
+                append(node?.formattedDatetime)
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -403,7 +399,7 @@ fun MapNodesContent(
             val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
             source?.featureCollection(
                 FeatureCollection.fromFeatures(
-                    state.latestNodes.map {
+                    state.nodes.map {
                         Feature.fromGeometry(
                             Point.fromLngLat(
                                 it.lon,
@@ -414,7 +410,7 @@ fun MapNodesContent(
                                 TEXT_FIELD_KEY_PROPERTY,
                                 String.format(
                                     "\n%s: %d°\n%d m/s",
-                                    azimuthToDirection(it.azimuth),
+                                    it.direction,
                                     it.azimuth.toInt(),
                                     it.speed
                                 )

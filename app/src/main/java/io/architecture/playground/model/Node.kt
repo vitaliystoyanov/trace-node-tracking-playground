@@ -11,7 +11,10 @@ data class Node(
     val azimuth: Double = 0.0,
     val alt: Double = 0.0,
     val time: Date,
-    val mode: NodeMode = NodeMode.INACTIVE
+    val mode: NodeMode = NodeMode.INACTIVE,
+
+    var formattedDatetime: String? = "",
+    var direction: String? = ""
 )
 
 enum class NodeMode(var valueInt: Int) {

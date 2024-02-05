@@ -1,6 +1,5 @@
 package io.architecture.playground.feature.map
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +11,8 @@ import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.SocketConnectionState
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
+import io.architecture.playground.domain.ConvertAzimuthToDirectionUseCase
+import io.architecture.playground.domain.FormatDateUseCase
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MapNodesUiState(
-    var latestNodes: List<Node>,
+    var nodes: List<Node>,
     var nodeCount: Long,
     var displayRoute: Route?,
     var connectionState: ConnectionState
@@ -31,7 +32,9 @@ data class MapNodesUiState(
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val nodeRepository: NodeRepository,
-    private val routeRepository: RouteRepository
+    private val routeRepository: RouteRepository,
+    formatDate: FormatDateUseCase,
+    convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
 ) : ViewModel() {
 
     private var displayRoute: Route? by mutableStateOf(null)
@@ -46,6 +49,10 @@ class MapViewModel @Inject constructor(
             snapshotFlow { displayRoute },
             countNodes
         ) { nodes, connection, displayRoute, count ->
+            nodes.forEach { node ->
+                node.formattedDatetime = formatDate(node.time)
+                node.direction = convertAzimuthToDirection(node.azimuth)
+            }
             MapNodesUiState(nodes, count, displayRoute, connection)
         }
             .stateIn(
@@ -61,6 +68,5 @@ class MapViewModel @Inject constructor(
 
     fun onLoadNodeRoute(nodeId: String) = viewModelScope.launch {
         displayRoute = routeRepository.getRouteBy(nodeId)
-        Log.d("DEBUG", "onLoadNodeRoute: $displayRoute")
     }
 }

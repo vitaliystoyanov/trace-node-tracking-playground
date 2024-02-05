@@ -60,8 +60,10 @@ dependencies {
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
 
-    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewModelCompose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.service)
 
     implementation(libs.androidx.appCompat)
@@ -78,10 +80,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // Hilt
-    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
-    kapt(libs.kotlinx.metadata.jvm)
 
     // Mapbox Maps SDK
     implementation(libs.android)
