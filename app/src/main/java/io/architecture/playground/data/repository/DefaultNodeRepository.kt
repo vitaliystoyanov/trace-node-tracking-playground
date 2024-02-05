@@ -8,18 +8,24 @@ import io.architecture.playground.data.remote.interfaces.NetworkDataSource
 import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.SocketConnectionState
 import io.architecture.playground.data.repository.interfaces.NodeRepository
+import io.architecture.playground.di.DefaultDispatcher
+import io.architecture.playground.di.IoDispatcher
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class DefaultNodeRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
-    private val localDataSource: LocalNodeRouteDataSource
+    private val localDataSource: LocalNodeRouteDataSource,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : NodeRepository {
 
     override fun observeConnectionState(): Flow<ConnectionState> =
@@ -38,9 +44,11 @@ class DefaultNodeRepository @Inject constructor(
 
     override fun observeAndStoreNodes(): Flow<Node> = networkDataSource.streamNodes()
         .map { it.toExternal() }
+        .flowOn(defaultDispatcher)
         .onEach {
             localDataSource.add(it.toLocal())
         }
+        .flowOn(ioDispatcher)
         .catch { error -> Log.d("REPOSITORY", "error - $error") }
 
     override fun observeNodesCount(): Flow<Long> = localDataSource.observeCountNodes()
@@ -48,7 +56,9 @@ class DefaultNodeRepository @Inject constructor(
     override suspend fun deleteAll() = localDataSource.deleteAllNodes()
 
     override fun observeLatestNodes(): Flow<List<Node>> =
-        localDataSource.observeAllNodes().map { it.toExternal() }
+        localDataSource.observeAllNodes()
+            .map { it.toExternal() }
+            .flowOn(defaultDispatcher)
 
     override fun observeLatestNodesWithRoute(): Flow<List<Pair<Node, Route>>> =
         localDataSource.observeAllNodesWithRoute()
