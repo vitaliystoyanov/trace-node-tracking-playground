@@ -11,14 +11,11 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.architecture.playground.data.repository.interfaces.NodeRepository
-import io.architecture.playground.data.repository.interfaces.RouteRepository
-import io.architecture.playground.di.ApplicationIoScope
+import io.architecture.playground.domain.ObserveAndStoreNodesUseCase
+import io.architecture.playground.domain.ObserveAndStoreRoutesUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
 
@@ -36,17 +33,11 @@ enum class ServiceState {
 class NetworkForegroundService : LifecycleService() {
 
     @Inject
-    lateinit var nodesRepository: NodeRepository
+    lateinit var observeAndStoreNodes: ObserveAndStoreNodesUseCase
 
     @Inject
-    lateinit var routeRepository: RouteRepository
-
-
-    @Inject
-    @ApplicationIoScope
-    lateinit var appScope: CoroutineScope
-
-    private val job = Job()
+    lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
+    private var supervisorJob = SupervisorJob(parent = null)
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
@@ -109,20 +100,12 @@ class NetworkForegroundService : LifecycleService() {
                 }
             }
 
-        appScope.launch {
-            nodesRepository.observeAndStoreNodes()
-                .catch { error -> Log.d("SERVICE", "Error - $error") }
-                .collect()
+        val serviceJob = lifecycleScope.launch {
+            launch { observeAndStoreNodes() }
+            observeAndStoreRoutes()
         }
-        appScope.launch {
-            delay(1000)
-            routeRepository.observeAndStoreRoutes()
-                .onEach {
-                    Log.d("SERVICE", "route - $it")
-                }
-                .catch { error -> Log.d("SERVICE", "Error - $error") }
-                .collect()
-        }
+        supervisorJob[serviceJob.key]
+        supervisorJob.cancel()
     }
 
     private fun stopService() {
@@ -139,11 +122,6 @@ class NetworkForegroundService : LifecycleService() {
         }
         isServiceStarted = false
         setServiceState(this, ServiceState.STOPPED)
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 
     private fun createNotification(): Notification {
