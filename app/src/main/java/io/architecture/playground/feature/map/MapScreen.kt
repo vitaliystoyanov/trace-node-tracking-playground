@@ -127,7 +127,7 @@ fun MapScreen(
             nodesState.nodes,
             onNodeClick = { nodeId ->
                 selectedNode = nodeId
-                viewModel.onLoadNodeRoute(nodeId)
+                viewModel.displayRoute(nodeId)
                 showBottomSheet = true
             }
         )

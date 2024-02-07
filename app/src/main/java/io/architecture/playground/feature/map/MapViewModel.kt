@@ -1,9 +1,5 @@
 package io.architecture.playground.feature.map
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,10 +9,12 @@ import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.domain.ObserveChunkedNodesUseCase
 import io.architecture.playground.model.Route
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,13 +26,13 @@ class MapViewModel @Inject constructor(
     observeNodes: ObserveChunkedNodesUseCase,
 ) : ViewModel() {
 
-    private var displayRoute: Route? by mutableStateOf(null)
-    private var connectionState = nodeRepository.observeConnectionState()
-    private var countNodes = nodeRepository.observeNodesCount()
+    private var _displayRoute = MutableStateFlow<Route?>(null)
+    private var _connectionState = nodeRepository.observeConnectionState()
+    private var _nodeCounter = nodeRepository.observeNodesCount()
 
 
     val uiState: StateFlow<MapUiState> =
-        combine(connectionState, snapshotFlow { displayRoute }) { connection, displayRoute ->
+        combine(_connectionState, _displayRoute) { connection, displayRoute ->
             MapUiState(displayRoute, connection)
         }.stateIn(
             scope = viewModelScope,
@@ -48,7 +46,7 @@ class MapViewModel @Inject constructor(
     val nodesUiState: StateFlow<MapNodesUiState> =
         combine(
             observeNodes(),
-            countNodes
+            _nodeCounter
         ) { nodes, countNodes ->
             MapNodesUiState(nodes, countNodes)
         }.stateIn(
@@ -60,7 +58,7 @@ class MapViewModel @Inject constructor(
             )
         )
 
-    fun onLoadNodeRoute(nodeId: String) = viewModelScope.launch {
-        displayRoute = routeRepository.getRouteBy(nodeId)
+    fun displayRoute(nodeId: String) = viewModelScope.launch {
+        _displayRoute.update { routeRepository.getRouteBy(nodeId) }
     }
 }
