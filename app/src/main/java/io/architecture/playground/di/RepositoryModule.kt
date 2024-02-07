@@ -8,15 +8,18 @@ import io.architecture.playground.data.repository.DefaultNodeRepository
 import io.architecture.playground.data.repository.DefaultRouteRepository
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindNodeRepository(repository: DefaultNodeRepository): NodeRepository
+    @Singleton
+    abstract fun bindsRouteRepository(repository: DefaultNodeRepository): NodeRepository
 
     @Binds
-    abstract fun bindRouteRepository(repository: DefaultRouteRepository): RouteRepository
-}
+    @Singleton
+    abstract fun bindsNodeRepository(repository: DefaultRouteRepository): RouteRepository
 
+}

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds

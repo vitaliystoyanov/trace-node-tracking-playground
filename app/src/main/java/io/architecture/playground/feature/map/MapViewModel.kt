@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    nodeRepository: NodeRepository,
+    private val nodeRepository: NodeRepository,
     private val routeRepository: RouteRepository,
     observeNodes: ObserveChunkedNodesUseCase,
 ) : ViewModel() {
