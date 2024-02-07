@@ -1,6 +1,5 @@
 package io.architecture.playground.data.repository.interfaces
 
-import io.architecture.playground.data.local.model.LocalRoute
 import io.architecture.playground.model.Route
 import kotlinx.coroutines.flow.Flow
 

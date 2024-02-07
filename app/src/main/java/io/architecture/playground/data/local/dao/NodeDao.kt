@@ -5,30 +5,30 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import io.architecture.playground.data.local.model.LocalNode
-import io.architecture.playground.data.local.model.LocalNodeWithRoute
+import io.architecture.playground.data.local.model.NodeEntity
+import io.architecture.playground.data.local.model.NodeWithRouteEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NodeDao {
 
     @Query("SELECT * FROM nodes")
-    fun observeAll(): Flow<List<LocalNode>>
+    fun observeAll(): Flow<List<NodeEntity>>
 
     @Query("SELECT * FROM nodes WHERE node_id = :id")
-    fun observeById(id: String): Flow<LocalNode>
+    fun observeById(id: String): Flow<NodeEntity>
 
     @Query("SELECT COUNT(node_id) FROM nodes")
     fun observeCountNodes(): Flow<Int>
 
     @Query("SELECT * FROM nodes")
-    suspend fun getAll(): List<LocalNode>
+    suspend fun getAll(): List<NodeEntity>
 
     @Query("SELECT * FROM nodes WHERE node_id = :id")
-    suspend fun getAllBy(id: String): List<LocalNode>
+    suspend fun getAllBy(id: String): List<NodeEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(node: LocalNode)
+    suspend fun insert(node: NodeEntity)
 
     @Query("DELETE FROM nodes WHERE node_id = :id")
     suspend fun deleteById(id: String): Int
@@ -38,6 +38,6 @@ interface NodeDao {
 
     @Transaction
     @Query("SELECT * FROM nodes")
-    fun observeAllNodeWithRoute(): Flow<List<LocalNodeWithRoute>>
+    fun observeAllNodeWithRoute(): Flow<List<NodeWithRouteEntity>>
 
 }

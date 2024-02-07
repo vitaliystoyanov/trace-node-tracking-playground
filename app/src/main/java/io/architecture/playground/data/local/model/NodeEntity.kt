@@ -8,7 +8,7 @@ import java.util.Date
 @Entity(
     tableName = "nodes"
 )
-data class LocalNode(
+data class NodeEntity(
     @PrimaryKey
     @ColumnInfo(name = "node_id")
     val nodeId: String,

@@ -1,6 +1,6 @@
 package io.architecture.playground.data.local.model
 
-data class LocalCoordinate(
+data class CoordinateEntity(
     val lat: Double,
     val lon: Double
 )

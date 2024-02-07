@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "node_routes"
 )
-class LocalRoute(
+class RouteEntity(
     @PrimaryKey
     @ColumnInfo(name = "node_id")
     val nodeId: String,
-    val route: List<LocalCoordinate>?
+    val route: List<CoordinateEntity>?
 )

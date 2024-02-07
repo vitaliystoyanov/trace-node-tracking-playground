@@ -1,7 +1,7 @@
 package io.architecture.playground.data.mapping
 
 import com.tinder.scarlet.WebSocket
-import io.architecture.playground.data.local.model.LocalNode
+import io.architecture.playground.data.local.model.NodeEntity
 import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.NetworkNode
 import io.architecture.playground.data.remote.model.SocketConnectionState
@@ -17,7 +17,7 @@ fun WebSocket.Event.toExternal(): ConnectionState = when (this) {
     is WebSocket.Event.OnMessageReceived -> ConnectionState(SocketConnectionState.MESSAGE_RECEIVED)
 }
 
-fun Node.toLocal() = LocalNode(
+fun Node.toLocal() = NodeEntity(
     nodeId = nodeId,
     lon = lon,
     time = time,
@@ -28,7 +28,7 @@ fun Node.toLocal() = LocalNode(
     mode = mode.valueInt
 )
 
-fun LocalNode.toExternal() = Node(
+fun NodeEntity.toExternal() = Node(
     nodeId = nodeId,
     lon = lon,
     time = time,
@@ -39,7 +39,7 @@ fun LocalNode.toExternal() = Node(
     mode = NodeMode.entries.first { it.valueInt == mode }
 )
 
-fun NetworkNode.toLocal() = LocalNode(
+fun NetworkNode.toLocal() = NodeEntity(
     nodeId = nodeId,
     lon = lon,
     time = Date(time),
@@ -50,7 +50,7 @@ fun NetworkNode.toLocal() = LocalNode(
     mode = mode
 )
 
-fun LocalNode.toNetwork() = NetworkNode(
+fun NodeEntity.toNetwork() = NetworkNode(
     nodeId = nodeId,
     lon = lon,
     time = time.time,
@@ -61,7 +61,7 @@ fun LocalNode.toNetwork() = NetworkNode(
     mode = mode
 )
 
-fun Node.toExternal(source: LocalNode, destination: Node): Node {
+fun Node.toExternal(source: NodeEntity, destination: Node): Node {
     destination.nodeId = source.nodeId
     destination.lon = source.lon
     destination.time = source.time
@@ -77,12 +77,12 @@ fun Node.toNetwork() = toLocal().toNetwork()
 
 fun NetworkNode.toExternal() = toLocal().toExternal()
 
-fun List<LocalNode>.toNetwork() = map(LocalNode::toNetwork)
+fun List<NodeEntity>.toNetwork() = map(NodeEntity::toNetwork)
 
 fun List<Node>.toLocal() = map(Node::toLocal)
 
 @JvmName("localToExternal")
-fun List<LocalNode>.toExternal() = map(LocalNode::toExternal)
+fun List<NodeEntity>.toExternal() = map(NodeEntity::toExternal)
 
 @JvmName("networkToLocal")
 fun List<NetworkNode>.toLocal() = map(NetworkNode::toLocal)
