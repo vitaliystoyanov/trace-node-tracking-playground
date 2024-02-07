@@ -18,11 +18,8 @@ interface NodeDao {
     @Query("SELECT * FROM nodes WHERE node_id = :id")
     fun observeById(id: String): Flow<LocalNode>
 
-    @Query("SELECT * FROM nodes ORDER BY datetime(time) DESC LIMIT 1")
-    fun observeLatest(): Flow<LocalNode>
-
     @Query("SELECT COUNT(node_id) FROM nodes")
-    fun observeCountNodes(): Flow<Long>
+    fun observeCountNodes(): Flow<Int>
 
     @Query("SELECT * FROM nodes")
     suspend fun getAll(): List<LocalNode>

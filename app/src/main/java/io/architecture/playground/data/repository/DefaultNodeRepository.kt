@@ -43,19 +43,19 @@ class DefaultNodeRepository @Inject constructor(
             }
 
     override fun observeAndStoreNodes(): Flow<Node> = networkDataSource.streamNodes()
-        .map { it.toExternal() }
-        .flowOn(defaultDispatcher)
         .onEach {
             localDataSource.add(it.toLocal())
         }
         .flowOn(ioDispatcher)
+        .map { it.toExternal() }
+        .flowOn(defaultDispatcher)
         .catch { error -> Log.d("REPOSITORY", "error - $error") }
 
-    override fun observeNodesCount(): Flow<Long> = localDataSource.observeCountNodes()
+    override fun observeNodesCount(): Flow<Int> = localDataSource.observeCountNodes()
 
     override suspend fun deleteAll() = localDataSource.deleteAllNodes()
 
-    override fun observeLatestNodes(): Flow<List<Node>> =
+    override fun observeListNodes(): Flow<List<Node>> =
         localDataSource.observeAllNodes()
             .map { it.toExternal() }
             .flowOn(defaultDispatcher)

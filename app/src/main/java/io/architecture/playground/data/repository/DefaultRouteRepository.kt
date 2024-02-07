@@ -9,10 +9,10 @@ import io.architecture.playground.di.DefaultDispatcher
 import io.architecture.playground.di.IoDispatcher
 import io.architecture.playground.model.Route
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DefaultRouteRepository @Inject constructor(
@@ -24,13 +24,14 @@ class DefaultRouteRepository @Inject constructor(
 
     override suspend fun add(route: Route) = localNodeRouteDataSource.add(route.toLocal())
 
-    override fun observeAndStoreRoutes(): Flow<Route> =
+    override fun observeAndStoreRoutes() =
         networkDataSource.streamRoutes()
             .map { it.toExternal() }
             .flowOn(defaultDispatcher)
             .onEach { localNodeRouteDataSource.add(it.toLocal()) }
             .flowOn(ioDispatcher)
 
-    override suspend fun getRouteBy(nodeId: String) =
+    override suspend fun getRouteBy(nodeId: String) = withContext(ioDispatcher) {
         localNodeRouteDataSource.getRouteBy(nodeId)?.toExternal()
+    }
 }

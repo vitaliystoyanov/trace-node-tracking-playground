@@ -18,7 +18,6 @@ abstract class DataSourceModule {
     @Binds
     abstract fun bindNetworkDataSource(dataSource: DefaultNetworkDataSource): NetworkDataSource
 
-
     @Singleton
     @Binds
     abstract fun bindLocalDataSource(dataSource: DefaultLocalNodesDataSource): LocalNodeRouteDataSource

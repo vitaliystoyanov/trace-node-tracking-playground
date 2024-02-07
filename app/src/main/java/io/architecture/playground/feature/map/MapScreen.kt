@@ -2,6 +2,7 @@ package io.architecture.playground.feature.map
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
@@ -61,7 +61,6 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.vectorSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.compass.generated.CompassSettings
-import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
@@ -74,9 +73,9 @@ import io.architecture.playground.feature.map.MapBoxParams.LAYER_LINE_ID
 import io.architecture.playground.feature.map.MapBoxParams.LAYER_SYMBOL_ID
 import io.architecture.playground.feature.map.MapBoxParams.LINE_WIDTH
 import io.architecture.playground.feature.map.MapBoxParams.MODE_KEY_PROPERTY
+import io.architecture.playground.feature.map.MapBoxParams.NODE_DATA_SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.NODE_ID_KEY_PROPERTY
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
-import io.architecture.playground.feature.map.MapBoxParams.SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.TERRAIN_DATA_SOURCE_ID
 import io.architecture.playground.feature.map.MapBoxParams.TERRAIN_SOURCE_LAYER_ID
 import io.architecture.playground.feature.map.MapBoxParams.TEXT_FIELD_KEY_PROPERTY
@@ -85,6 +84,7 @@ import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.NodeMode
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
+import kotlin.time.measureTime
 
 object MapBoxParams {
     const val ZOOM = 4.5
@@ -96,7 +96,7 @@ object MapBoxParams {
     const val TERRAIN_DATA_SOURCE_ID = "terrain-data-source-id"
 
     // GEOJson layers' and image ids
-    const val SOURCE_ID = "source-id"
+    const val NODE_DATA_SOURCE_ID = "source-id"
     const val LAYER_CIRCLE_ID = "layer-circle-id"
     const val LAYER_LINE_ID = "layer-line-id"
     const val LAYER_SYMBOL_ID = "symbol-text-id"
@@ -116,6 +116,7 @@ fun MapScreen(
     viewModel: MapViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val nodesState by viewModel.nodesUiState.collectAsStateWithLifecycle()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNode by remember { mutableStateOf("") }
@@ -123,14 +124,14 @@ fun MapScreen(
 
     Scaffold { contentPadding ->
         MapNodesContent(contentPadding,
-            state,
+            nodesState.nodes,
             onNodeClick = { nodeId ->
                 selectedNode = nodeId
                 viewModel.onLoadNodeRoute(nodeId)
                 showBottomSheet = true
             }
         )
-        TopConnectionStatusBar(state)
+        TopConnectionStatusBar(state.connectionState.type, nodesState.nodeCount)
     }
 
     if (showBottomSheet) {
@@ -141,7 +142,7 @@ fun MapScreen(
             },
             sheetState = sheetState
         ) {
-            val node = state.nodes.find { it.nodeId == selectedNode }
+            val node = nodesState.nodes.find { it.nodeId == selectedNode }
             BottomSheetContent(node, selectedNode)
         }
     }
@@ -220,7 +221,7 @@ fun BottomSheetContent(node: Node?, selectedNode: String) {
 @Composable
 fun MapNodesContent(
     padding: PaddingValues,
-    state: MapNodesUiState,
+    nodes: Set<Node>,
     onNodeClick: (String) -> Unit
 ) {
     val mapViewportState = rememberMapViewportState {
@@ -261,7 +262,7 @@ fun MapNodesContent(
                         url("mapbox://mapbox.mapbox-terrain-v2")
                     })
                 style.addSource(
-                    geoJsonSource(SOURCE_ID)
+                    geoJsonSource(NODE_DATA_SOURCE_ID)
                 )
                 style.addLayer(
                     lineLayer(TERRAIN_DATA_SOURCE_ID, TERRAIN_DATA_SOURCE_ID) {
@@ -276,7 +277,7 @@ fun MapNodesContent(
                     style.addImage(TRIANGLE_IMAGE_ID, bitmap)
                 }
                 style.addLayer(
-                    circleLayer(LAYER_CIRCLE_ID, SOURCE_ID) {
+                    circleLayer(LAYER_CIRCLE_ID, NODE_DATA_SOURCE_ID) {
                         circleColor(match {
                             get(MODE_KEY_PROPERTY)
                             stop {
@@ -316,7 +317,7 @@ fun MapNodesContent(
                     }
                 )
                 style.addLayerBelow(
-                    lineLayer(LAYER_LINE_ID, SOURCE_ID) {
+                    lineLayer(LAYER_LINE_ID, NODE_DATA_SOURCE_ID) {
                         lineColor(Color.parseColor("#ff69b4"))
                         lineWidth(LINE_WIDTH)
                         filter(
@@ -328,7 +329,7 @@ fun MapNodesContent(
                     }, below = LAYER_CIRCLE_ID
                 )
                 style.addLayer(
-                    symbolLayer(LAYER_SYMBOL_ID, SOURCE_ID) {
+                    symbolLayer(LAYER_SYMBOL_ID, NODE_DATA_SOURCE_ID) {
                         iconImage(TRIANGLE_IMAGE_ID)
                         iconIgnorePlacement(true)
                         iconAllowOverlap(true)
@@ -382,67 +383,73 @@ fun MapNodesContent(
                     }
                 )
             }
-            mapView.mapboxMap.addOnMapClickListener(OnMapClickListener { point ->
+            mapView.mapboxMap.addOnMapClickListener { point ->
                 mapView.mapboxMap.queryRenderedFeatures(
                     RenderedQueryGeometry(mapView.mapboxMap.pixelForCoordinate(point)),
                     RenderedQueryOptions(listOf(LAYER_SYMBOL_ID, LAYER_CIRCLE_ID), null)
                 ) {
-                    it.value?.forEach { q ->
-                        onNodeClick(q.queriedFeature.feature.getStringProperty(NODE_ID_KEY_PROPERTY))
+                    it.value?.forEach { renderedFeature ->
+                        onNodeClick(
+                            renderedFeature.queriedFeature.feature.getStringProperty(
+                                NODE_ID_KEY_PROPERTY
+                            )
+                        )
                     }
                 }
                 true
-            })
+            }
         }
 
-        MapEffect(state) { view ->
-            val source = view.mapboxMap.getSource(SOURCE_ID) as? GeoJsonSource
-            source?.featureCollection(
-                FeatureCollection.fromFeatures(
-                    state.nodes.map {
-                        Feature.fromGeometry(
-                            Point.fromLngLat(
-                                it.lon,
-                                it.lat
-                            )
-                        ).also { feature ->
-                            feature.addStringProperty(
-                                TEXT_FIELD_KEY_PROPERTY,
-                                String.format(
-                                    "\n%s: %d°\n%d m/s",
-                                    it.direction,
-                                    it.azimuth.toInt(),
-                                    it.speed
-                                )
-                            )
-                            feature.addStringProperty(MODE_KEY_PROPERTY, it.mode.name)
-                            feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
-                            feature.addNumberProperty(BEARING_KEY_PROPERTY, it.azimuth)
-                        }
-                    }.toMutableList()
-                        .also { listFeatures ->
-                            if (state.displayRoute != null) {
-                                run {
-                                    val lineString: LineString =
-                                        LineString.fromLngLats(state.displayRoute!!.route.map {
-                                            Point.fromLngLat(
-                                                it.lon,
-                                                it.lat
-                                            )
-                                        })
-                                    listFeatures.add(Feature.fromGeometry(lineString))
-                                }
-                            }
-                        }
-                )
+        MapEffect(nodes) { view ->
+            val source = view.mapboxMap.getSource(NODE_DATA_SOURCE_ID) as? GeoJsonSource
+            val time = measureTime {
+                val features = nodes.map {
+                    val feature = Feature.fromGeometry(
+                        Point.fromLngLat(
+                            it.lon,
+                            it.lat
+                        ), null, it.nodeId
+                    )
+                    feature.addStringProperty(
+                        TEXT_FIELD_KEY_PROPERTY,
+                        String.format(
+                            "\n%s: %d°\n%d m/s",
+                            it.direction,
+                            it.azimuth.toInt(),
+                            it.speed
+                        )
+                    )
+                    feature.addStringProperty(MODE_KEY_PROPERTY, it.mode.name)
+                    feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
+                    feature.addNumberProperty(BEARING_KEY_PROPERTY, it.azimuth)
+                    feature
+                }
+//                    .toMutableList()
+//                    .also { listFeatures ->
+//                        if (state.displayRoute != null) {
+//                            val lineString: LineString =
+//                                LineString.fromLngLats(state.displayRoute!!.route.map {
+//                                    Point.fromLngLat(
+//                                        it.lon,
+//                                        it.lat
+//                                    )
+//                                })
+//                            listFeatures.add(Feature.fromGeometry(lineString))
+//                        }
+//                    }
+                source?.featureCollection(FeatureCollection.fromFeatures(features))
+            }
+            Log.d(
+                "RENDER_DEBUG",
+                "MapNodesContent: addGeoJSONSourceFeatures time - $time [${nodes.size} node(s)]"
             )
         }
     }
 }
 
 @Composable
-fun TopConnectionStatusBar(state: MapNodesUiState) {
-    val bgColor = when (state.connectionState.type) {
+fun TopConnectionStatusBar(connectionState: SocketConnectionState, nodesCount: Int) {
+    val bgColor = when (connectionState) {
         SocketConnectionState.UNDEFINED -> R.color.black
         SocketConnectionState.OPENED -> R.color.teal_700
         SocketConnectionState.CLOSED -> R.color.teal_red
@@ -458,10 +465,10 @@ fun TopConnectionStatusBar(state: MapNodesUiState) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        with(state) {
-            if (this.connectionState.type === SocketConnectionState.OPENED) { // Dirty, very dirty
+        when (connectionState) {
+            SocketConnectionState.OPENED -> {
                 listOf(
-                    "Track nodes: ${this.nodeCount}"
+                    "Track nodes: $nodesCount"
                 ).forEach { text ->
                     Text(
                         text = text,
@@ -470,17 +477,21 @@ fun TopConnectionStatusBar(state: MapNodesUiState) {
                         fontWeight = FontWeight.Bold
                     )
                 }
-            } else if (this.connectionState.type === SocketConnectionState.UNDEFINED) {
+            }
+
+            SocketConnectionState.UNDEFINED -> {
                 Text(
                     text = "Connecting...",
                     color = colorResource(id = R.color.white),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
-            } else {
+            }
+
+            else -> {
                 Text(
                     text = "Connection status: ${
-                        this.connectionState.type.toString().lowercase()
+                        connectionState.toString().lowercase()
                     }!",
                     color = colorResource(id = R.color.white),
                     fontSize = 10.sp,

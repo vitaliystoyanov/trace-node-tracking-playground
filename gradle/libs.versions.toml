@@ -21,6 +21,7 @@ exampleNdkVersion = "21.4.7075529"
 # Plugins
 hiltAndroidVersion = "2.46"
 hiltAndroidCompilerVersion = "2.46"
+kotlinxCoroutinesAndroidVersion = "1.7.3"
 kotlinxMetadataJvmVersion = "0.6.0"
 lifecycleAndroidVersion = "0.1.12"
 loggingInterceptorVersion = "4.12.0"
@@ -41,6 +42,7 @@ composeBom = "2024.01.00"
 
 androidxHiltNavigationCompose = "1.1.0"
 roomKtxVersion = "2.6.1"
+runtimeTracingVersion = "1.0.0-beta01"
 scarletVersion = "0.1.12"
 websocketOkhttpVersion = "0.1.12"
 streamAdapterCoroutinesVersion = "0.1.12"
@@ -69,6 +71,7 @@ androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", 
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 
+androidx-runtime-tracing = { module = "androidx.compose.runtime:runtime-tracing", version.ref = "runtimeTracingVersion" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -79,6 +82,7 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltA
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroidVersion" }
 kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinxMetadataJvmVersion" }
 lifecycle-android = { module = "com.tinder.scarlet:lifecycle-android", version.ref = "lifecycleAndroidVersion" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptorVersion" }

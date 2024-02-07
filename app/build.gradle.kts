@@ -56,10 +56,10 @@ dependencies {
     implementation(libs.googleMaterialDesign)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.compose.uiTooling)
+    implementation(libs.androidx.runtime.tracing)
 
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
-
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewModelCompose)

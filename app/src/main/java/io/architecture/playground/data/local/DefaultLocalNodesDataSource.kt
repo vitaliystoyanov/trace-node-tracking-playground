@@ -12,20 +12,19 @@ class DefaultLocalNodesDataSource @Inject constructor(
     private val nodeDao: NodeDao,
     private val routeDao: RouteDao
 ) : LocalNodeRouteDataSource {
-    override suspend fun getRouteBy(nodeId: String) = routeDao.getById(nodeId)
-
-    override suspend fun add(node: LocalNode) = nodeDao.insert(node)
-
-    override suspend fun add(route: LocalRoute) = routeDao.insert(route)
 
     override fun observeAllNodes(): Flow<List<LocalNode>> = nodeDao.observeAll()
 
     override fun observeAllNodesWithRoute(): Flow<List<LocalNodeWithRoute>> =
         nodeDao.observeAllNodeWithRoute()
 
-    override fun observeCountNodes(): Flow<Long> = nodeDao.observeCountNodes()
+    override fun observeCountNodes(): Flow<Int> = nodeDao.observeCountNodes()
 
-    override fun observeLatestNode(): Flow<LocalNode> = nodeDao.observeLatest()
+    override suspend fun getRouteBy(nodeId: String) = routeDao.getById(nodeId)
+
+    override suspend fun add(node: LocalNode) = nodeDao.insert(node)
+
+    override suspend fun add(route: LocalRoute) = routeDao.insert(route)
 
     override suspend fun getAllNodes(): List<LocalNode> = nodeDao.getAll()
 
@@ -35,7 +34,4 @@ class DefaultLocalNodesDataSource @Inject constructor(
         nodeDao.deleteAll()
         routeDao.deleteAll()
     }
-
-    override suspend fun getAllTracesByNodeId(nodeId: String): List<LocalNode> =
-        nodeDao.getAllBy(nodeId)
 }

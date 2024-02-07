@@ -5,8 +5,8 @@ import io.architecture.playground.data.local.model.LocalNode
 import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.NetworkNode
 import io.architecture.playground.data.remote.model.SocketConnectionState
-import io.architecture.playground.model.NodeMode
 import io.architecture.playground.model.Node
+import io.architecture.playground.model.NodeMode
 import java.util.Date
 
 fun WebSocket.Event.toExternal(): ConnectionState = when (this) {
@@ -61,7 +61,17 @@ fun LocalNode.toNetwork() = NetworkNode(
     mode = mode
 )
 
-
+fun Node.toExternal(source: LocalNode, destination: Node): Node {
+    destination.nodeId = source.nodeId
+    destination.lon = source.lon
+    destination.time = source.time
+    destination.speed = source.speed
+    destination.azimuth = source.azimuth
+    destination.alt = source.alt
+    destination.lat = source.lat
+    destination.mode = NodeMode.entries.first { it.valueInt == source.mode }
+    return destination
+}
 
 fun Node.toNetwork() = toLocal().toNetwork()
 

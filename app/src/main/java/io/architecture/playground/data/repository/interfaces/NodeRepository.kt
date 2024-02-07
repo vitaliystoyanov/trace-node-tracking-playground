@@ -10,12 +10,11 @@ interface NodeRepository {
 
     fun observeAndStoreNodes(): Flow<Node>
 
-    fun observeNodesCount(): Flow<Long>
+    fun observeNodesCount(): Flow<Int>
 
     suspend fun deleteAll()
 
-    fun observeLatestNodes(): Flow<List<Node>>
-
     fun observeLatestNodesWithRoute(): Flow<List<Pair<Node, Route>>>
 
+    fun observeListNodes(): Flow<List<Node>>
 }
