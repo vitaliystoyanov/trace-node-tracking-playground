@@ -20,7 +20,7 @@
         android:theme="@style/Base.Theme.WebsocketRealtimeMapPlayground"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".MapActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,7 +1,7 @@
 package io.architecture.playground.domain
 
 import android.util.Log
-import io.architecture.playground.data.repository.interfaces.NodeRepository
+import io.architecture.playground.data.repository.interfaces.TraceRepository
 import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ObserveAndStoreNodesUseCase @Inject constructor(
-    private var nodesRepository: NodeRepository,
+class ObserveAndStoreTracesUseCase @Inject constructor(
+    private var tracesRepository: TraceRepository,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend operator fun invoke() = withContext(ioDispatcher) {
-        nodesRepository.observeAndStoreNodes()
+    suspend operator fun invoke() = withContext(ioDispatcher) { // TODO Dispatcher is correct?
+        tracesRepository.observeAndStore()
             .catch { error -> Log.d("SERVICE", "Error - $error") }
             .collect()
     }

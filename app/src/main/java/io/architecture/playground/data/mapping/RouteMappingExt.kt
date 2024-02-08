@@ -8,12 +8,12 @@ import io.architecture.playground.model.Route
 
 fun Route.toLocal() = RouteEntity(
     nodeId = nodeId,
-    route = route.map { CoordinateEntity(it.lat, it.lon) }
+    route = coordinates.map { CoordinateEntity(it.lat, it.lon) }
 )
 
 fun RouteEntity.toExternal() = Route(
     nodeId = nodeId,
-    route = route?.map { Coordinate(it.lat, it.lon) } ?: emptyList()
+    coordinates = route?.map { Coordinate(it.lat, it.lon) } ?: emptyList()
 )
 
 fun NetworkRoute.toLocal() = RouteEntity(

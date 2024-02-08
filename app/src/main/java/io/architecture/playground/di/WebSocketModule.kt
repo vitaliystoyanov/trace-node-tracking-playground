@@ -10,7 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.remote.websocket.NodeService
+import io.architecture.playground.data.remote.websocket.TraceService
 import io.architecture.playground.data.remote.websocket.RoutesService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,7 +37,7 @@ object WebSocketModule {
     @Singleton
     @Provides
     fun provideNodeTracesService(@NodeTracesScarlet scarlet: Scarlet) =
-        scarlet.create(NodeService::class.java)
+        scarlet.create(TraceService::class.java)
 
     @Singleton
     @Provides

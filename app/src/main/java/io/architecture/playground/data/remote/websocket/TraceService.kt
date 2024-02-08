@@ -2,14 +2,14 @@ package io.architecture.playground.data.remote.websocket
 
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
-import io.architecture.playground.data.remote.model.NetworkNode
+import io.architecture.playground.data.remote.model.NetworkTrace
 import kotlinx.coroutines.channels.ReceiveChannel
 
-interface NodeService {
+interface TraceService {
 
     @Receive
     fun streamConnection(): ReceiveChannel<WebSocket.Event>
 
     @Receive
-    fun streamNodes(): ReceiveChannel<NetworkNode>
+    fun streamTraces(): ReceiveChannel<NetworkTrace>
 }

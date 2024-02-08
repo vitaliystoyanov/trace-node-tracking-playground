@@ -9,7 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.feature.map.MapScreen
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MapActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

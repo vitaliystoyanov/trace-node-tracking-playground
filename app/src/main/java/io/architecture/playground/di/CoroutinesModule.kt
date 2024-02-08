@@ -49,7 +49,7 @@ object CoroutinesModule {
     @Provides
     @Singleton
     @ApplicationIoScope
-    fun providesUiCoroutineScope(
+    fun providesIoCoroutineScope(
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 

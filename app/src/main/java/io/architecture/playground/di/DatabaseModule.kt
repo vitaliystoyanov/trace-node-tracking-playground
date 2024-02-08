@@ -7,8 +7,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.local.NodeDatabase
+import io.architecture.playground.data.local.InMemoryDatabase
 import io.architecture.playground.data.local.dao.NodeDao
+import io.architecture.playground.data.local.dao.TraceDao
 import io.architecture.playground.data.local.dao.RouteDao
 import javax.inject.Singleton
 
@@ -16,18 +17,24 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    @Singleton
     @Provides
-    fun provideDataBase(@ApplicationContext context: Context): NodeDatabase {
+    @Singleton
+    fun provideInMemoryDatabase(@ApplicationContext context: Context): InMemoryDatabase {
         return Room.inMemoryDatabaseBuilder(
             context,
-            NodeDatabase::class.java
+            InMemoryDatabase::class.java
         ).build()
     }
 
     @Provides
-    fun provideNodeDao(database: NodeDatabase): NodeDao = database.nodeDao()
+    @Singleton
+    fun provideNodeDao(database: InMemoryDatabase): NodeDao = database.nodeDao()
 
     @Provides
-    fun provideRouteDao(database: NodeDatabase): RouteDao = database.routeDao()
+    @Singleton
+    fun provideTraceDao(database: InMemoryDatabase): TraceDao = database.traceDao()
+
+    @Provides
+    @Singleton
+    fun provideRouteDao(database: InMemoryDatabase): RouteDao = database.routeDao()
 }

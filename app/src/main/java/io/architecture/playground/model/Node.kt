@@ -1,23 +1,27 @@
 package io.architecture.playground.model
 
-import java.util.Date
-
 data class Node(
-    var nodeId: String = "",
-    var id: Long = 0,
-    var lon: Double = 0.0,
-    var lat: Double = 0.0,
-    var speed: Int = 0,
-    var azimuth: Double = 0.0,
-    var alt: Double = 0.0,
-    var time: Date,
-    var mode: NodeMode = NodeMode.INACTIVE,
+    val id: String,
+    val mode: NodeMode,
+    val lastTraceTimestamp: Long,
+) {
+    constructor(id: String, mode: Int, lastTraceTimestamp: Long) : this(
+        id,
+        NodeMode.valueOf(mode),
+        lastTraceTimestamp
+    )
+}
 
-    var formattedDatetime: String? = "",
-    var direction: String? = ""
-)
-
-enum class NodeMode(var valueInt: Int) {
+enum class NodeMode(var value: Int) {
     ACTIVE(1),
-    INACTIVE(0)
+    INACTIVE(0),
+    UNKNOWN(-1);
+
+    companion object {
+        fun valueOf(mode: Int) = NodeMode.entries.firstOrNull { it.value == mode } ?: UNKNOWN
+    }
+}
+
+inline fun <reified T : Enum<T>> printAllValues() {
+    println(enumValues<T>().joinToString { it.name })
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.playground.data.remote.model.ConnectionState
 import io.architecture.playground.data.remote.model.SocketConnectionState
-import io.architecture.playground.data.repository.interfaces.NodeRepository
+import io.architecture.playground.data.repository.interfaces.TraceRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.domain.ObserveChunkedNodesUseCase
 import io.architecture.playground.model.Route
@@ -21,14 +21,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val nodeRepository: NodeRepository,
+    private val nodeRepository: TraceRepository,
     private val routeRepository: RouteRepository,
     observeNodes: ObserveChunkedNodesUseCase,
 ) : ViewModel() {
 
     private var _displayRoute = MutableStateFlow<Route?>(null)
     private var _connectionState = nodeRepository.observeConnectionState()
-    private var _nodeCounter = nodeRepository.observeNodesCount()
+    private var _nodeCounter = nodeRepository.observeCount()
 
 
     val uiState: StateFlow<MapUiState> =
@@ -58,7 +58,7 @@ class MapViewModel @Inject constructor(
             )
         )
 
-    fun displayRoute(nodeId: String) = viewModelScope.launch {
+    fun loadRoute(nodeId: String) = viewModelScope.launch {
         _displayRoute.update { routeRepository.getRouteBy(nodeId) }
     }
 }

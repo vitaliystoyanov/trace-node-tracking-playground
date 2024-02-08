@@ -2,7 +2,6 @@ package io.architecture.playground.domain
 
 import android.util.Log
 import io.architecture.playground.data.repository.interfaces.RouteRepository
-import io.architecture.playground.di.DefaultDispatcher
 import io.architecture.playground.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
@@ -17,7 +16,7 @@ class ObserveAndStoreRoutesUseCase @Inject constructor(
 
     suspend operator fun invoke() = withContext(ioDispatcher) {
         routesRepository.observeAndStoreRoutes()
-            .catch { error -> Log.d("SERVICE", "Error - $error") }
+            .catch { error -> Log.d("SERVICE", "Error - $error") } // TODO Catching of throwables
             .collect()
     }
 }

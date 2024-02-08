@@ -26,7 +26,7 @@ fun <T> Flow<T>.chunked(chunkSize: Int): Flow<List<T>> {
     }
 }
 
-fun <T> Flow<T>.chunkedSetBy(maxSize: Int, interval: Duration, predicate: (T) -> String) =
+fun <T> Flow<T>.chunkedSetBy(maxSize: Int, interval: Duration, predicate: (T) -> String) = // TODO Look in details
     channelFlow {
 
         val buffer = mutableSetOf<T>()
@@ -37,7 +37,7 @@ fun <T> Flow<T>.chunkedSetBy(maxSize: Int, interval: Duration, predicate: (T) ->
             flushJob?.cancelAndJoin()
             val alreadyBuffered = buffer.find { predicate(it) == predicate(value) }
             if (alreadyBuffered == null) buffer.add(value)
-//            buffer.add(value)
+//            buffer.add(value) // TODO
 
             if (buffer.size >= maxSize) {
                 ensureActive()

@@ -1,12 +1,13 @@
 package io.architecture.playground.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.Update
 import io.architecture.playground.data.local.model.NodeEntity
-import io.architecture.playground.data.local.model.NodeWithRouteEntity
+import io.architecture.playground.data.local.model.NodeWithLastTraceEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,29 +16,18 @@ interface NodeDao {
     @Query("SELECT * FROM nodes")
     fun observeAll(): Flow<List<NodeEntity>>
 
-    @Query("SELECT * FROM nodes WHERE node_id = :id")
-    fun observeById(id: String): Flow<NodeEntity>
-
-    @Query("SELECT COUNT(node_id) FROM nodes")
-    fun observeCountNodes(): Flow<Int>
-
-    @Query("SELECT * FROM nodes")
-    suspend fun getAll(): List<NodeEntity>
-
-    @Query("SELECT * FROM nodes WHERE node_id = :id")
-    suspend fun getAllBy(id: String): List<NodeEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(node: NodeEntity)
 
-    @Query("DELETE FROM nodes WHERE node_id = :id")
-    suspend fun deleteById(id: String): Int
+    @Update
+    suspend fun update(node: NodeEntity)
 
-    @Query("DELETE FROM nodes")
-    suspend fun deleteAll()
+    @Query("SELECT COUNT(id) FROM nodes")
+    fun observeCount(): Flow<Int>
 
-    @Transaction
-    @Query("SELECT * FROM nodes")
-    fun observeAllNodeWithRoute(): Flow<List<NodeWithRouteEntity>>
+    @Delete
+    suspend fun delete(node: NodeEntity)
 
+    @Query("SELECT * FROM nodes, traces WHERE nodes.id = traces.node_id")
+    fun observeAllWithLastTrace(): Flow<List<NodeWithLastTraceEntity>>
 }

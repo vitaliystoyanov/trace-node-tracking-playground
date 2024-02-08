@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapboxExperimental
@@ -83,6 +84,8 @@ import io.architecture.playground.feature.map.MapBoxParams.TRIANGLE_IMAGE_ID
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.NodeMode
+import io.architecture.playground.model.Route
+import io.architecture.playground.model.Trace
 import io.architecture.playground.util.BitmapUtils.bitmapFromDrawableRes
 import kotlin.time.measureTime
 
@@ -113,6 +116,7 @@ object MapBoxParams {
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun MapScreen(
+    // !!!!!!!! TODO Whole redactor !!!!!!!!!!
     viewModel: MapViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -123,14 +127,15 @@ fun MapScreen(
     val sheetState = rememberModalBottomSheetState()
 
     Scaffold { contentPadding ->
-        MapNodesContent(contentPadding,
+        MapNodesContent(
+            contentPadding,
             nodesState.nodes,
-            onNodeClick = { nodeId ->
-                selectedNode = nodeId
-                viewModel.displayRoute(nodeId)
-                showBottomSheet = true
-            }
-        )
+            state.displayRoute
+        ) { nodeId ->
+            selectedNode = nodeId
+            viewModel.loadRoute(nodeId)
+            showBottomSheet = true
+        }
         TopConnectionStatusBar(state.connectionState.type, nodesState.nodeCount)
     }
 
@@ -142,7 +147,7 @@ fun MapScreen(
             },
             sheetState = sheetState
         ) {
-            val node = nodesState.nodes.find { it.nodeId == selectedNode }
+            val node = nodesState.nodes.find { it.first.id == selectedNode }
             BottomSheetContent(node, selectedNode)
         }
     }
@@ -150,17 +155,17 @@ fun MapScreen(
 
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun BottomSheetContent(node: Node?, selectedNode: String) {
+fun BottomSheetContent(nodeTrace: Pair<Node, Trace>?, selectedNode: String) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        listOf(
+        listOf( // TODO with map
             buildAnnotatedString {
                 append(
                     String.format(
                         "%s: %f° (reference plane is true north)",
-                        node?.direction,
-                        node?.azimuth,
+                        nodeTrace?.second?.direction,
+                        nodeTrace?.second?.azimuth,
                     )
                 )
             },
@@ -169,38 +174,38 @@ fun BottomSheetContent(node: Node?, selectedNode: String) {
                     append("Mode: ")
                 }
                 withStyle(style = SpanStyle(color = colorResource(id = R.color.teal_700))) {
-                    append(node?.mode.toString())
+                    append(nodeTrace?.first?.mode.toString())
                 }
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Attitude: ")
                 }
-                append(node?.alt.toString())
+                append(nodeTrace?.second?.alt.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Speed: ")
                 }
-                append("${node?.speed} m/s")
+                append("${nodeTrace?.second?.speed} m/s")
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Longitude: ")
                 }
-                append(node?.lon.toString())
+                append(nodeTrace?.second?.lon.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Latitude: ")
                 }
-                append(node?.lat.toString())
+                append(nodeTrace?.second?.lat.toString())
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Last node timestamp: ")
                 }
-                append(node?.formattedDatetime)
+                append(nodeTrace?.second?.formattedDatetime)
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -221,7 +226,8 @@ fun BottomSheetContent(node: Node?, selectedNode: String) {
 @Composable
 fun MapNodesContent(
     padding: PaddingValues,
-    nodes: Set<Node>,
+    nodes: Set<Pair<Node, Trace>>,
+    displayRoute: Route?,
     onNodeClick: (String) -> Unit
 ) {
     val mapViewportState = rememberMapViewportState {
@@ -400,43 +406,39 @@ fun MapNodesContent(
             }
         }
 
-        MapEffect(nodes) { view ->
+
+        MapEffect(nodes, displayRoute) { view ->
             val source = view.mapboxMap.getSource(NODE_DATA_SOURCE_ID) as? GeoJsonSource
             val time = measureTime {
                 val features = nodes.map {
                     val feature = Feature.fromGeometry(
                         Point.fromLngLat(
-                            it.lon,
-                            it.lat
-                        ), null, it.nodeId
+                            it.second.lon,
+                            it.second.lat
+                        ), null, it.second.nodeId
                     )
                     feature.addStringProperty(
                         TEXT_FIELD_KEY_PROPERTY,
                         String.format(
                             "\n%s: %d°\n%d m/s",
-                            it.direction,
-                            it.azimuth.toInt(),
-                            it.speed
+                            it.second.direction,
+                            it.second.azimuth.toInt(),
+                            it.second.speed
                         )
                     )
-                    feature.addStringProperty(MODE_KEY_PROPERTY, it.mode.name)
-                    feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.nodeId)
-                    feature.addNumberProperty(BEARING_KEY_PROPERTY, it.azimuth)
+                    feature.addStringProperty(MODE_KEY_PROPERTY, it.first.mode.toString())
+                    feature.addStringProperty(NODE_ID_KEY_PROPERTY, it.second.nodeId)
+                    feature.addNumberProperty(BEARING_KEY_PROPERTY, it.second.azimuth)
                     feature
                 }
-//                    .toMutableList()
-//                    .also { listFeatures ->
-//                        if (state.displayRoute != null) {
-//                            val lineString: LineString =
-//                                LineString.fromLngLats(state.displayRoute!!.route.map {
-//                                    Point.fromLngLat(
-//                                        it.lon,
-//                                        it.lat
-//                                    )
-//                                })
-//                            listFeatures.add(Feature.fromGeometry(lineString))
-//                        }
-//                    }
+                    .toMutableList()
+                    .also { listFeatures ->
+                        val lineString: LineString =
+                            LineString.fromLngLats(displayRoute?.coordinates?.map {
+                                Point.fromLngLat(it.lon, it.lat)
+                            } ?: emptyList())
+                        listFeatures.add(Feature.fromGeometry(lineString))
+                    }
                 source?.featureCollection(FeatureCollection.fromFeatures(features))
             }
             Log.d(

@@ -9,7 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 
-object BitmapUtils {
+object BitmapUtils { // TODO if it's needed ?? try to replace with mapbox functions
 
     fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
         drawableToBitmap(AppCompatResources.getDrawable(context, resourceId))

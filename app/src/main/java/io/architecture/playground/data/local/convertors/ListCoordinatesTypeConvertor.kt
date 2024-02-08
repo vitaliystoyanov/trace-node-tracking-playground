@@ -5,13 +5,13 @@ import io.architecture.playground.data.local.model.CoordinateEntity
 
 class ListCoordinatesTypeConvertor {
     @TypeConverter
-    fun fromArrayListOfLocalCoordinate(list: List<CoordinateEntity>?): String =
+    fun fromArrayListOfCoordinate(list: List<CoordinateEntity>?): String =
         list
             ?.map { it.lat.toString() + "," + it.lon.toString() }
             ?.joinToString(separator = ";") { it } ?: ""
 
     @TypeConverter
-    fun toArrayListOfLocalCoordinate(string: String): List<CoordinateEntity>? =
+    fun toArrayListOfCoordinate(string: String): List<CoordinateEntity>? =
         string
             .split(";")
             .map {

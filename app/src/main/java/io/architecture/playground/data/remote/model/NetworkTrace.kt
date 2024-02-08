@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
 //    "n": "bb0c326c-c1ee-11ee-b86a-d106324846e3",
 //    "m": 1
 
-data class NetworkNode(
+data class NetworkTrace(
     @SerializedName("l")     var lon      : Double   = 0.0,
     @SerializedName("lt")    var lat      : Double   = 0.0,
     @SerializedName("s")   var speed      : Int      = 0,

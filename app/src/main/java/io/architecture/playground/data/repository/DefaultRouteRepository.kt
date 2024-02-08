@@ -1,6 +1,6 @@
 package io.architecture.playground.data.repository
 
-import io.architecture.playground.data.local.LocalNodeRouteDataSource
+import io.architecture.playground.data.local.LocalDataSource
 import io.architecture.playground.data.mapping.toExternal
 import io.architecture.playground.data.mapping.toLocal
 import io.architecture.playground.data.remote.interfaces.NetworkDataSource
@@ -17,21 +17,23 @@ import javax.inject.Inject
 
 class DefaultRouteRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
-    private val localNodeRouteDataSource: LocalNodeRouteDataSource,
+    private val localTraceRouteDataSource: LocalDataSource,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : RouteRepository {
 
-    override suspend fun add(route: Route) = localNodeRouteDataSource.add(route.toLocal())
+    override suspend fun add(route: Route) = withContext(ioDispatcher) {
+        localTraceRouteDataSource.updateOrCreate(route.toLocal())
+    }
 
     override fun observeAndStoreRoutes() =
         networkDataSource.streamRoutes()
             .map { it.toExternal() }
             .flowOn(defaultDispatcher)
-            .onEach { localNodeRouteDataSource.add(it.toLocal()) }
+            .onEach { localTraceRouteDataSource.updateOrCreate(it.toLocal()) }
             .flowOn(ioDispatcher)
 
     override suspend fun getRouteBy(nodeId: String) = withContext(ioDispatcher) {
-        localNodeRouteDataSource.getRouteBy(nodeId)?.toExternal()
+        localTraceRouteDataSource.getRouteBy(nodeId)?.toExternal()
     }
 }

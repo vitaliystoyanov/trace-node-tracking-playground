@@ -13,7 +13,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.architecture.playground.domain.ObserveAndStoreNodesUseCase
+import io.architecture.playground.domain.ObserveAndStoreTracesUseCase
 import io.architecture.playground.domain.ObserveAndStoreRoutesUseCase
 import kotlinx.coroutines.*
 import java.util.*
@@ -30,10 +30,10 @@ enum class ServiceState {
 }
 
 @AndroidEntryPoint
-class NetworkForegroundService : LifecycleService() {
+class NetworkForegroundService : LifecycleService() { // TODO Extract notifications operations to Notifier class
 
     @Inject
-    lateinit var observeAndStoreNodes: ObserveAndStoreNodesUseCase
+    lateinit var observeAndStoreTraces: ObserveAndStoreTracesUseCase
 
     @Inject
     lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
@@ -101,7 +101,7 @@ class NetworkForegroundService : LifecycleService() {
             }
 
         val serviceJob = lifecycleScope.launch {
-            launch { observeAndStoreNodes() }
+            launch { observeAndStoreTraces() }
             observeAndStoreRoutes()
         }
         supervisorJob[serviceJob.key]
@@ -142,7 +142,7 @@ class NetworkForegroundService : LifecycleService() {
         }
 
         val pendingIntent: PendingIntent =
-            Intent(this, MainActivity::class.java).let { notificationIntent ->
+            Intent(this, MapActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
             }
 
