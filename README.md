@@ -2,7 +2,7 @@
 
 This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source at runtime.
 
-<img src="/docs/demo.gif" width="520">
+<img src="/docs/demo0.gif" width="520">
 
 With loaded node routes:
 <img src="/docs/demo1.gif" width="520">
