@@ -15,12 +15,4 @@
         </item>
     </style>
 
-    <style name="Base.Theme.WebsocketRealtimeMapPlayground.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.TestMapboxMapCompose.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.TestMapboxMapCompose.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

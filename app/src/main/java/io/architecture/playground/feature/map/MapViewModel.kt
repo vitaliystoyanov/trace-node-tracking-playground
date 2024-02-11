@@ -3,62 +3,104 @@ package io.architecture.playground.feature.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.architecture.playground.data.remote.model.ConnectionState
-import io.architecture.playground.data.remote.model.SocketConnectionState
-import io.architecture.playground.data.repository.interfaces.TraceRepository
+import io.architecture.playground.core.pool.PoolManager
+import io.architecture.playground.data.remote.model.ConnectionEvent
+import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
-import io.architecture.playground.domain.ObserveChunkedNodesUseCase
+import io.architecture.playground.di.DefaultDispatcher
+import io.architecture.playground.domain.Connection
+import io.architecture.playground.domain.ConnectionState
+import io.architecture.playground.domain.GetAllNodeWithTraceUseCase
+import io.architecture.playground.domain.GetCompositeConnectionStateUseCase
+import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
+import io.architecture.playground.model.Trace
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class NodesUiState(
+    val nodeTraceMap: Map<Node, Trace>,
+    val nodeCount: Int,
+)
+
+data class RouteUiState(
+    val displayRoute: Route?,
+)
+
+data class ConnectionUiState(
+    val all: Map<Int, ConnectionState>,
+)
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val nodeRepository: TraceRepository,
+    nodeRepository: NodeRepository,
     private val routeRepository: RouteRepository,
-    observeNodes: ObserveChunkedNodesUseCase,
+    getAllNodeWithTrace: GetAllNodeWithTraceUseCase,
+    connectionState: GetCompositeConnectionStateUseCase,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    private val poolManager: PoolManager
 ) : ViewModel() {
 
     private var _displayRoute = MutableStateFlow<Route?>(null)
-    private var _connectionState = nodeRepository.observeConnectionState()
     private var _nodeCounter = nodeRepository.observeCount()
+    private val _mapNodeTrace = MutableStateFlow<Map<Node, Trace>?>(null)
 
-
-    val uiState: StateFlow<MapUiState> =
-        combine(_connectionState, _displayRoute) { connection, displayRoute ->
-            MapUiState(displayRoute, connection)
-        }.stateIn(
+    val connectionStateUi: StateFlow<ConnectionUiState> = connectionState()
+        .map { state -> ConnectionUiState(state) }
+        .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = MapUiState(
-                null,
-                ConnectionState(SocketConnectionState.UNDEFINED)
+            initialValue = ConnectionUiState(
+                mapOf(
+                    Connection.ROUTE_SERVICE_CONNECTION to ConnectionEvent.UNDEFINED,
+                    Connection.ROUTE_SERVICE_CONNECTION to ConnectionEvent.UNDEFINED
+                )
             )
         )
 
-    val nodesUiState: StateFlow<MapNodesUiState> =
+    val uiState: StateFlow<RouteUiState> =
+        _displayRoute
+            .map { RouteUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = RouteUiState(
+                    null
+                )
+            )
+
+    val nodesUiState: StateFlow<NodesUiState> =
         combine(
-            observeNodes(),
+            getAllNodeWithTrace(viewModelScope),
             _nodeCounter
-        ) { nodes, countNodes ->
-            MapNodesUiState(nodes, countNodes)
+        ) { map, countNodes ->
+            _mapNodeTrace.update { map }
+            NodesUiState(map, countNodes)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = MapNodesUiState(
-                emptySet(),
-                0
+            initialValue = NodesUiState(
+                emptyMap(),
+                0,
             )
         )
 
     fun loadRoute(nodeId: String) = viewModelScope.launch {
         _displayRoute.update { routeRepository.getRouteBy(nodeId) }
+    }
+
+    fun releaseRenderedObjects() = viewModelScope.launch(defaultDispatcher) {
+        _mapNodeTrace.value?.forEach { (node, trace) ->
+            poolManager.getPoolBy(Node::class).release(node)
+            poolManager.getPoolBy(Trace::class).release(trace)
+        }
     }
 }

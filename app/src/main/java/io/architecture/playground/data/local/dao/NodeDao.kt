@@ -30,4 +30,7 @@ interface NodeDao {
 
     @Query("SELECT * FROM nodes, traces WHERE nodes.id = traces.node_id")
     fun observeAllWithLastTrace(): Flow<List<NodeWithLastTraceEntity>>
+
+    @Query("SELECT * FROM nodes, traces WHERE nodes.id = traces.node_id")
+    suspend fun getAllWithLastTrace(): List<NodeWithLastTraceEntity>
 }

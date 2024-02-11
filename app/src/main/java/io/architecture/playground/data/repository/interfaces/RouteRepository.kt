@@ -10,4 +10,5 @@ interface RouteRepository {
     fun observeAndStoreRoutes(): Flow<Route>
 
     suspend fun getRouteBy(nodeId: String): Route?
+
 }

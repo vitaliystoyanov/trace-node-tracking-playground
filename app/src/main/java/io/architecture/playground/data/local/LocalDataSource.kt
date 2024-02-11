@@ -16,6 +16,8 @@ interface LocalDataSource {
 
     fun observeNodeCount(): Flow<Int>
 
+    suspend fun getAllNodesWithLatestTrace(): List<NodeWithLastTraceEntity>
+
     suspend fun getRouteBy(nodeId: String): RouteEntity?
 
     suspend fun updateOrCreate(node: NodeEntity)
@@ -28,5 +30,5 @@ interface LocalDataSource {
 
     suspend fun deleteAllTraces()
 
-    suspend fun deleteAllWithRoute()
+    fun observeTraceCount(): Flow<Int>
 }

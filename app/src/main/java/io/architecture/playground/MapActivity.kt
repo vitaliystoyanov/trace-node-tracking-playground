@@ -11,7 +11,7 @@ import io.architecture.playground.feature.map.MapScreen
 @AndroidEntryPoint
 class MapActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) { // TODO Implement Splash screen API + user data fetching
         super.onCreate(savedInstanceState)
 
         setContent {

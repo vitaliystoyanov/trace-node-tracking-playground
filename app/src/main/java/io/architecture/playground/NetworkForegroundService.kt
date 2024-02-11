@@ -10,11 +10,14 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.architecture.playground.domain.ObserveAndStoreTracesUseCase
+import io.architecture.playground.core.pool.PoolManager
 import io.architecture.playground.domain.ObserveAndStoreRoutesUseCase
+import io.architecture.playground.domain.ObserveAndStoreTracesUseCase
 import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
@@ -30,13 +33,18 @@ enum class ServiceState {
 }
 
 @AndroidEntryPoint
-class NetworkForegroundService : LifecycleService() { // TODO Extract notifications operations to Notifier class
+class NetworkForegroundService :
+    LifecycleService() {   // TODO Extract notifications operations to Notifier class
+
 
     @Inject
     lateinit var observeAndStoreTraces: ObserveAndStoreTracesUseCase
 
     @Inject
     lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
+
+    @Inject
+    lateinit var poolManager: PoolManager
     private var supervisorJob = SupervisorJob(parent = null)
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -101,8 +109,15 @@ class NetworkForegroundService : LifecycleService() { // TODO Extract notificati
             }
 
         val serviceJob = lifecycleScope.launch {
-            launch { observeAndStoreTraces() }
-            observeAndStoreRoutes()
+            poolManager.initialize()
+            while (!poolManager.isInitialized) {
+                delay(500)
+            }
+            Log.d("POOL_OBJECTS", "startService: ")
+            launch {
+                launch { observeAndStoreTraces() }
+                observeAndStoreRoutes()
+            }
         }
         supervisorJob[serviceJob.key]
         supervisorJob.cancel()
@@ -115,7 +130,16 @@ class NetworkForegroundService : LifecycleService() { // TODO Extract notificati
                     it.release()
                 }
             }
-            stopForeground(true)
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                }
+
+                else -> {
+                    @Suppress("DEPRECATION")
+                    stopForeground(true)
+                }
+            }
             stopSelf()
         } catch (e: Exception) {
             Log.d("SERVICE", "Service stopped without being started: ${e.message}")
@@ -146,11 +170,11 @@ class NetworkForegroundService : LifecycleService() { // TODO Extract notificati
                 PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
             }
 
-        val builder: Notification.Builder =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(
+        val builder: NotificationCompat.Builder =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) NotificationCompat.Builder(
                 this,
                 notificationChannelId
-            ) else Notification.Builder(this)
+            ) else NotificationCompat.Builder(this, notificationChannelId)
 
         return builder
             .setContentTitle("Network Service")
@@ -158,7 +182,7 @@ class NetworkForegroundService : LifecycleService() { // TODO Extract notificati
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker("Websocket connection")
-            .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
+            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
             .build()
     }
 }

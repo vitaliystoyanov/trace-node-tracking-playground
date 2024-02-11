@@ -54,10 +54,11 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.androidx.activityCompose)
     implementation(libs.googleMaterialDesign)
+    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.compose.uiTooling)
     implementation(libs.androidx.runtime.tracing)
-
+    implementation(libs.lifecycle.android)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -93,10 +94,13 @@ dependencies {
 
     // scarlet
     implementation(libs.scarlet)
-    implementation(libs.lifecycle.android)
     implementation(libs.websocket.okhttp)
     implementation(libs.message.adapter.gson)
     implementation(libs.stream.adapter.coroutines)
+
+    // Moshi
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.moshi.kotlin.codegen)
 
     // okhttp
     implementation(libs.okhttp)

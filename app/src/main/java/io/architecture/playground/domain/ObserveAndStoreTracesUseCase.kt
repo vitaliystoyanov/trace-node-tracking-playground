@@ -14,7 +14,7 @@ class ObserveAndStoreTracesUseCase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend operator fun invoke() = withContext(ioDispatcher) { // TODO Dispatcher is correct?
+    suspend operator fun invoke() = withContext(ioDispatcher) {
         tracesRepository.observeAndStore()
             .catch { error -> Log.d("SERVICE", "Error - $error") }
             .collect()

@@ -3,7 +3,6 @@ package io.architecture.playground.ext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
@@ -26,7 +25,11 @@ fun <T> Flow<T>.chunked(chunkSize: Int): Flow<List<T>> {
     }
 }
 
-fun <T> Flow<T>.chunkedSetBy(maxSize: Int, interval: Duration, predicate: (T) -> String) = // TODO Look in details
+inline fun <T> Flow<T>.chunkedSetBy(
+    maxSize: Int,
+    interval: Duration,
+    crossinline predicate: (T) -> String
+) = // TODO Look in details. Do you need chunking?
     channelFlow {
 
         val buffer = mutableSetOf<T>()
@@ -37,17 +40,14 @@ fun <T> Flow<T>.chunkedSetBy(maxSize: Int, interval: Duration, predicate: (T) ->
             flushJob?.cancelAndJoin()
             val alreadyBuffered = buffer.find { predicate(it) == predicate(value) }
             if (alreadyBuffered == null) buffer.add(value)
-//            buffer.add(value) // TODO
 
             if (buffer.size >= maxSize) {
-                ensureActive()
                 send(buffer.toSet())
                 buffer.clear()
             } else {
                 flushJob = launch {
                     delay(interval)
                     if (buffer.isNotEmpty()) {
-                        ensureActive()
                         send(buffer.toSet())
                         buffer.clear()
                     }

@@ -3,22 +3,27 @@ package io.architecture.playground.data.local.convertors
 import androidx.room.TypeConverter
 import io.architecture.playground.data.local.model.CoordinateEntity
 
+private const val COORDINATE_DELIMITER = ","
+private const val COORDINATE_TERMINAL = ";"
+
 class ListCoordinatesTypeConvertor {
     @TypeConverter
     fun fromArrayListOfCoordinate(list: List<CoordinateEntity>?): String =
         list
-            ?.map { it.lat.toString() + "," + it.lon.toString() }
-            ?.joinToString(separator = ";") { it } ?: ""
+            ?.asSequence()
+            ?.map { it.lat.toString() + COORDINATE_DELIMITER + it.lon.toString() }
+            ?.joinToString(COORDINATE_TERMINAL) { it } ?: ""
 
     @TypeConverter
     fun toArrayListOfCoordinate(string: String): List<CoordinateEntity>? =
         string
             .split(";")
+            .asSequence()
             .map {
                 CoordinateEntity(
-                    it.split(",")[1].toDouble(),
-                    it.split(",")[0].toDouble()
+                    it.split(COORDINATE_DELIMITER)[1].toDouble(),
+                    it.split(COORDINATE_DELIMITER)[0].toDouble()
                 )
             }
-            .toList().also { ArrayList(it) }
+            .toList()
 }

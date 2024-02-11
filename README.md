@@ -4,6 +4,9 @@ This is to demonstrate modern Android architecture, decomposition of UI, domain,
 
 <img src="/docs/demo.gif" width="520">
 
+With loaded node routes:
+<img src="/docs/demo1.gif" width="520">
+
 ## Tech stack
 
 Nothing special :)
@@ -25,6 +28,7 @@ Nothing special :)
 * Adds style layers to MapBox at runtime
 * Supports retrieving traces in background
 * Supports simple in-memory cache for traces 
+* TBR
 
 ## Design layered architecture
 * The single source of truth principle: its database layer*
@@ -35,33 +39,11 @@ Nothing special :)
 * A single-activity application
 * Follows Unidirectional Data Flow (UDF) principles
 * The data layer exposes application data using a repository
+* TBR
 
 ## Streaming WebSocket GPS trace nodes with Glitch
 
-Simple Node.js back-end produces GPS trace nodes from a raw file every 250-1000 milliseconds (randomly). On web socket connection starts to send the raw file line-by-line.
-
-
-Here is a sample trace node:
-```
-{
-   "ept":0.001,
-   "eps":0.1,
-   "epv":1,
-   "lon":4.864389408103556,
-   "time":"2015-09-24T11:22:18.147Z",
-   "epd":0.1,
-   "epx":1,
-   "speed":9.367439184887354,
-   "alt":0,
-   "epy":1,
-   "track":332.49117875064536,
-   "class":"fbb17080-bfc0-11ee-bdfe-a58c0c9e65ee",
-   "lat":52.16027760433122,
-   "mode":3
-}
-```
-
-'class' field is UIID per trace node
+Simple Node.js back-end produces GPS trace node movements.
 
 
 [Code project is publicly available on Glitch.com](https://glitch.com/edit/#!/websockets-diver)

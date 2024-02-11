@@ -2,7 +2,7 @@ package io.architecture.playground.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-
+// Example of payload
 //    "l": 30.52323011454044,
 //    "lt": 42.725705657669245,
 //    "s": 13,
@@ -13,12 +13,12 @@ import com.google.gson.annotations.SerializedName
 //    "m": 1
 
 data class NetworkTrace(
-    @SerializedName("l")     var lon      : Double   = 0.0,
-    @SerializedName("lt")    var lat      : Double   = 0.0,
-    @SerializedName("s")   var speed      : Int      = 0,
-    @SerializedName("az") var azimuth     : Double   = 0.0,
-    @SerializedName("a")     var alt      : Double   = 0.0,
-    @SerializedName("t")    var time      : Long     = 0,
-    @SerializedName("n")  var nodeId      : String   = "",
-    @SerializedName("m")    var mode      : Int      = 0
+    @SerializedName("l") var lon: Double = 0.0,
+    @SerializedName("lt") var lat: Double = 0.0,
+    @SerializedName("s") var speed: Int = 0,
+    @SerializedName("az") var azimuth: Double = 0.0,
+    @SerializedName("a") var alt: Double = 0.0,
+    @SerializedName("t") var time: Long = 0,
+    @SerializedName("n") var nodeId: String = "",
+    @SerializedName("m") var mode: Int = 0
 )
