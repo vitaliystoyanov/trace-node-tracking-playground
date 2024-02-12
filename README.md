@@ -11,7 +11,7 @@ Some considerations:
 
 <img src="/docs/demo3.gif" width="520">
 
-With loaded node routes:\n
+
 <img src="/docs/demo1.gif" width="520">
 
 ## Tech stack
