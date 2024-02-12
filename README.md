@@ -1,10 +1,17 @@
 # GPS trace node tracking playground application ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
-This is to demonstrate modern Android architecture, decomposition of UI, domain, data layers, and rendering GeoJSON source at runtime.
+PoC of design implementation for processing huge GPS node trace data in effective manner.
 
-<img src="/docs/demo0.gif" width="520">
+The application processes GPS node trace data using the Scarlet websocket client, deserializes it using Gson and writes the data to a local Room database for further data rendering based on Jetpack Compose and MapBox SDK built-in capabilities.
+On the other side, the Node.js backend generates sample data using the turf.js library. For each node, the route, direction and speed are generated at runtime.
 
-With loaded node routes:
+Some considerations:
+* The application processes 10 thousand websocket messages and then renders efficiently. The websocket message format is a string, but it is better to implement a binary message format. These nodes are dynamic moving, which is CPU and GPU-intensive to render and process highly frequently updated node movements. (However, there is a slight stuttering in UI rendering frames due to MapBox rendering on the native C++ side). All buffers have been disabled in the MapBox configuration.
+* At each layer of the architecture: db entity, external and network models have mappers for each other. Used object pool design pattern to avoid intensive allocation/deallocation of Java/Kotlin objects.
+
+<img src="/docs/demo3.gif" width="520">
+
+With loaded node routes:\n
 <img src="/docs/demo1.gif" width="520">
 
 ## Tech stack
@@ -12,7 +19,7 @@ With loaded node routes:
 Nothing special :)
 
 * Jetpack Compose
-* Kotlin Flows API
+* Kotlin Channels & Flows APIs
 * [MapBox SDK for Android](https://docs.mapbox.com/android/maps/guides/)
 * [Mapbox Maps Compose Extension](https://github.com/mapbox/mapbox-maps-android/tree/extension-compose-v0.1.0/extension-compose)
 * [Scarlet: A Retrofit inspired WebSocket client](https://github.com/Tinder/Scarlet)
@@ -22,13 +29,11 @@ Nothing special :)
 * [Hilt](https://developer.android.com/training/dependency-injection/hilt-jetpack)
 
 ## Functionality
-* Opens WebSocket connection on app launch
-* Stores trace nodes to Room database
-* Reactive rendering GeoJSON source and a real-time trace node. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
-* Adds style layers to MapBox at runtime
-* Supports retrieving traces in background
-* Supports simple in-memory cache for traces 
-* TBR
+* Supports websocket connections in background
+* Stores trace nodes to in-memory Room database
+* Reactive rendering GeoJSON features from in-memory GeoJSON source. A GeoJSON source is a collection of one or more geographic features, which may be points, lines and so on.
+* Data-driven map layer styling. Mapbox’s data-driven styling features allow to use attributes in the data to style maps. The app can style map features automatically based on their individual attributes.
+* Allocates memory for processing node traces at runtime using Pool Object manager
 
 ## Design layered architecture
 * The single source of truth principle: its database layer*
@@ -53,7 +58,7 @@ Ready to use WebSocket endpoint:
 wss://websockets-diver.glitch.me
 ```
 
-## Improvements
+## Goals
 
-* Paging for Room
-* MemCache for traces
+To be a part of ... you know :)
+

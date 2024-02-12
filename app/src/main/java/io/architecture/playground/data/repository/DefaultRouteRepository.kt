@@ -20,7 +20,7 @@ class DefaultRouteRepository @Inject constructor(
     private val localTraceRouteDataSource: LocalDataSource,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : DefaultStreamConnectionRepository(networkDataSource), RouteRepository {
+) : RouteRepository {
 
     override suspend fun add(route: Route) = withContext(ioDispatcher) {
         localTraceRouteDataSource.updateOrCreate(route.toLocal())

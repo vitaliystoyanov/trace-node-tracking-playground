@@ -4,9 +4,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.architecture.playground.data.repository.DefaultConnectionStateRepository
 import io.architecture.playground.data.repository.DefaultNodeRepository
 import io.architecture.playground.data.repository.DefaultRouteRepository
 import io.architecture.playground.data.repository.DefaultTraceRepository
+import io.architecture.playground.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.data.repository.interfaces.TraceRepository
@@ -27,5 +29,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsRouteRepository(repository: DefaultRouteRepository): RouteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsConnectionStateRepository(repository: DefaultConnectionStateRepository): ConnectionStateRepository
 
 }

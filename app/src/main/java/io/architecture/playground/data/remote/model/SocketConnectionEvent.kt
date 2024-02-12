@@ -7,6 +7,6 @@ enum class ConnectionEvent {
     CLOSED,
     CLOSING,
     FAILED,
-    MESSAGE_RECEIVED,
+    MESSAGE_RECEIVED
 }
 

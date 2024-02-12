@@ -11,7 +11,7 @@ data class Trace(
     var speed: Int = 0,
     var azimuth: Double = 0.0,
     var alt: Double = 0.0,
-    var time: Date,
+    var sentAtTime: Date,
 
     var formattedDatetime: String? = "",
     var direction: String? = ""
@@ -26,7 +26,7 @@ data class Trace(
         speed = 0
         azimuth = 0.0
         alt = 0.0
-        time = Date()
+        sentAtTime = Date()
 
         formattedDatetime = ""
         direction = ""

@@ -51,6 +51,13 @@ websocketOkhttpVersion = "0.1.12"
 streamAdapterCoroutinesVersion = "0.1.12"
 material3Version = "1.2.0-rc01"
 accompanistSystemuicontrollerVersion = "0.27.0"
+agp = "8.2.2"
+androidx-benchmark = "1.1.1"
+runner = "1.5.2"
+junit = "1.1.5"
+junit-junit = "4.13.2"
+benchmark-junit4 = "1.2.3"
+kotlin = "1.9.22"
 
 [libraries]
 
@@ -101,8 +108,15 @@ scarlet = { module = "com.tinder.scarlet:scarlet", version.ref = "scarletVersion
 websocket-okhttp = { module = "com.tinder.scarlet:websocket-okhttp", version.ref = "websocketOkhttpVersion" }
 stream-adapter-coroutines = { module = "com.tinder.scarlet:stream-adapter-coroutines", version.ref = "streamAdapterCoroutinesVersion" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
+runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
+benchmark-junit4 = { group = "androidx.benchmark", name = "benchmark-junit4", version.ref = "benchmark-junit4" }
 
 
 [bundles]
 
 [plugins]
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchmark" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

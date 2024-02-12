@@ -5,7 +5,7 @@ import io.architecture.playground.core.pool.PoolMember
 data class Node(
     var id: String,
     var mode: NodeMode,
-    var lastTraceTimestamp: Long,
+    var sentTime: Long,
 ) : PoolMember {
     constructor(id: String, mode: Int, lastTraceTimestamp: Long) : this(
         id,
@@ -16,12 +16,9 @@ data class Node(
     override fun finalize() = run {
         id = ""
         mode = NodeMode.UNKNOWN
-        lastTraceTimestamp = -1
+        sentTime = -1
     }
 }
-
-//    override fun createEmpty(): Node = Node("", NodeMode.UNKNOWN, -1)
-
 
 enum class NodeMode(var value: Int) {
     ACTIVE(1),

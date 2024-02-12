@@ -69,7 +69,7 @@ fun NodeBottomSheetContent(
             },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("Last trace timestamp: ")
+                    append("Sent at: ")
                 }
                 append(entry.value.formattedDatetime)
             },

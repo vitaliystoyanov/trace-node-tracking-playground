@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.playground.core.pool.PoolManager
-import io.architecture.playground.data.remote.model.ConnectionEvent
+import io.architecture.playground.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.di.DefaultDispatcher
-import io.architecture.playground.domain.Connection
-import io.architecture.playground.domain.ConnectionState
 import io.architecture.playground.domain.GetAllNodeWithTraceUseCase
-import io.architecture.playground.domain.GetCompositeConnectionStateUseCase
+import io.architecture.playground.model.Connection
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
@@ -36,34 +34,31 @@ data class RouteUiState(
 )
 
 data class ConnectionUiState(
-    val all: Map<Int, ConnectionState>,
+    val all: Map<Int, Connection>,
 )
+
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
     nodeRepository: NodeRepository,
     private val routeRepository: RouteRepository,
     getAllNodeWithTrace: GetAllNodeWithTraceUseCase,
-    connectionState: GetCompositeConnectionStateUseCase,
+    connectionStateRepository: ConnectionStateRepository,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     private val poolManager: PoolManager
 ) : ViewModel() {
 
-    private var _displayRoute = MutableStateFlow<Route?>(null)
-    private var _nodeCounter = nodeRepository.observeCount()
+    private val _displayRoute = MutableStateFlow<Route?>(null)
+    private val _nodeCounter = nodeRepository.observeCount()
     private val _mapNodeTrace = MutableStateFlow<Map<Node, Trace>?>(null)
 
-    val connectionStateUi: StateFlow<ConnectionUiState> = connectionState()
-        .map { state -> ConnectionUiState(state) }
+
+    val connectionState = connectionStateRepository.connectionStateShared
+        .map { ConnectionUiState(it) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ConnectionUiState(
-                mapOf(
-                    Connection.ROUTE_SERVICE_CONNECTION to ConnectionEvent.UNDEFINED,
-                    Connection.ROUTE_SERVICE_CONNECTION to ConnectionEvent.UNDEFINED
-                )
-            )
+            initialValue = ConnectionUiState(emptyMap())
         )
 
     val uiState: StateFlow<RouteUiState> =
@@ -93,7 +88,7 @@ class MapViewModel @Inject constructor(
             )
         )
 
-    fun loadRoute(nodeId: String) = viewModelScope.launch {
+    fun loadRoute(nodeId: String) = viewModelScope.launch(defaultDispatcher) {
         _displayRoute.update { routeRepository.getRouteBy(nodeId) }
     }
 

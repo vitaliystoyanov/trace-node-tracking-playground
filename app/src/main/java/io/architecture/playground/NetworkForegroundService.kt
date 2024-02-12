@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.core.pool.PoolManager
+import io.architecture.playground.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.playground.domain.ObserveAndStoreRoutesUseCase
 import io.architecture.playground.domain.ObserveAndStoreTracesUseCase
 import kotlinx.coroutines.*
@@ -36,12 +37,14 @@ enum class ServiceState {
 class NetworkForegroundService :
     LifecycleService() {   // TODO Extract notifications operations to Notifier class
 
-
     @Inject
     lateinit var observeAndStoreTraces: ObserveAndStoreTracesUseCase
 
     @Inject
     lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
+
+    @Inject
+    lateinit var connectionStateRepository: ConnectionStateRepository
 
     @Inject
     lateinit var poolManager: PoolManager
@@ -113,7 +116,6 @@ class NetworkForegroundService :
             while (!poolManager.isInitialized) {
                 delay(500)
             }
-            Log.d("POOL_OBJECTS", "startService: ")
             launch {
                 launch { observeAndStoreTraces() }
                 observeAndStoreRoutes()

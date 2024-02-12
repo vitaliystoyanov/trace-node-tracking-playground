@@ -17,6 +17,7 @@ import io.architecture.playground.model.Trace
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -30,18 +31,19 @@ class DefaultTraceRepository @Inject constructor(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     poolHolder: PoolManager
-) : DefaultStreamConnectionRepository(networkDataSource), TraceRepository {
+) : TraceRepository {
 
     private val nodePool = poolHolder.getPoolByMember<Node>()
     private val traceEntitiesPool = poolHolder.getPoolByMember<TraceEntity>()
 
     override fun observeAndStore(): Flow<Trace> = networkDataSource.streamTraces()
+        .consumeAsFlow()
         .onEach { trace ->
             val localTraceEntity = traceEntitiesPool.acquire()!!
             val nodePooled = nodePool.acquire()!!.apply {// TODO Move to external mapping
                 id = trace.nodeId
                 mode = NodeMode.valueOf(trace.mode)
-                lastTraceTimestamp = trace.time
+                sentTime = trace.sentAtTime
             }
 
             localDataSource.updateOrCreate(trace.assignProperties(localTraceEntity, trace))

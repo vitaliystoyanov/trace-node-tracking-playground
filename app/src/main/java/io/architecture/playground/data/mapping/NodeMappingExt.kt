@@ -9,13 +9,13 @@ import io.architecture.playground.model.NodeMode
 fun Node.toLocal() = NodeEntity(
     id = id,
     mode = mode.value,
-    lastTraceTimestamp = lastTraceTimestamp
+    lastTraceTimestamp = sentTime
 )
 
 fun NodeEntity.toExternal() = Node(
     id = id,
     mode = NodeMode.valueOf(mode),
-    lastTraceTimestamp = lastTraceTimestamp
+    sentTime = lastTraceTimestamp
 )
 
 fun NodeWithLastTraceEntity.toExternal(): CompositeNodeTrace = CompositeNodeTrace(
@@ -43,5 +43,5 @@ fun assignProperties(nodePooled: NodeEntity, source: Node): NodeEntity = nodePoo
 fun assignProperties(nodePooled: Node, source: NodeEntity): Node = nodePooled.apply {
     id = source.id
     mode = NodeMode.valueOf(source.mode)
-    lastTraceTimestamp = source.lastTraceTimestamp
+    sentTime = source.lastTraceTimestamp
 }

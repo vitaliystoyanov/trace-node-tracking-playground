@@ -26,7 +26,7 @@ class ObserveChunkedNodesUseCase @Inject constructor(
             .flatMapConcat { it.asFlow() }
             .distinctUntilChangedBy { it.node.id }
             .onEach {
-                it.trace.formattedDatetime = formatDate(it.trace.time)
+                it.trace.formattedDatetime = formatDate(it.trace.sentAtTime)
                 it.trace.direction = convertAzimuthToDirection(it.trace.azimuth)
             }
             .flowOn(defaultDispatcher)

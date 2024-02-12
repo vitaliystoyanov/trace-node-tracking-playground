@@ -49,7 +49,7 @@ class DefaultNodeRepository @Inject constructor(
                 nodePooled.apply {
                     id = it.node.id
                     mode = NodeMode.valueOf(it.node.mode)
-                    lastTraceTimestamp = it.trace.timestamp.time
+                    sentTime = it.trace.sentAtTime.time
                 }
                 tracePooled.apply {
                     id = it.trace.id
@@ -59,7 +59,7 @@ class DefaultNodeRepository @Inject constructor(
                     speed = it.trace.speed
                     azimuth = it.trace.azimuth
                     alt = it.trace.alt
-                    time = it.trace.timestamp
+                    sentAtTime = it.trace.sentAtTime
                 }
 
                 nodePooled to tracePooled

@@ -20,7 +20,7 @@ data class TraceEntity(
     var speed: Int,
     var azimuth: Double,
     var alt: Double,
-    var timestamp: Date
+    var sentAtTime: Date
 ) : PoolMember {
 
     override fun finalize() = run {
@@ -31,6 +31,6 @@ data class TraceEntity(
         speed = 0
         azimuth = 0.0
         alt = 0.0
-        timestamp = Date(0)
+        sentAtTime = Date(0)
     }
 }

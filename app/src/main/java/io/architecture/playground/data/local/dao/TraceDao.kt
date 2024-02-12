@@ -27,7 +27,7 @@ interface TraceDao {
 
     @Query(
         """
-            INSERT INTO traces (node_id, lon, lat, speed, azimuth, alt, timestamp) 
+            INSERT INTO traces (node_id, lon, lat, speed, azimuth, alt, sentAtTime) 
             VALUES(:node_id, :lon, :lat, :speed, :azimuth, :alt, :time)
     """
     )

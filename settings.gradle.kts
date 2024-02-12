@@ -26,4 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Websocket Realtime Map Playground"
 include(":app")
- 
+include(":microbenchmark")

@@ -13,13 +13,16 @@ fun WebSocket.Event.toExternal(): ConnectionEvent = when (this) {
     is WebSocket.Event.OnConnectionClosing -> ConnectionEvent.CLOSING
     is WebSocket.Event.OnConnectionFailed -> ConnectionEvent.FAILED
     is WebSocket.Event.OnMessageReceived -> ConnectionEvent.MESSAGE_RECEIVED
+    else -> {
+        ConnectionEvent.UNDEFINED
+    }
 }
 
 fun Trace.toLocal() = TraceEntity(
     id = id,
     nodeId = nodeId,
     lon = lon,
-    timestamp = time,
+    sentAtTime = sentAtTime,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
@@ -30,7 +33,7 @@ fun TraceEntity.toExternal() = Trace(
     id = id,
     nodeId = nodeId,
     lon = lon,
-    time = timestamp,
+    sentAtTime = sentAtTime,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
@@ -41,7 +44,7 @@ fun NetworkTrace.toLocal() = TraceEntity(
     id = 0,
     nodeId = nodeId,
     lon = lon,
-    timestamp = Date(time),
+    sentAtTime = Date(sentAtTime),
     speed = speed,
     azimuth = azimuth,
     alt = alt,
@@ -51,7 +54,7 @@ fun NetworkTrace.toLocal() = TraceEntity(
 fun TraceEntity.toNetwork() = NetworkTrace(
     nodeId = nodeId,
     lon = lon,
-    time = timestamp.time,
+    sentAtTime = sentAtTime.time,
     speed = speed,
     azimuth = azimuth,
     alt = alt,
@@ -86,7 +89,7 @@ fun TraceEntity.assignProperties(tracePooled: Trace, source: TraceEntity): Trace
         id = source.id
         nodeId = source.nodeId
         lon = source.lon
-        time = source.timestamp
+        sentAtTime = source.sentAtTime
         speed = source.speed
         azimuth = source.azimuth
         alt = source.alt
@@ -98,7 +101,7 @@ fun Trace.assignProperties(tracePooled: TraceEntity, source: Trace): TraceEntity
         id = source.id
         nodeId = source.nodeId
         lon = source.lon
-        timestamp = source.time
+        sentAtTime = source.sentAtTime
         speed = source.speed
         azimuth = source.azimuth
         alt = source.alt
@@ -113,7 +116,7 @@ fun NetworkTrace.assignProperties(
         id = 0
         nodeId = source.nodeId
         lon = source.lon
-        timestamp = Date(source.time)
+        sentAtTime = Date(source.sentAtTime)
         speed = source.speed
         azimuth = source.azimuth
         alt = source.alt

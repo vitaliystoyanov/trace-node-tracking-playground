@@ -42,6 +42,8 @@ import io.architecture.playground.feature.map.MapBoxParams.ZOOM
 import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.time.measureTime
 
 
@@ -58,7 +60,7 @@ fun MapScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val nodesState by viewModel.nodesUiState.collectAsStateWithLifecycle()
-    val connectionState by viewModel.connectionStateUi.collectAsStateWithLifecycle()
+    val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNodeId by remember { mutableStateOf("") }

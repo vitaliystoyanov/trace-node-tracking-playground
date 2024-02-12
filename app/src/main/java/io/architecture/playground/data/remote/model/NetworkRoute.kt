@@ -3,6 +3,7 @@ package io.architecture.playground.data.remote.model
 import com.google.gson.annotations.SerializedName
 
 data class NetworkRoute(
+    @SerializedName("type") var type: String = "",
     @SerializedName("n") var nodeId: String,
     @SerializedName("r") var route: Array<DoubleArray>?
 ) {

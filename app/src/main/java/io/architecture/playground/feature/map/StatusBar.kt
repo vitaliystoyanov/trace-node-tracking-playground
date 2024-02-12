@@ -19,13 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.architecture.playground.R
-import io.architecture.playground.domain.Connection
-import io.architecture.playground.domain.ConnectionState
+import io.architecture.playground.model.Connection
+import io.architecture.playground.model.ConnectionState
 
 @Composable
-fun StatusBar(modifier: Modifier, states: Map<Int, ConnectionState>, nodesCount: Int) {
+fun StatusBar(modifier: Modifier, states: Map<Int, Connection>, nodesCount: Int) {
     val systemUiController = rememberSystemUiController()
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
+
+    val connection = states[Connection.TRACE_SERVICE_CONNECTION]
+
     val color by infiniteTransition.animateColor(
         initialValue = colorResource(id = R.color.teal_700),
         targetValue = colorResource(id = R.color.teal_700_dark),
@@ -37,7 +40,7 @@ fun StatusBar(modifier: Modifier, states: Map<Int, ConnectionState>, nodesCount:
     )
 
     val bgColor = colorResource(
-        when (states[Connection.TRACE_SERVICE_CONNECTION]) {
+        when (connection?.state) {
             ConnectionState.UNDEFINED -> R.color.black
             ConnectionState.OPENED -> R.color.teal_700
             ConnectionState.CLOSED -> R.color.teal_red
@@ -50,9 +53,7 @@ fun StatusBar(modifier: Modifier, states: Map<Int, ConnectionState>, nodesCount:
         }
     )
 
-    val colorOnState =
-        if (states[Connection.TRACE_SERVICE_CONNECTION] != ConnectionState.OPENED) bgColor else color
-
+    val colorOnState = if (connection?.state != ConnectionState.OPENED) bgColor else color
     systemUiController.setStatusBarColor(colorOnState)
     Row(
         modifier = modifier
@@ -62,21 +63,26 @@ fun StatusBar(modifier: Modifier, states: Map<Int, ConnectionState>, nodesCount:
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        val stateTraces = when (states[Connection.TRACE_SERVICE_CONNECTION]) {
-            ConnectionState.UNDEFINED -> "connecting..."
-            null -> "Connecting..."
-            ConnectionState.CLOSING -> "closing connection..."
-            ConnectionState.FAILED -> "FAILED! Connecting again..."
-            else -> states[Connection.TRACE_SERVICE_CONNECTION].toString()
-
+        val stateTraces = when (connection?.state) {
+            ConnectionState.OPENED -> "opened"
+            ConnectionState.MESSAGE_RECEIVED -> "active"
+            ConnectionState.CLOSING -> "closing..."
+            ConnectionState.CLOSED -> "closed"
+            ConnectionState.FAILED -> "FAILED!"
+            ConnectionState.UNDEFINED -> "initializing..."
+            null -> "initializing..."
+            else -> {
+                ""
+            }
         }
 
-        val statusText = if (states[Connection.TRACE_SERVICE_CONNECTION] != null)
-            "Nodes: $nodesCount | Connection: $stateTraces" else stateTraces
+        val statusText = if (connection != null)
+            "Nodes: $nodesCount | Connection: $stateTraces | " +
+                    "RTT: ${connection.rtt.value} ms" else stateTraces
         Text(
             text = statusText,
             color = colorResource(id = R.color.white),
-            fontSize = 10.sp,
+            fontSize = 9.sp,
             fontWeight = FontWeight.Bold
         )
     }

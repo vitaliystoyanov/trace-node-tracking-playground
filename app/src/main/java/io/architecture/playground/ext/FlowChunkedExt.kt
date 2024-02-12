@@ -25,11 +25,22 @@ fun <T> Flow<T>.chunked(chunkSize: Int): Flow<List<T>> {
     }
 }
 
+fun <T, R> Flow<T>.chunked(size: Int, transform: suspend (List<T>) -> R): Flow<R> = flow {
+    val cache = ArrayList<T>(size)
+    collect {
+        cache.add(it)
+        if (cache.size == size) {
+            emit(transform(cache))
+            cache.clear()
+        }
+    }
+}
+
 inline fun <T> Flow<T>.chunkedSetBy(
     maxSize: Int,
     interval: Duration,
     crossinline predicate: (T) -> String
-) = // TODO Look in details. Do you need chunking?
+) = // TODO Look up details. Do you need chunking?
     channelFlow {
 
         val buffer = mutableSetOf<T>()

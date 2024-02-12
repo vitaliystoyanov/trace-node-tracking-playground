@@ -13,12 +13,13 @@ import com.google.gson.annotations.SerializedName
 //    "m": 1
 
 data class NetworkTrace(
+    @SerializedName("type") var type: String = "",
     @SerializedName("l") var lon: Double = 0.0,
     @SerializedName("lt") var lat: Double = 0.0,
     @SerializedName("s") var speed: Int = 0,
     @SerializedName("az") var azimuth: Double = 0.0,
     @SerializedName("a") var alt: Double = 0.0,
-    @SerializedName("t") var time: Long = 0,
+    @SerializedName("t") var sentAtTime: Long = 0,
     @SerializedName("n") var nodeId: String = "",
     @SerializedName("m") var mode: Int = 0
 )
