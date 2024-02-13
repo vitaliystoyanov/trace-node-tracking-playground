@@ -23,14 +23,14 @@ class DefaultRouteRepository @Inject constructor(
 ) : RouteRepository {
 
     override suspend fun add(route: Route) = withContext(ioDispatcher) {
-        localTraceRouteDataSource.updateOrCreate(route.toLocal())
+        localTraceRouteDataSource.createOrUpdate(route.toLocal())
     }
 
-    override fun observeAndStoreRoutes() =
+    override fun streamAndPersist() =
         networkDataSource.streamRoutes()
             .map { it.toExternal() }
             .flowOn(defaultDispatcher)
-            .onEach { localTraceRouteDataSource.updateOrCreate(it.toLocal()) }
+            .onEach { localTraceRouteDataSource.createOrUpdate(it.toLocal()) }
             .flowOn(ioDispatcher)
 
     override suspend fun getRouteBy(nodeId: String) = withContext(ioDispatcher) {

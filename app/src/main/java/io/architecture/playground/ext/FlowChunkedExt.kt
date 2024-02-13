@@ -1,25 +1,35 @@
 package io.architecture.playground.ext
 
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
+import android.util.Log
+import io.architecture.playground.model.Trace
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.takeWhile
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 fun <T> Flow<T>.chunked(chunkSize: Int): Flow<List<T>> {
     val buffer = mutableListOf<T>()
+
     return flow {
         this@chunked.collect {
             buffer.add(it)
             if (buffer.size == chunkSize) {
+                Log.d("REPOSITORY_DEBUG", "chunked: chunkSize - $chunkSize")
                 emit(buffer.toList())
                 buffer.clear()
             }
         }
         if (buffer.isNotEmpty()) {
+            Log.d("REPOSITORY_DEBUG", "chunked: chunkSize - $chunkSize")
             emit(buffer.toList())
         }
     }
@@ -36,40 +46,67 @@ fun <T, R> Flow<T>.chunked(size: Int, transform: suspend (List<T>) -> R): Flow<R
     }
 }
 
-inline fun <T> Flow<T>.chunkedSetBy(
-    maxSize: Int,
-    interval: Duration,
-    crossinline predicate: (T) -> String
-) = // TODO Look up details. Do you need chunking?
-    channelFlow {
+private object Done
+private object TimerExpired
 
-        val buffer = mutableSetOf<T>()
-        var flushJob: Job? = null
+@OptIn(ExperimentalCoroutinesApi::class)
+fun <T> Flow<T>.chunked(
+    sizeLimit: Int,
+    timeLimit: Duration,
+): Flow<List<T>> {
+    require(sizeLimit > 0) { "'sizeLimit' must be positive: $sizeLimit" }
+    require(timeLimit > 0.milliseconds) { "'timeLimit' must be positive: $timeLimit" }
 
-        collect { value ->
+    val upstream: Flow<Any?> = this
 
-            flushJob?.cancelAndJoin()
-            val alreadyBuffered = buffer.find { predicate(it) == predicate(value) }
-            if (alreadyBuffered == null) buffer.add(value)
+    return flow {
+        val timerEnabled = MutableSharedFlow<Boolean?>()
+        var queue = mutableListOf<T>()
 
-            if (buffer.size >= maxSize) {
-                send(buffer.toSet())
-                buffer.clear()
-            } else {
-                flushJob = launch {
-                    delay(interval)
-                    if (buffer.isNotEmpty()) {
-                        send(buffer.toSet())
-                        buffer.clear()
+        merge(
+            upstream.onCompletion { emit(Done) },
+            timerEnabled
+                .takeWhile { it != null }
+                .flatMapLatest { enabled ->
+                    if (enabled!!)
+                        flow {
+                            delay(timeLimit)
+                            emit(TimerExpired)
+                        }
+                    else
+                        emptyFlow()
+                }
+        )
+            .collect { element ->
+                when (element) {
+                    Done -> {
+                        if (queue.isNotEmpty()) {
+                            emit(queue)
+                            queue = mutableListOf()
+                        }
+
+                        timerEnabled.emit(null)
+                    }
+
+                    TimerExpired -> {
+                        if (queue.isNotEmpty()) {
+                            emit(queue)
+                            queue = mutableListOf()
+                        }
+                    }
+
+                    else -> {
+                        @Suppress("UNCHECKED_CAST")
+                        queue.add(element as T)
+
+                        if (queue.size >= sizeLimit) {
+                            emit(queue)
+                            queue = mutableListOf()
+                            timerEnabled.emit(false)
+                        } else if (queue.size == 1)
+                            timerEnabled.emit(true)
                     }
                 }
             }
-        }
-
-        flushJob?.cancelAndJoin()
-
-        if (buffer.isNotEmpty()) {
-            send(buffer.toSet())
-            buffer.clear()
-        }
     }
+}

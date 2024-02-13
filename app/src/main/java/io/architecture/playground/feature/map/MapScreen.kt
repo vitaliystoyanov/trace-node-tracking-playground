@@ -39,11 +39,10 @@ import com.mapbox.maps.renderer.OnFpsChangedListener
 import io.architecture.playground.feature.map.MapBoxParams.CAMERA_POINT
 import io.architecture.playground.feature.map.MapBoxParams.PITCH
 import io.architecture.playground.feature.map.MapBoxParams.ZOOM
-import io.architecture.playground.model.Node
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.measureTime
 
 
@@ -58,9 +57,10 @@ object MapBoxParams {
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val nodesState by viewModel.nodesUiState.collectAsStateWithLifecycle()
-    val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
+    val details by viewModel.detailsUiState.collectAsStateWithLifecycle()
+    val traces by viewModel.tracesUiState.collectAsStateWithLifecycle()
+    val nodesCounter by viewModel.nodeCounterUiState.collectAsStateWithLifecycle()
+    val connectionState by viewModel.connectionsUiState.collectAsStateWithLifecycle()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedNodeId by remember { mutableStateOf("") }
@@ -69,23 +69,22 @@ fun MapScreen(
     Scaffold { contentPadding ->
         MapNodesContent(
             contentPadding,
-            nodesState.nodeTraceMap,
-            state.displayRoute,
+            traces,
+            details.route,
             onNodeClick = { nodeId ->
                 selectedNodeId = nodeId
-                viewModel.loadRoute(nodeId)
+                viewModel.loadDetails(nodeId)
                 showBottomSheet = true
-            },
-            onReleaseObjectFromPool = {
-                viewModel.releaseRenderedObjects()
             }
-        )
+        ) {
+
+        }
         StatusBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
-            connectionState.all,
-            nodesState.nodeCount
+            connectionState,
+            nodesCounter
         )
 
         if (showBottomSheet) {
@@ -93,14 +92,11 @@ fun MapScreen(
                 onDismissRequest = {
                     selectedNodeId = ""
                     showBottomSheet = false
+                    viewModel.clearDetails(selectedNodeId)
                 },
                 sheetState = sheetState
             ) {
-                val node =
-                    nodesState.nodeTraceMap.entries.find { it.key.id == selectedNodeId } // TODO UFD
-                node?.let {
-                    NodeBottomSheetContent(node, selectedNodeId)
-                }
+                NodeBottomSheetContent(details, selectedNodeId)
             }
         }
     }
@@ -110,7 +106,7 @@ fun MapScreen(
 @Composable
 fun MapNodesContent(
     padding: PaddingValues,
-    mapOfNodes: Map<Node, Trace>,
+    nodeTraces: Sequence<Trace>,
     displayRoute: Route?,
     onNodeClick: (String) -> Unit,
     onReleaseObjectFromPool: () -> Unit
@@ -133,7 +129,7 @@ fun MapNodesContent(
         Modifier.padding(padding),
         mapInitOptionsFactory = { context -> MapInitOptions(context) },
         mapViewportState = mapViewportState,
-        compassSettings = CompassSettings { enabled = true; rotation = 0f; clickable = true },
+        compassSettings = CompassSettings { enabled = false; rotation = 0f; clickable = true },
         scaleBarSettings = scaleBarSetting,
         gesturesSettings = gesturesSettings,
     ) {
@@ -161,27 +157,13 @@ fun MapNodesContent(
             }
         }
 
-        MapEffect(mapOfNodes) { view ->
+        MapEffect(nodeTraces) { view ->
             val source = view.mapboxMap.getSource(NODE_DATA_SOURCE_ID) as? GeoJsonSource
             val features = mutableListOf<Feature>()
 
-
-            val timeGeneration = measureTime {
-                mapOfNodes.entries
-                    .asSequence()
-                    .map { toFeaturesFrom(it) }
-                    .toCollection(features)
-                    .also { list ->
-                        displayRoute?.let {
-                            list.add(toLineStringFeature(displayRoute))
-                        }
-                    }
+            withContext(Dispatchers.Default) {
+                generateFeatures(nodeTraces, features, displayRoute)
             }
-            Log.d(
-                "RENDER_DEBUG",
-                "Feature collection time generation - " +
-                        "${timeGeneration.inWholeMilliseconds} ms for [${features.size}] features. "
-            )
             val timeAddToFeatureCollection = measureTime {
                 source?.featureCollection(FeatureCollection.fromFeatures(features))
                 onReleaseObjectFromPool()
@@ -195,6 +177,28 @@ fun MapNodesContent(
     }
 }
 
+private fun generateFeatures(
+    mapOfNodes: Sequence<Trace>,
+    features: MutableList<Feature>,
+    displayRoute: Route?
+) {
+    val timeGeneration = measureTime {
+        mapOfNodes
+            .map { toFeaturesFrom(it) }
+            .toCollection(features)
+            .also { list ->
+                displayRoute?.let {
+                    list.add(toLineStringFeature(displayRoute))
+                }
+            }
+    }
+    Log.d(
+        "RENDER_DEBUG",
+        "Feature collection time generation - " +
+                "${timeGeneration.inWholeMilliseconds} ms for [${features.size}] features. "
+    )
+}
+
 
 private fun toLineStringFeature(displayRoute: Route) = Feature.fromGeometry(
     LineString.fromLngLats(displayRoute.coordinates.map {
@@ -202,24 +206,24 @@ private fun toLineStringFeature(displayRoute: Route) = Feature.fromGeometry(
     })
 )
 
-private fun toFeaturesFrom(entry: Map.Entry<Node, Trace>) =
+private fun toFeaturesFrom(entry: Trace) =
     Feature.fromGeometry(
         Point.fromLngLat(
-            entry.value.lon,
-            entry.value.lat
-        ), null, entry.value.nodeId
+            entry.lon,
+            entry.lat
+        ), null, entry.nodeId
     )
         .apply {
             addStringProperty(
                 TEXT_FIELD_KEY_PROPERTY,
                 String.format(
                     "\n%s: %d°\n%d m/s",
-                    entry.value.direction,
-                    entry.value.azimuth.toInt(),
-                    entry.value.speed
+                    entry.direction,
+                    entry.azimuth.toInt(),
+                    entry.speed
                 )
             )
-            addStringProperty(MODE_KEY_PROPERTY, entry.key.mode.toString())
-            addStringProperty(NODE_ID_KEY_PROPERTY, entry.value.nodeId)
-            addNumberProperty(BEARING_KEY_PROPERTY, entry.value.azimuth)
+            addStringProperty(MODE_KEY_PROPERTY, "entry.mode.toString()")
+            addStringProperty(NODE_ID_KEY_PROPERTY, entry.nodeId)
+            addNumberProperty(BEARING_KEY_PROPERTY, entry.azimuth)
         }

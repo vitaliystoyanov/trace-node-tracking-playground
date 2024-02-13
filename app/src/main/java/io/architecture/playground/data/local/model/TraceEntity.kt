@@ -10,8 +10,6 @@ import java.util.Date
     tableName = "traces"
 )
 data class TraceEntity(
-    @ColumnInfo(name = "trace_id")
-    var id: Long,
     @ColumnInfo(name = "node_id")
     @PrimaryKey
     var nodeId: String,
@@ -24,7 +22,6 @@ data class TraceEntity(
 ) : PoolMember {
 
     override fun finalize() = run {
-        id = 0
         nodeId = ""
         lon = 0.0
         lat = 0.0

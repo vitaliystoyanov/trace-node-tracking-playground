@@ -16,7 +16,6 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.playground.core.pool.PoolManager
-import io.architecture.playground.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.playground.domain.ObserveAndStoreRoutesUseCase
 import io.architecture.playground.domain.ObserveAndStoreTracesUseCase
 import kotlinx.coroutines.*
@@ -42,9 +41,6 @@ class NetworkForegroundService :
 
     @Inject
     lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
-
-    @Inject
-    lateinit var connectionStateRepository: ConnectionStateRepository
 
     @Inject
     lateinit var poolManager: PoolManager

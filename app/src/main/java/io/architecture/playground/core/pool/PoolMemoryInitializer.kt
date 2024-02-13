@@ -18,10 +18,10 @@ class PoolMemoryInitializer @Inject constructor() {
         poolTraceEntities: PoolObjects<TraceEntity>
     ) {
         repeat(100_000) {
-            poolNodes.release(Node("", 0, 0))
-            poolTraces.release(Trace(0, "", 0.0, 0.0, 1, 0.0, 0.0, Date()))
-            poolTraceEntities.release(TraceEntity(0, "", 0.0, 0.0, 1, 0.0, 0.0, Date()))
-            poolNodeEntities.release(NodeEntity("", 0, 0))
+            poolNodes.release(Node("", 0))
+            poolTraces.release(Trace("", 0.0, 0.0, 1, 0.0, 0.0, Date()))
+            poolTraceEntities.release(TraceEntity( "", 0.0, 0.0, 1, 0.0, 0.0, Date()))
+            poolNodeEntities.release(NodeEntity("", 0))
         }
     }
 }

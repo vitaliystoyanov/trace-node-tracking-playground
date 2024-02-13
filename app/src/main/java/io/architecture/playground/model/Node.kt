@@ -4,19 +4,16 @@ import io.architecture.playground.core.pool.PoolMember
 
 data class Node(
     var id: String,
-    var mode: NodeMode,
-    var sentTime: Long,
+    var mode: NodeMode
 ) : PoolMember {
-    constructor(id: String, mode: Int, lastTraceTimestamp: Long) : this(
+    constructor(id: String, mode: Int) : this(
         id,
-        NodeMode.valueOf(mode),
-        lastTraceTimestamp
+        NodeMode.valueOf(mode)
     )
 
     override fun finalize() = run {
         id = ""
         mode = NodeMode.UNKNOWN
-        sentTime = -1
     }
 }
 

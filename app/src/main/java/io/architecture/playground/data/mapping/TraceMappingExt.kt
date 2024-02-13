@@ -19,7 +19,6 @@ fun WebSocket.Event.toExternal(): ConnectionEvent = when (this) {
 }
 
 fun Trace.toLocal() = TraceEntity(
-    id = id,
     nodeId = nodeId,
     lon = lon,
     sentAtTime = sentAtTime,
@@ -30,7 +29,6 @@ fun Trace.toLocal() = TraceEntity(
 )
 
 fun TraceEntity.toExternal() = Trace(
-    id = id,
     nodeId = nodeId,
     lon = lon,
     sentAtTime = sentAtTime,
@@ -41,7 +39,6 @@ fun TraceEntity.toExternal() = Trace(
 )
 
 fun NetworkTrace.toLocal() = TraceEntity(
-    id = 0,
     nodeId = nodeId,
     lon = lon,
     sentAtTime = Date(sentAtTime),
@@ -86,7 +83,6 @@ fun List<NetworkTrace>.toExternal() = map(NetworkTrace::toExternal)
 
 fun TraceEntity.assignProperties(tracePooled: Trace, source: TraceEntity): Trace =
     tracePooled.apply {
-        id = source.id
         nodeId = source.nodeId
         lon = source.lon
         sentAtTime = source.sentAtTime
@@ -98,7 +94,6 @@ fun TraceEntity.assignProperties(tracePooled: Trace, source: TraceEntity): Trace
 
 fun Trace.assignProperties(tracePooled: TraceEntity, source: Trace): TraceEntity =
     tracePooled.apply {
-        id = source.id
         nodeId = source.nodeId
         lon = source.lon
         sentAtTime = source.sentAtTime
@@ -113,7 +108,6 @@ fun NetworkTrace.assignProperties(
     tracePooled: TraceEntity, source: NetworkTrace
 ): TraceEntity =
     tracePooled.apply {
-        id = 0
         nodeId = source.nodeId
         lon = source.lon
         sentAtTime = Date(source.sentAtTime)

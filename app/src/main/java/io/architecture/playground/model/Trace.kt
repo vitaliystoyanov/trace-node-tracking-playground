@@ -4,7 +4,6 @@ import io.architecture.playground.core.pool.PoolMember
 import java.util.Date
 
 data class Trace(
-    var id: Long = 0,
     var nodeId: String = "",
     var lon: Double = 0.0,
     var lat: Double = 0.0,
@@ -19,7 +18,6 @@ data class Trace(
 
 
     override fun finalize() = run {
-        id = 0
         nodeId = ""
         lon = 0.0
         lat = 0.0

@@ -11,12 +11,11 @@ import io.architecture.playground.model.NodeMode
 data class NodeEntity(
     @PrimaryKey var id: String,
     var mode: Int,
-    var lastTraceTimestamp: Long,
 ) : PoolMember {
 
     override fun finalize() = run {
         id = ""
         mode = NodeMode.UNKNOWN.value
-        lastTraceTimestamp = -1
     }
+
 }

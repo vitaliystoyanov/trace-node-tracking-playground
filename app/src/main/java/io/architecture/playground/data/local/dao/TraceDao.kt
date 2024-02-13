@@ -13,7 +13,11 @@ interface TraceDao {
     @Query("SELECT * FROM traces")
     fun observeAll(): Flow<List<TraceEntity>>
 
-    @Query("SELECT * FROM traces WHERE node_id = :nodeId")
+    @Query("""
+        SELECT node_id, lon, lat, sentAtTime, speed, azimuth, alt, MAX(sentAtTime) AS sentAtTime 
+            FROM traces
+        WHERE node_id = :nodeId LIMIT 1
+    """)
     fun observeById(nodeId: String): Flow<TraceEntity>
 
     @Query("SELECT COUNT(node_id) FROM traces")
@@ -27,7 +31,7 @@ interface TraceDao {
 
     @Query(
         """
-            INSERT INTO traces (node_id, lon, lat, speed, azimuth, alt, sentAtTime) 
+        INSERT INTO traces (node_id, lon, lat, speed, azimuth, alt, sentAtTime) 
             VALUES(:node_id, :lon, :lat, :speed, :azimuth, :alt, :time)
     """
     )

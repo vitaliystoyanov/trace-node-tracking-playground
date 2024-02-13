@@ -15,7 +15,7 @@ class ObserveAndStoreTracesUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke() = withContext(ioDispatcher) {
-        tracesRepository.observeAndStore()
+        tracesRepository.streamAndPersist()
             .catch { error -> Log.e("SERVICE", "Error ", error) }
             .collect()
     }

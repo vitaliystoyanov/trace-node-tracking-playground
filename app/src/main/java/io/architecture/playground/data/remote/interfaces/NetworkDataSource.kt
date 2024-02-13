@@ -5,11 +5,12 @@ import io.architecture.playground.data.remote.model.NetworkClientTime
 import io.architecture.playground.data.remote.model.NetworkRoute
 import io.architecture.playground.data.remote.model.NetworkServerTime
 import io.architecture.playground.data.remote.model.NetworkTrace
+import io.architecture.playground.model.Trace
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.Flow
 
 interface NetworkDataSource {
-    fun streamTraces(): ReceiveChannel<NetworkTrace>
+    fun streamTraces(): Flow<Trace>
 
     fun streamRoutes(): Flow<NetworkRoute>
 
@@ -21,4 +22,5 @@ interface NetworkDataSource {
 
     fun streamServerTime(): Flow<NetworkServerTime>
 
+    fun streamTracesAsChannel(): ReceiveChannel<NetworkTrace>
 }

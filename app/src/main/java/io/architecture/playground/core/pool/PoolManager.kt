@@ -13,6 +13,7 @@ import kotlin.reflect.KClass
 
 typealias PoolMap = Map<KClass<out PoolMember>, PoolObjects<out PoolMember>>
 
+@Suppress("UNCHECKED_CAST")
 @Singleton
 class PoolManager @Inject constructor(
     poolNodesFactory: PoolObjects.Factory<Node>,

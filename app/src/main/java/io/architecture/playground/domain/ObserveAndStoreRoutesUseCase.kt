@@ -14,8 +14,11 @@ class ObserveAndStoreRoutesUseCase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
+    // TODO  This pattern makes your app more scalable,
+    // TODO as classes calling suspend functions don't have to worry about what Dispatcher
+    // TODO to use for what type of work. This responsibility lies in the class that does the work
     suspend operator fun invoke() = withContext(ioDispatcher) {
-        routesRepository.observeAndStoreRoutes()
+        routesRepository.streamAndPersist()
             .catch { error -> Log.d("SERVICE", "Error - $error") } // TODO Catching of throwables
             .collect()
     }

@@ -5,10 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import io.architecture.playground.data.local.model.NodeEntity
-import io.architecture.playground.data.local.model.NodeWithLastTraceEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,7 +15,7 @@ interface NodeDao {
     @Query("SELECT * FROM nodes")
     fun observeAll(): Flow<List<NodeEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(node: NodeEntity)
 
     @Update
@@ -29,11 +27,4 @@ interface NodeDao {
     @Delete
     suspend fun delete(node: NodeEntity)
 
-    @Transaction
-    @Query("SELECT * FROM nodes, traces WHERE nodes.id = traces.node_id")
-    fun observeAllWithLastTrace(): Flow<List<NodeWithLastTraceEntity>>
-
-    @Transaction
-    @Query("SELECT * FROM nodes, traces WHERE nodes.id = traces.node_id")
-    suspend fun getAllWithLastTrace(): List<NodeWithLastTraceEntity>
 }

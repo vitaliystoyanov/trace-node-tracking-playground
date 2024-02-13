@@ -16,7 +16,7 @@ open class PoolObjects<T : PoolMember> @AssistedInject constructor(@Assisted pri
     fun getMaxSize() = maxPoolSize
 
     @Synchronized
-    fun acquire(): T? {
+    fun acquire(): T {
         if (pool.size > 0) {
             return pool.pop()
         }
