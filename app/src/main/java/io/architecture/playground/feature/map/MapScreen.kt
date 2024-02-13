@@ -36,9 +36,10 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.scalebar.generated.ScaleBarSettings
 import com.mapbox.maps.renderer.OnFpsChangedListener
-import io.architecture.playground.feature.map.MapBoxParams.CAMERA_POINT
-import io.architecture.playground.feature.map.MapBoxParams.PITCH
-import io.architecture.playground.feature.map.MapBoxParams.ZOOM
+import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_BEARING
+import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_PITCH
+import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_POINT
+import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_ZOOM
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
 import kotlinx.coroutines.Dispatchers
@@ -47,9 +48,10 @@ import kotlin.time.measureTime
 
 
 object MapBoxParams {
-    const val ZOOM = 4.5
-    const val PITCH = 0.0
-    val CAMERA_POINT: Point = Point.fromLngLat(34.0828899, 44.1541579)
+    val CAMERA_INITIAL_POINT: Point = Point.fromLngLat(34.0828899, 44.1541579)
+    const val CAMERA_INITIAL_ZOOM = 4.5
+    const val CAMERA_INITIAL_PITCH = 0.0
+    const val CAMERA_INITIAL_BEARING = 0.0
 }
 
 @Composable
@@ -113,10 +115,14 @@ fun MapNodesContent(
 ) {
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
-            center(CAMERA_POINT)
-            zoom(ZOOM)
-            pitch(PITCH)
+            center(CAMERA_INITIAL_POINT)
+            zoom(CAMERA_INITIAL_ZOOM)
+            pitch(CAMERA_INITIAL_PITCH)
+            bearing(CAMERA_INITIAL_BEARING)
         }
+    }
+    val compassSettings: CompassSettings by remember {
+        mutableStateOf(CompassSettings { enabled = false })
     }
     val scaleBarSetting: ScaleBarSettings by remember {
         mutableStateOf(ScaleBarSettings { enabled = false })
@@ -129,7 +135,7 @@ fun MapNodesContent(
         Modifier.padding(padding),
         mapInitOptionsFactory = { context -> MapInitOptions(context) },
         mapViewportState = mapViewportState,
-        compassSettings = CompassSettings { enabled = false; rotation = 0f; clickable = true },
+        compassSettings = compassSettings,
         scaleBarSettings = scaleBarSetting,
         gesturesSettings = gesturesSettings,
     ) {
@@ -223,7 +229,10 @@ private fun toFeaturesFrom(entry: Trace) =
                     entry.speed
                 )
             )
-            addStringProperty(MODE_KEY_PROPERTY, "entry.mode.toString()") // TODO Not available from Trace class
+            addStringProperty(
+                MODE_KEY_PROPERTY,
+                "entry.mode.toString()"
+            ) // TODO Not available from Trace class
             addStringProperty(NODE_ID_KEY_PROPERTY, entry.nodeId)
             addNumberProperty(BEARING_KEY_PROPERTY, entry.azimuth)
         }
