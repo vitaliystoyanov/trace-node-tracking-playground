@@ -52,10 +52,7 @@ class PoolManager @Inject constructor(
 
     inline fun <reified T : PoolMember> getPoolByMember() = holder[T::class] as PoolObjects<T>
 
-    fun getPools() = holder.values
-
     inline fun <reified T : PoolMember> getPoolBy(classKey: KClass<T>): PoolObjects<T> =
         holder[classKey] as PoolObjects<T>
 
-    internal fun getPoolMap() = holder
 }

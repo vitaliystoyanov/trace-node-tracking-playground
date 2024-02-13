@@ -1,12 +1,9 @@
 package io.architecture.playground.ext
 
-import android.util.Log
-import io.architecture.playground.model.Trace
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -23,13 +20,11 @@ fun <T> Flow<T>.chunked(chunkSize: Int): Flow<List<T>> {
         this@chunked.collect {
             buffer.add(it)
             if (buffer.size == chunkSize) {
-                Log.d("REPOSITORY_DEBUG", "chunked: chunkSize - $chunkSize")
                 emit(buffer.toList())
                 buffer.clear()
             }
         }
         if (buffer.isNotEmpty()) {
-            Log.d("REPOSITORY_DEBUG", "chunked: chunkSize - $chunkSize")
             emit(buffer.toList())
         }
     }

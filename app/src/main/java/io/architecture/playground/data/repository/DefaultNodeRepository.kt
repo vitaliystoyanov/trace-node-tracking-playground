@@ -31,7 +31,6 @@ class DefaultNodeRepository @Inject constructor(
     override fun streamAllNodes(): Flow<List<Node>> =
         localDataSource.observeAllNodes().map { it.toExternal() }
 
-
     override fun streamCount(): Flow<Int> = localDataSource.observeNodeCount()
 
 }

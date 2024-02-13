@@ -54,7 +54,6 @@ open class DefaultTraceRepository @Inject constructor(
     override fun streamTraceBy(nodeId: String): Flow<Trace> = localDataSource.observeTraceBy(nodeId)
         .map { it.toExternal() }
 
-
     // TODO Bulk insertion of items in an SQLite table is always better than inserting each item individually
     // TODO Extract _sharedStreamTraces logic
     override fun streamAndPersist(): Flow<Trace> = sharedStreamTraces

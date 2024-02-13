@@ -13,7 +13,6 @@ class ObserveAndStoreTracesUseCase @Inject constructor(
     private var tracesRepository: TraceRepository,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-
     suspend operator fun invoke() = withContext(ioDispatcher) {
         tracesRepository.streamAndPersist()
             .catch { error -> Log.e("SERVICE", "Error ", error) }

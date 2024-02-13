@@ -223,7 +223,7 @@ private fun toFeaturesFrom(entry: Trace) =
                     entry.speed
                 )
             )
-            addStringProperty(MODE_KEY_PROPERTY, "entry.mode.toString()")
+            addStringProperty(MODE_KEY_PROPERTY, "entry.mode.toString()") // TODO Not available from Trace class
             addStringProperty(NODE_ID_KEY_PROPERTY, entry.nodeId)
             addNumberProperty(BEARING_KEY_PROPERTY, entry.azimuth)
         }

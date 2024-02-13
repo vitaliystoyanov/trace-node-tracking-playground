@@ -53,8 +53,6 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
     * Room can’t know what exactly has changed in the table data,
     * therefore it re-triggers the query defined in the DAO
     *
-    * TODO classes calling suspend functions don't have to worry about what Dispatcher
-    * TODO to use for what type of work. This responsibility lies in the class that does the work.
     *
     * */
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -64,7 +63,7 @@ class DefaultConnectionStateRepository @Inject constructor(
 
     override fun streamRoundTripTime(interval: Duration): Flow<UpstreamRtt> =
         network.streamServerTime()
-            .onStart { sendClientTimeWith(2.seconds) }
+            .onStart { sendClientTimeWith(2.seconds) } // TODO Start on connection
             .onEach { sendClientTimeWith(interval) }
             .map { serverTime -> UpstreamRtt(System.currentTimeMillis() - serverTime.clientSentTime) }
             .catch { error -> Log.e("RTT_NETWORK", "streamRoundTripTime ", error) }

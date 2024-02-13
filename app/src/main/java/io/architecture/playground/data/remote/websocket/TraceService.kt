@@ -8,7 +8,6 @@ import io.architecture.playground.data.remote.model.NetworkServerTime
 import io.architecture.playground.data.remote.model.NetworkTrace
 import io.architecture.playground.data.remote.websocket.scarlet.Target
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.flow.Flow
 
 interface TraceService {
 

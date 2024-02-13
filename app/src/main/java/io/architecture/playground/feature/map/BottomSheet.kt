@@ -17,11 +17,11 @@ import androidx.compose.ui.unit.sp
 fun NodeBottomSheetContent(
     state: DetailsUiState,
     selectedNode: String
-) { // TODO With map collection please :)
+) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        listOf(
+        listOf( // TODO With map please :)
             buildAnnotatedString {
                 append(
                     String.format(
@@ -31,14 +31,6 @@ fun NodeBottomSheetContent(
                     )
                 )
             },
-//            buildAnnotatedString {
-//                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-//                    append("Mode: ")
-//                }
-//                withStyle(style = SpanStyle(color = colorResource(id = R.color.teal_700))) {
-//                    append(state.lastTrace?.toString())
-//                }
-//            },
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Attitude: ")
