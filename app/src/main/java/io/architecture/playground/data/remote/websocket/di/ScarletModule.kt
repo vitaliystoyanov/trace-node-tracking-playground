@@ -1,6 +1,7 @@
 package io.architecture.playground.data.remote.websocket.di
 
 import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.messageadapter.protobuf.ProtobufMessageAdapter
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import dagger.Module
 import dagger.Provides
@@ -8,7 +9,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.architecture.playground.data.remote.websocket.RoutesService
 import io.architecture.playground.data.remote.websocket.TraceService
-import io.architecture.playground.data.remote.websocket.scarlet.CustomGsonMessageAdapter
 import io.architecture.playground.data.remote.websocket.scarlet.CustomStreamAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,7 +28,8 @@ annotation class NodeRoutesScarlet
 @InstallIn(SingletonComponent::class)
 object WebSocketModule {
 
-    private const val BASE_URL = "wss://websockets-diver.glitch.me"
+    //    private const val BASE_URL = "wss://websockets-diver.glitch.me"
+    private const val BASE_URL = "ws://192.168.1.***:8080"
     private const val NODE_TRACES_WEBSOCKET_URL = "$BASE_URL/nodes/traces"
     private const val NODE_ROUTES_WEBSOCKET_URL = "$BASE_URL/nodes/routes"
 
@@ -45,12 +46,12 @@ object WebSocketModule {
     @Singleton
     @Provides
     @NodeTracesScarlet
-    fun provideNodeTracesScarlet(
+    fun provideNodeTracesScarlet( // TODO Hilt map multiBinding
         client: OkHttpClient
     ) =
         Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(NODE_TRACES_WEBSOCKET_URL))
-            .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory())
+            .addMessageAdapterFactory(ProtobufMessageAdapter.Factory())
             .addStreamAdapterFactory(CustomStreamAdapter.Factory)
             .build()
 
@@ -62,11 +63,9 @@ object WebSocketModule {
     ) =
         Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(NODE_ROUTES_WEBSOCKET_URL))
-            .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory())
-            .addStreamAdapterFactory(CustomStreamAdapter.Factory)
+            .addMessageAdapterFactory(ProtobufMessageAdapter.Factory())
+            .addStreamAdapterFactory(CustomStreamAdapter.Factory) // TODO buffer capacity
             .build()
-
-
 
 
     @Provides

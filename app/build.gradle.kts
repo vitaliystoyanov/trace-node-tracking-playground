@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    kotlin("plugin.serialization") version "1.9.22" // TODO move to libraries
 }
 
 android {
@@ -70,6 +71,10 @@ dependencies {
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)
 
+    // kotlinx-serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.material3)
@@ -96,6 +101,7 @@ dependencies {
     implementation(libs.scarlet)
     implementation(libs.websocket.okhttp)
     implementation(libs.message.adapter.gson)
+    implementation(libs.message.adapter.protobuf)
     implementation(libs.stream.adapter.coroutines)
 
     // Moshi

@@ -8,7 +8,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 
 interface RoutesService {
     @Receive
-    @Target(type = "")
     fun streamConnection(): ReceiveChannel<WebSocket.Event>
 
     @Receive

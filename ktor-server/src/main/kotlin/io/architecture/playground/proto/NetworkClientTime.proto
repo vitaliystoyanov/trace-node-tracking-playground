@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+
+// serial name 'io.architecture.playground.data.remote.model.NetworkClientTime'
+message NetworkClientTime {
+  required int64 time = 1;
+}

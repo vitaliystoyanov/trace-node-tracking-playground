@@ -1,13 +1,12 @@
-package io.architecture.playground.data.remote.model
+package io.architecture.playground.model
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class NetworkRoute(
-    @SerializedName("type") var type: String = "",
-    @SerializedName("n") var nodeId: String,
-    @SerializedName("r") var route: Array<DoubleArray>?
+    var type: String = "",
+    var nodeId: String,
+    var route: Array<DoubleArray>?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

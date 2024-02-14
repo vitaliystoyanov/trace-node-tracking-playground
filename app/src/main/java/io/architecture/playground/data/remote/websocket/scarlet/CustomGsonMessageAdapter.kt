@@ -1,5 +1,7 @@
 package io.architecture.playground.data.remote.websocket.scarlet
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
@@ -75,6 +77,7 @@ class CustomGsonMessageAdapter<T> private constructor(
         private val gson: Gson = DEFAULT_GSON
     ) : MessageAdapter.Factory {
 
+        @RequiresApi(Build.VERSION_CODES.P)
         override fun create(type: Type, annotations: Array<Annotation>): MessageAdapter<*> {
             val typeAdapter = gson.getAdapter(TypeToken.get(type))
             return CustomGsonMessageAdapter(gson, typeAdapter, annotations)

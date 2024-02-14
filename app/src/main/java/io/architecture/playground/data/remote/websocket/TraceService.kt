@@ -12,7 +12,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 interface TraceService {
 
     @Receive
-    @Target(type = "")
     fun streamConnection(): ReceiveChannel<WebSocket.Event>
 
     @Receive
@@ -23,6 +22,6 @@ interface TraceService {
     fun sendClientTime(time: NetworkClientTime)
 
     @Receive
-    @Target(type = "rtt")
+    @Target(type = "rtt") // deserialization by provided type that includes in incoming Message.TEXT format
     fun streamServerTime(): ReceiveChannel<NetworkServerTime>
 }

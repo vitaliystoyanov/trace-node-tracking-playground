@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+
+// serial name 'io.architecture.playground.data.remote.model.NetworkServerTime'
+message NetworkServerTime {
+  // WARNING: a default value decoded when value is missing
+  optional string type = 1;
+  // WARNING: a default value decoded when value is missing
+  optional int64 clientSentTime = 2;
+  // WARNING: a default value decoded when value is missing
+  optional int64 serverTime = 3;
+}

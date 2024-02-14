@@ -11,4 +11,5 @@ import java.lang.annotation.Retention;
 @Retention(RUNTIME)
 public @interface Target {
     String type() default "";
+
 }

@@ -1,6 +1,7 @@
 package io.architecture.playground
 
 import android.app.Application
+import com.mapbox.maps.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
 import io.architecture.playground.core.pool.PoolManager
 import javax.inject.Inject
@@ -12,8 +13,8 @@ class PlaygroundApplication : Application() {
     lateinit var poolManager: PoolManager
 
     override fun onCreate() {
-        setupCoroutineDebugMode() // TODO Check if it's DEBUG
         super.onCreate()
+        if (BuildConfig.DEBUG) setupCoroutineDebugMode()
     }
 
     private fun setupCoroutineDebugMode() {
