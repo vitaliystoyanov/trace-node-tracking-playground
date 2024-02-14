@@ -33,8 +33,11 @@ google-services.json
 # Android Profiling
 *.hprof
 
+*.drawio.bkp
+
 server/
 
 app/src/main/res/values/developer-config.xml
 
 /TODO.md
+/docs/.$design.drawio.bkp
