@@ -33,15 +33,8 @@ google-services.json
 # Android Profiling
 *.hprof
 
+server/
+
 app/src/main/res/values/developer-config.xml
 
 /TODO.md
-
-.gradle
-**/build/
-xcuserdata
-!src/**/build/
-.DS_Store
-captures
-.externalNativeBuild
-.cxx
