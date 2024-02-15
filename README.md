@@ -34,7 +34,9 @@ Nothing special :)
 * Data-driven map layer styling. Mapbox’s data-driven styling features allow to use attributes in the data to style maps. The app can style map features automatically based on their individual attributes.
 * Allocates memory for processing node traces at runtime using Pool Object manager
 
-## Design layered architecture
+## Design architecture
+<img src="/docs/design.drawio.png" alt="Design architecture diagram" title="Design diagram">
+
 * The single source of truth principle: its database layer*
 * Kotlin Coroutines and channels, flows as communication between arch layers: **websocket/database data sources** <-> **repository layer** <-> **data layer** <-> **reactive UI layer**
 * The data and business layer expose suspend functions and Flows
