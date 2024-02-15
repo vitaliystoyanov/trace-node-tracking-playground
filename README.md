@@ -10,8 +10,11 @@ Some considerations:
 
 <img src="/docs/demo3.gif" width="520">
 
-
-<img src="/docs/demo1.gif" width="520">
+<p align="center">
+  <img alt="Light" src="/docs/demo3.gif" width="45%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="Dark" src="/docs/demo1.gif" width="45%">
+</p>
 
 ## Tech stack
 
