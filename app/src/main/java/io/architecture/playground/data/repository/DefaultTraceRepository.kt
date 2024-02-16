@@ -5,8 +5,8 @@ import io.architecture.playground.core.pool.PoolManager
 import io.architecture.playground.data.local.LocalDataSource
 import io.architecture.playground.data.local.model.TraceEntity
 import io.architecture.playground.data.mapping.assignProperties
-import io.architecture.playground.data.mapping.toExternal
-import io.architecture.playground.data.remote.interfaces.NetworkDataSource
+import io.architecture.playground.data.mapping.toExternalAs
+import io.architecture.playground.data.remote.NetworkDataSource
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.TraceRepository
 import io.architecture.playground.di.ApplicationScope
@@ -41,10 +41,11 @@ open class DefaultTraceRepository @Inject constructor(
     poolHolder: PoolManager
 ) : TraceRepository {
 
-    private val nodePool = poolHolder.getPoolByMember<Node>()
-    private val traceEntitiesPool = poolHolder.getPoolByMember<TraceEntity>()
-    override val sharedStreamTraces: SharedFlow<Trace> =
-        networkDataSource.streamTraces()  // TODO extract to network data source
+    private val _nodePool = poolHolder.getPoolByMember<Node>()
+    private val _traceEntitiesPool = poolHolder.getPoolByMember<TraceEntity>()
+    private val _sharedStreamTraces: SharedFlow<Trace> =
+        networkDataSource.streamTraces()
+            .map { it.toExternalAs() }
             .shareIn(
                 applicationScope,
                 replay = 1,
@@ -52,16 +53,16 @@ open class DefaultTraceRepository @Inject constructor(
             )
 
     override fun streamTraceBy(nodeId: String): Flow<Trace> = localDataSource.observeTraceBy(nodeId)
-        .map { it.toExternal() }
+        .map { it.toExternalAs() }
 
     // TODO Bulk insertion of items in an SQLite table is always better than inserting each item individually
     // TODO Extract _sharedStreamTraces logic
-    override fun streamAndPersist(): Flow<Trace> = sharedStreamTraces
+    override fun streamAndPersist(): Flow<Trace> = _sharedStreamTraces
 //        .flowOn(ioDispatcher)
         .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
         .onEach { trace ->
-            val localTraceEntity = traceEntitiesPool.acquire()
-            val nodePooled = nodePool.acquire().apply {// TODO Move to external mapping
+            val localTraceEntity = _traceEntitiesPool.acquire()
+            val nodePooled = _nodePool.acquire().apply {// TODO Move to external mapping
                 id = trace.nodeId
                 mode = NodeMode.ACTIVE // TODO
             }
@@ -69,12 +70,12 @@ open class DefaultTraceRepository @Inject constructor(
             localDataSource.createOrUpdate(trace.assignProperties(localTraceEntity, trace))
             nodeRepository.createOrUpdate(nodePooled)
 
-            traceEntitiesPool.release(localTraceEntity)
-            nodePool.release(nodePooled)
+            _traceEntitiesPool.release(localTraceEntity)
+            _nodePool.release(nodePooled)
         }
         .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
 
-    override fun streamViaNetwork(): Flow<Trace> = sharedStreamTraces
+    override fun streamViaNetwork(): Flow<Trace> = _sharedStreamTraces
         .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
         .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
 
@@ -88,6 +89,6 @@ open class DefaultTraceRepository @Inject constructor(
 
     override fun streamList(): Flow<List<Trace>> =
         localDataSource.observeAllTraces()
-            .map { it.toExternal() }
+            .map { it.toExternalAs() }
             .flowOn(defaultDispatcher)
 }

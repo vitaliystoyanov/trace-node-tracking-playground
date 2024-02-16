@@ -9,7 +9,7 @@ fun Node.toLocal() = NodeEntity(
     mode = mode.value
 )
 
-fun NodeEntity.toExternal() = Node(
+fun NodeEntity.toExternalAs() = Node(
     id = id,
     mode = NodeMode.valueOf(mode)
 )
@@ -17,7 +17,7 @@ fun NodeEntity.toExternal() = Node(
 fun List<Node>.toLocal() = map(Node::toLocal)
 
 @JvmName("localToExternal")
-fun List<NodeEntity>.toExternal() = map(NodeEntity::toExternal)
+fun List<NodeEntity>.toExternalAs() = map(NodeEntity::toExternalAs)
 
 
 fun assignProperties(nodePooled: NodeEntity, source: Node): NodeEntity = nodePooled.apply {

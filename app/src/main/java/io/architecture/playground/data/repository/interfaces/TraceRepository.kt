@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface TraceRepository {
 
-    val sharedStreamTraces: SharedFlow<Trace>
-
     fun streamTraceBy(nodeId: String): Flow<Trace>
 
     fun streamTracesBy(nodeId: String): Flow<TraceEntity>

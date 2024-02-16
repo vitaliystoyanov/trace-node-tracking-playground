@@ -2,7 +2,7 @@ package io.architecture.playground.domain
 
 import android.util.Log
 import io.architecture.playground.data.local.model.TraceEntity
-import io.architecture.playground.data.mapping.toExternal
+import io.architecture.playground.data.mapping.toExternalAs
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.TraceRepository
 import io.architecture.playground.di.DefaultDispatcher
@@ -59,7 +59,7 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
     operator fun invoke(
         isDataBaseStream: Boolean,
         interval: Duration = 1.seconds
-    ): Flow<List<Trace>> {
+    ): Flow<Sequence<Trace>> {
         require(interval > 0.milliseconds) { "'interval' must be positive: $interval" }
 
         fun streamTracesViaNetwork() = traceRepository.streamViaNetwork()
@@ -72,7 +72,7 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
             .streamTracesBy(id)
             .flowOn(ioDispatcher)
             .distinctUntilChanged(defaultAreEquivalentCoordinates)
-            .map { traceEntity -> traceEntity.toExternal() }
+            .map { traceEntity -> traceEntity.toExternalAs() }
             .onEach { trace ->
                 trace.formattedDatetime = formatDate(trace.sentAtTime)
                 trace.direction = convertAzimuthToDirection(trace.azimuth)
@@ -109,11 +109,10 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
     }
 }
 
-fun Flow<List<Trace>>.cached(
-): Flow<List<Trace>> = flow {
+fun Flow<List<Trace>>.cached(): Flow<Sequence<Trace>> = flow {
     val cache = LinkedHashMap<String, Trace>()
     collect { list ->
         list.map { cache.put(it.nodeId, it) }
-        emit(cache.values.toList())
+        emit(cache.values.asSequence())
     }
 }

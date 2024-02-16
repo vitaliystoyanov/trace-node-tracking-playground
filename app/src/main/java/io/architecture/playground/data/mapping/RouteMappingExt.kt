@@ -11,7 +11,7 @@ fun Route.toLocal() = RouteEntity(
     route = coordinates.map { CoordinateEntity(it.lat, it.lon) }
 )
 
-fun RouteEntity.toExternal() = Route(
+fun RouteEntity.toExternalAs() = Route(
     nodeId = nodeId,
     coordinates = route?.map { Coordinate(it.lat, it.lon) } ?: emptyList()
 )
@@ -23,15 +23,15 @@ fun NetworkRoute.toLocal() = RouteEntity(
     } ?: emptyList()
 )
 
-fun NetworkRoute.toExternal() = toLocal().toExternal()
+fun NetworkRoute.toExternalAs() = toLocal().toExternalAs()
 
 fun List<Route>.toLocal() = map(Route::toLocal)
 
 @JvmName("localToExternal")
-fun List<RouteEntity>.toExternal() = map(RouteEntity::toExternal)
+fun List<RouteEntity>.toExternalAs() = map(RouteEntity::toExternalAs)
 
 @JvmName("networkToLocal")
 fun List<NetworkRoute>.toLocal() = map(NetworkRoute::toLocal)
 
 @JvmName("networkToExternal")
-fun List<NetworkRoute>.toExternal() = map(NetworkRoute::toExternal)
+fun List<NetworkRoute>.toExternalAs() = map(NetworkRoute::toExternalAs)

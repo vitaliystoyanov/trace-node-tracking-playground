@@ -1,9 +1,9 @@
 package io.architecture.playground.data.repository
 
 import io.architecture.playground.data.local.LocalDataSource
-import io.architecture.playground.data.mapping.toExternal
+import io.architecture.playground.data.mapping.toExternalAs
 import io.architecture.playground.data.mapping.toLocal
-import io.architecture.playground.data.remote.interfaces.NetworkDataSource
+import io.architecture.playground.data.remote.NetworkDataSource
 import io.architecture.playground.data.repository.interfaces.RouteRepository
 import io.architecture.playground.di.DefaultDispatcher
 import io.architecture.playground.di.IoDispatcher
@@ -28,12 +28,12 @@ class DefaultRouteRepository @Inject constructor(
 
     override fun streamAndPersist() =
         networkDataSource.streamRoutes()
-            .map { it.toExternal() }
+            .map { it.toExternalAs() }
             .flowOn(defaultDispatcher)
             .onEach { localTraceRouteDataSource.createOrUpdate(it.toLocal()) }
             .flowOn(ioDispatcher)
 
     override suspend fun getRouteBy(nodeId: String) = withContext(ioDispatcher) {
-        localTraceRouteDataSource.getRouteBy(nodeId)?.toExternal()
+        localTraceRouteDataSource.getRouteBy(nodeId)?.toExternalAs()
     }
 }

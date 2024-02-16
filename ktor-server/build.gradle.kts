@@ -3,12 +3,11 @@ plugins {
     alias(libs.plugins.ktor)
     application
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
-
-    alias(libs.plugins.kotlinMultiplatform) apply false
 }
 
 group = "io.architecture.playground"
 version = "1.0.0"
+
 application {
     mainClass.set("io.architecture.playground.ApplicationKt")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")

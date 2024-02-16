@@ -1,4 +1,4 @@
-package io.architecture.playground.data.remote.websocket.scarlet
+package io.architecture.playground.data.remote.websocket.scarlet.internal
 
 import android.util.Log
 import com.tinder.scarlet.Message
