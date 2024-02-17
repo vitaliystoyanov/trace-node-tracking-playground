@@ -25,8 +25,8 @@ geojsonVersion = "0.2.1"
 hiltAndroidVersion = "2.46"
 hiltAndroidCompilerVersion = "2.46"
 
-kotlinxSerializationJsonVersion = "1.6.2"
-kotlinxSerializationProtobufVersion = "1.6.2"
+kotlinxSerializationJsonVersion = "1.6.3"
+kotlinxSerializationProtobufVersion = "1.6.3"
 
 ktorVersion = "2.3.8"
 
@@ -36,7 +36,7 @@ mapboxSdkTurfVersion = "6.15.0"
 mapsComposeVersion = "0.1.0"
 mapsStyleVersion = "11.1.0"
 sarletMessageAdapterVersion = "0.1.12"
-moshiKotlinCodegenVersion = "1.15.0"
+moshiKotlinCodegenVersion = "1.15.1"
 okhttpVersion = "4.12.0"
 
 # ktor-server
@@ -50,7 +50,7 @@ androidxCore = "1.12.0"
 androidxLifecycle = "2.7.0"
 
 materialDesign = "1.11.0"
-composeBom = "2024.01.00"
+composeBom = "2024.02.00"
 
 androidxHiltNavigationCompose = "1.1.0"
 roomKtxVersion = "2.6.1"
@@ -59,8 +59,8 @@ scarletVersion = "0.1.12"
 turfVersion = "0.2.1"
 websocketOkhttpVersion = "0.1.12"
 streamAdapterCoroutinesVersion = "0.1.12"
-material3Version = "1.2.0-rc01"
-accompanistSystemuicontrollerVersion = "0.27.0"
+material3Version = "1.2.0"
+accompanistSystemuicontrollerVersion = "0.34.0"
 agp = "8.2.2"
 androidx-benchmark = "1.1.1"
 runner = "1.5.2"
@@ -68,6 +68,8 @@ junit = "1.1.5"
 junit-junit = "4.13.2"
 benchmark-junit4 = "1.2.3"
 kotlin = "1.9.22"
+espresso-core = "3.5.1"
+annotation = "1.6.0"
 
 [libraries]
 
@@ -139,6 +141,8 @@ logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 
 [bundles]
 
@@ -153,3 +157,4 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+androidDynamicFeature = { id = "com.android.dynamic-feature", version.ref = "agp" }
