@@ -41,7 +41,7 @@ okhttpVersion = "4.12.0"
 
 # ktor-server
 ktor = "2.3.8"
-logback = "1.4.14"
+logback = "1.5.0"
 
 # Dependencies
 androidxActivityCompose = "1.8.2"
@@ -70,6 +70,10 @@ benchmark-junit4 = "1.2.3"
 kotlin = "1.9.22"
 espresso-core = "3.5.1"
 annotation = "1.6.0"
+animationCoreAndroidVersion = "1.6.1"
+foundationLayoutAndroidVersion = "1.6.1"
+material3AndroidVersion = "1.2.0"
+uiGraphicsAndroidVersion = "1.6.1"
 
 [libraries]
 
@@ -144,6 +148,11 @@ ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "k
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 
+androidx-animation-core-android = { group = "androidx.compose.animation", name = "animation-core-android", version.ref = "animationCoreAndroidVersion" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3AndroidVersion" }
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroidVersion" }
+
 [bundles]
 
 [plugins]
@@ -153,8 +162,9 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchmark" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
-# Ktor server
+# Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+# Ktor server
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 androidDynamicFeature = { id = "com.android.dynamic-feature", version.ref = "agp" }
