@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "io.architecture.datasource.api"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     buildTypes {
         release {
@@ -22,7 +22,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 }
 

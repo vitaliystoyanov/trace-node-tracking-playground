@@ -1,8 +1,11 @@
 [versions]
 # Versions
-androidMinSdkVersion = "23"
-androidTargetSdkVersion = "34"
-androidCompileSdkVersion = "34"
+minSdk = "23"
+tragetSdk = "34"
+compileSdk = "34"
+
+kotlinCompilerExtensionVersion = "1.5.8"
+jvmTarget = "1.8"
 
 # Plugins
 composePlugin = "1.5.12"

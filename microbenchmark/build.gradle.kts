@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "io.architecture.microbenchmark"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,11 +15,11 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     defaultConfig {
-        minSdk = 24
+        jvmTarget = libs.versions.minSdk.get().toInt()
         targetSdk = 34
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR,LOW-BATTERY"
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"

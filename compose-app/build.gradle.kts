@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "io.architecture.playground"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     buildFeatures {
         compose = true
@@ -19,8 +19,8 @@ android {
 
     defaultConfig {
         applicationId = "io.architecture.playground"
-        minSdk = 23
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.tragetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
@@ -49,10 +49,10 @@ android {
         }
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.jvmTarget.get()
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
     // Allow references to generated code
     kapt {

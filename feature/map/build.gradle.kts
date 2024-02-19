@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "io.architecture.map"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     buildFeatures {
         compose = true
@@ -24,10 +24,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.jvmTarget.get()
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
 }
 
