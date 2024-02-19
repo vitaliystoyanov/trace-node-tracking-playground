@@ -1,0 +1,17 @@
+on:
+  push:
+    paths-ignore:
+      - '.github/**'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+ detekt-all:
+   name: Static code analysis
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+
+     - name: Detekt
+       uses: natiginfo/action-detekt-all@1.23.5
