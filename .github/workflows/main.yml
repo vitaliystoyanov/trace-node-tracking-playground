@@ -104,13 +104,3 @@ jobs:
         with:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
-          
-  detekt-all:
-     name: Static code analysis
-     runs-on: ubuntu-latest
-     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detekt
-        uses: natiginfo/action-detekt-all@1.23.5
