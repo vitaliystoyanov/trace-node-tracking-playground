@@ -4,7 +4,7 @@ import java.net.NetworkInterface
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
+    alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.android)
 }
 
@@ -54,10 +54,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
-    // Allow references to generated code
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -89,7 +85,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 }
 
 val getLocalIPv4: List<String>

@@ -36,12 +36,13 @@ streamAdapterCoroutinesVersion = "0.1.12"
 material3Version = "1.2.0"
 accompanistSystemuicontrollerVersion = "0.34.0"
 agp = "8.2.2"
+googleKsp = "1.9.21-1.0.16"
 androidx-benchmark = "1.1.1"
 runner = "1.5.2"
 junit = "1.1.5"
 junit-junit = "4.13.2"
 benchmark-junit4 = "1.2.3"
-kotlin = "1.9.22"
+kotlin = "1.9.21"
 espresso-core = "3.5.1"
 annotation = "1.6.0"
 animationCoreAndroidVersion = "1.6.1"
@@ -150,6 +151,7 @@ androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchm
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidVersion" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "googleKsp" }
 
 # Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

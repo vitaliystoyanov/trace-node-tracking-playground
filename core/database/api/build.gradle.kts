@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
+    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -30,6 +30,5 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.material3)
     annotationProcessor(libs.androidx.room.compiler)
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.androidx.room.room.compiler)
+    ksp(libs.androidx.room.room.compiler)
 }
