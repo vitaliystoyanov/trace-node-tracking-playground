@@ -11,7 +11,7 @@ import io.architecture.network.websocket.model.NetworkServerTime
 import kotlinx.coroutines.flow.Flow
 
 
-interface ScarletTraceService : TraceService {
+internal interface ScarletTraceService : TraceService {
 
     @Receive
     fun streamConnection(): Flow<WebSocket.Event>

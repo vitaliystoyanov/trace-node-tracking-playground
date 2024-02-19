@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.lang.reflect.Type
 
 
-class CustomStreamAdapter<T> : StreamAdapter<T, Flow<T>> {
+internal class CustomStreamAdapter<T> : StreamAdapter<T, Flow<T>> {
     override fun adapt(stream: Stream<T>): Flow<T> {
         return callbackFlow {
             stream.start(object : Stream.Observer<T> {

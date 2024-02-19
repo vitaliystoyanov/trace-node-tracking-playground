@@ -6,7 +6,7 @@ import io.architecture.database.api.model.CoordinateEntity
 private const val COORDINATE_DELIMITER = ","
 private const val COORDINATE_TERMINAL = ";"
 
-class ListCoordinatesTypeConvertor {
+internal class ListCoordinatesTypeConvertor {
     @TypeConverter
     fun fromArrayListOfCoordinate(list: List<CoordinateEntity>?): String =
         list

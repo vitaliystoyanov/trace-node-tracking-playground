@@ -13,7 +13,7 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 @Experimental
-class KotlinSerializeProtobufMessageAdapter<T : Any>(
+internal class KotlinSerializeProtobufMessageAdapter<T : Any>(
     private val typeClass: KClass<T>,
     private val annotations: Array<Annotation>
 ) : MessageAdapter<T> {

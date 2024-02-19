@@ -21,7 +21,7 @@ import io.architecture.database.imp.room.convertors.ListCoordinatesTypeConvertor
     ListCoordinatesTypeConvertor::class,
     DateTypeConvertor::class
 )
-abstract class InMemoryDatabase : RoomDatabase() {
+internal abstract class InMemoryDatabase : RoomDatabase() {
 
     abstract fun nodeDao(): NodeDao
 

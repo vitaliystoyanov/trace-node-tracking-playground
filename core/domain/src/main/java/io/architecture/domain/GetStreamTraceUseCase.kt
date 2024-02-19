@@ -3,14 +3,12 @@ package io.architecture.domain
 import android.util.Log
 import io.architecture.common.DefaultDispatcher
 import io.architecture.common.IoDispatcher
-import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.repository.interfaces.TraceRepository
 import io.architecture.model.Trace
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 

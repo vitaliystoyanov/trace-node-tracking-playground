@@ -5,11 +5,11 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class NodeTracesScarlet
+internal annotation class NodeTracesScarlet
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class NodeRoutesScarlet
+internal annotation class NodeRoutesScarlet
 
 //@Module
 //@InstallIn(SingletonComponent::class)

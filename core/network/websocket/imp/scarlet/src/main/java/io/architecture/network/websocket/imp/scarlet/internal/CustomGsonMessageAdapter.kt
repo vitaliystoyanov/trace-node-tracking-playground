@@ -19,7 +19,7 @@ import kotlin.text.Charsets.UTF_8
 * https://github.com/Tinder/Scarlet/issues/37#issuecomment-449871932
 *
 * */
-class CustomGsonMessageAdapter<T> private constructor(
+internal class CustomGsonMessageAdapter<T> private constructor(
     private val gson: Gson,
     private val typeAdapter: TypeAdapter<T>,
     private val annotations: Array<Annotation>
