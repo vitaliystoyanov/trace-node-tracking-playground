@@ -1,0 +1,78 @@
+name: Build & Assemble artifacts & Tests
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK And Gradle
+        uses: ./.github/actions/setup-jdk-gradle
+        with:
+          cache-read-only: false
+
+      - name: Run Unit Test
+        run: ./gradlew test
+
+      - name: Upload Unit Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-report
+          path: app/build/reports/unitTests/tests/testDebugUnitTest
+
+  assemble-debug:
+    needs: [unit-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK And Gradle
+        uses: ./.github/actions/setup-jdk-gradle
+        with:
+          cache-read-only: false
+
+      - name: Assemble Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+  assemble-release:
+    needs: [unit-test]
+    name: Build release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK And Gradle
+        uses: ./.github/actions/setup-jdk-gradle
+        with:
+          cache-read-only: false
+
+      - name: Build release APK and AAB after test
+        run: |
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
+
+      - name: Assemble Release APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload AAB Bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
