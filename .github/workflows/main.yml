@@ -16,13 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK And Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
           
-      - name: Set Up JDK
-        uses: actions/setup-java@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '17'
@@ -48,12 +48,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK And Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
           
-      - name: Set Up JDK
+      - name: Setup JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
@@ -77,12 +77,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK And Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
           
-      - name: Set Up JDK
+      - name: Setup JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
@@ -93,7 +93,6 @@ jobs:
         run: |
           ./gradlew assembleRelease
           ./gradlew bundleRelease
-
       - name: Assemble Release APK
         uses: actions/upload-artifact@v3
         with:
@@ -106,12 +105,12 @@ jobs:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
           
-   detekt-all:
+  detekt-all:
      name: Static code analysis
      runs-on: ubuntu-latest
      steps:
-       - name: "checkout"
-         uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-       - name: "detekt"
-         uses: natiginfo/action-detekt-all@1.23.5
+      - name: Detekt
+        uses: natiginfo/action-detekt-all@1.23.5
