@@ -1,0 +1,116 @@
+name: CI Build & Tests & Artifacts
+
+on:
+  push:
+    paths-ignore:
+      - '.github/**'
+    branches: [ "main" ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  unit-test:
+    name: Run unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Run Unit Test
+        run: ./gradlew test
+
+      - name: Upload Unit Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-report
+          path: app/build/reports/unitTests/tests/testDebugUnitTest
+
+  assemble-debug:
+    needs: [unit-test]
+    name: Build debug artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Assemble Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+  assemble-release:
+    needs: [unit-test]
+    name: Build release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Build release APK and AAB after test
+        run: |
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
+      - name: Assemble Release APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload AAB Bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          
+  detekt-all:
+     name: Static code analysis
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detekt
+        uses: natiginfo/action-detekt-all@1.23.5

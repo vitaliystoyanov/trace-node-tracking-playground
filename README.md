@@ -1,5 +1,7 @@
-# PoC of design implementation for processing large GPS node trace data effectively ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+# PoC of design implementation for processing large GPS node trace data effectively
 
+[![.github/workflows/main.yml](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml/badge.svg?branch=gitworkflow)](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml)
+ ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
 The application processes GPS node trace data using the Scarlet websocket client, deserializes it using Gson and writes the data to a local Room database for further data rendering based on Jetpack Compose and MapBox SDK built-in capabilities.
 On the other side, the Node.js backend generates sample data using the turf.js library. For each node, the route, direction and speed are generated at runtime.
