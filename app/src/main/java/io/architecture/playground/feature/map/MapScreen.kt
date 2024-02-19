@@ -40,6 +40,7 @@ import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_BEARIN
 import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_PITCH
 import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_POINT
 import io.architecture.playground.feature.map.MapBoxParams.CAMERA_INITIAL_ZOOM
+import io.architecture.playground.model.NodeMode
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
 import kotlinx.coroutines.Dispatchers
@@ -229,10 +230,7 @@ private fun toFeaturesFrom(entry: Trace) =
                     entry.speed
                 )
             )
-            addStringProperty(
-                MODE_KEY_PROPERTY,
-                "entry.mode.toString()"
-            ) // TODO Not available from Trace class
+            addStringProperty(MODE_KEY_PROPERTY, NodeMode.ACTIVE.name) // TODO Not available from Trace class
             addStringProperty(NODE_ID_KEY_PROPERTY, entry.nodeId)
             addNumberProperty(BEARING_KEY_PROPERTY, entry.azimuth)
         }

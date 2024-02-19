@@ -4,18 +4,19 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.architecture.playground.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.data.repository.interfaces.RouteRepository
+import io.architecture.playground.domain.GetConnectionStateUseCase
 import io.architecture.playground.domain.GetStreamChunkedNodeWithTraceUseCase
 import io.architecture.playground.domain.GetStreamTraceUseCase
+import io.architecture.playground.model.Connection
 import io.architecture.playground.model.Route
 import io.architecture.playground.model.Trace
+import io.architecture.playground.model.UpstreamRtt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,21 +28,27 @@ data class DetailsUiState(val route: Route?, val lastTrace: Trace?)
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val routeRepository: RouteRepository,
-    nodeRepository: NodeRepository,
-    getChunkedNodeWithTrace: GetStreamChunkedNodeWithTraceUseCase,
     private val getStreamTrace: GetStreamTraceUseCase,
-    connectionStateRepository: ConnectionStateRepository,
+    private val routeRepository: RouteRepository,
+    getChunkedNodeWithTrace: GetStreamChunkedNodeWithTraceUseCase,
+    connectionState: GetConnectionStateUseCase,
+    nodeRepository: NodeRepository,
 ) : ViewModel() {
 
     private lateinit var job: Job
     private val _displayDetails = MutableStateFlow(DetailsUiState(null, null))
 
-    val connectionsUiState = connectionStateRepository.connectionStateShared
+    val connectionsUiState = connectionState()
+        .onEach {
+            Log.d(
+                "REPOSITORY_DEBUG",
+                "VIEW_MODEL -> connectionsUiState -> state - $it"
+            )
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyMap()
+            initialValue = Connection(rtt = UpstreamRtt(0L), isConnected = false)
         )
 
     val detailsUiState: StateFlow<DetailsUiState> = _displayDetails
@@ -62,11 +69,10 @@ class MapViewModel @Inject constructor(
         getChunkedNodeWithTrace(false, 1.seconds)
             .onEach {
                 Log.d(
-                    "REPOSITORY_DEBUG",
+                    "REPOSITORY_DEBUG_N",
                     "chunked list size of traces to sequence - ${it.count()}"
                 )
             }
-            .map { it.asSequence() }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
@@ -74,7 +80,7 @@ class MapViewModel @Inject constructor(
             )
 
     fun clearDetails(nodeId: String) {
-        if (job!= null && job.isActive) job.cancel()
+        if (job.isActive) job.cancel()
     }
 
     fun loadDetails(nodeId: String) {

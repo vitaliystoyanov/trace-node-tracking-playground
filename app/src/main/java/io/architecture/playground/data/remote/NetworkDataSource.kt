@@ -1,26 +1,26 @@
-package io.architecture.playground.data.remote.interfaces
+package io.architecture.playground.data.remote
 
 import io.architecture.playground.data.remote.model.ConnectionEvent
 import io.architecture.playground.data.remote.model.NetworkClientTime
 import io.architecture.playground.data.remote.model.NetworkRoute
 import io.architecture.playground.data.remote.model.NetworkServerTime
 import io.architecture.playground.data.remote.model.NetworkTrace
-import io.architecture.playground.model.Trace
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.Flow
 
 interface NetworkDataSource {
-    fun streamTraces(): Flow<Trace>
+
+    fun openSession()
+
+    fun closeSession()
+
+    fun streamTraces(): Flow<NetworkTrace>
 
     fun streamRoutes(): Flow<NetworkRoute>
-
-    fun streamTraceConnectionState(): Flow<ConnectionEvent>
-
-    fun streamRouteConnectionState(): Flow<ConnectionEvent>
 
     fun sendClientTime(time: NetworkClientTime)
 
     fun streamServerTime(): Flow<NetworkServerTime>
 
-    fun streamTracesAsChannel(): ReceiveChannel<NetworkTrace>
+    fun streamConnectionEvents(): Flow<ConnectionEvent>
+
 }

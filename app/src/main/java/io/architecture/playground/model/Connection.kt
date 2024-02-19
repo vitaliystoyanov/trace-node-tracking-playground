@@ -1,22 +1,27 @@
 package io.architecture.playground.model
 
+import io.architecture.playground.data.mapping.toExternalState
 import io.architecture.playground.data.remote.model.ConnectionEvent
 
 data class Connection(
-    var state: ConnectionState = ConnectionState.UNDEFINED,
-    val rtt: UpstreamRtt,
-    val isConnected: Boolean = false
+    var state: State = State.UNDEFINED,
+    var rtt: UpstreamRtt,
+    var isConnected: Boolean = false
 ) {
-    fun changeStatus(connectionEvent: ConnectionEvent) {
-        // Simplification ;)
-        state = connectionEvent
+    fun changeState(connectionEvent: ConnectionEvent): Connection = with(this) {
+        state = connectionEvent.toExternalState()
+        this
     }
 
-    companion object {
-        const val ROUTE_SERVICE_CONNECTION = 0
-        const val TRACE_SERVICE_CONNECTION = 1
+    enum class State {
+        UNDEFINED,
+        OPENED,
+        CLOSED,
+        CLOSING,
+        FAILED,
+        MESSAGE_RECEIVED
     }
 }
 
-// Simplification ;)
-typealias ConnectionState = ConnectionEvent
+
+

@@ -1,6 +1,7 @@
 package io.architecture.playground.data.remote.model
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 // Example of payload
 //    "l": 30.52323011454044,
@@ -12,6 +13,7 @@ import com.google.gson.annotations.SerializedName
 //    "n": "bb0c326c-c1ee-11ee-b86a-d106324846e3",
 //    "m": 1
 
+@Serializable
 data class NetworkTrace(
     @SerializedName("type") var type: String = "",
     @SerializedName("l") var lon: Double = 0.0,

@@ -1,8 +1,12 @@
+import java.net.Inet4Address
+import java.net.NetworkInterface
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    kotlin("plugin.serialization") version "1.9.22" // TODO move to libraries
 }
 
 android {
@@ -11,6 +15,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -24,6 +29,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "DEV_MACHINE_IP", "\"" + getLocalIPv4[0] + "\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -70,6 +78,18 @@ dependencies {
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)
 
+    // kotlinx-serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
+
+    // Ktor for Android
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.websockets)
+    implementation(libs.ktor.client.serialization.jvm)
+    implementation(libs.ktor.serialization.kotlinx.protobuf)
+    implementation(libs.ktor.client.logging.jvm)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.material3)
@@ -96,6 +116,7 @@ dependencies {
     implementation(libs.scarlet)
     implementation(libs.websocket.okhttp)
     implementation(libs.message.adapter.gson)
+    implementation(libs.message.adapter.protobuf)
     implementation(libs.stream.adapter.coroutines)
 
     // Moshi
@@ -107,3 +128,16 @@ dependencies {
     implementation(libs.logging.interceptor)
 
 }
+
+val getLocalIPv4: List<String>
+    get() {
+        val ip4s = mutableListOf<String>()
+        NetworkInterface.getNetworkInterfaces().toList()
+            .filter { it.isUp && !it.isLoopback && !it.isVirtual }
+            .forEach { networkInterface ->
+                networkInterface.inetAddresses.toList()
+                    .filter { !it.isLoopbackAddress && it is Inet4Address }
+                    .forEach { inetAddress -> ip4s.add(inetAddress.hostAddress) }
+            }
+        return ip4s
+    }

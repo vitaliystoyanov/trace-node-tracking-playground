@@ -1,15 +1,13 @@
 package io.architecture.playground.data.remote.websocket.di
 
 import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.messageadapter.protobuf.ProtobufMessageAdapter
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.playground.data.remote.websocket.RoutesService
-import io.architecture.playground.data.remote.websocket.TraceService
-import io.architecture.playground.data.remote.websocket.scarlet.CustomGsonMessageAdapter
-import io.architecture.playground.data.remote.websocket.scarlet.CustomStreamAdapter
+import io.architecture.playground.data.remote.websocket.scarlet.internal.CustomStreamAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Qualifier
@@ -28,45 +26,39 @@ annotation class NodeRoutesScarlet
 @InstallIn(SingletonComponent::class)
 object WebSocketModule {
 
-    private const val BASE_URL = "wss://websockets-diver.glitch.me"
-    private const val NODE_TRACES_WEBSOCKET_URL = "$BASE_URL/nodes/traces"
-    private const val NODE_ROUTES_WEBSOCKET_URL = "$BASE_URL/nodes/routes"
+//    @Provides Commented.
+//    @Singleton
+//    fun provideTraceService(@NodeTracesScarlet scarlet: Scarlet) =
+//        scarlet.create(ScarletTraceService::class.java)
+//
+//    @Provides
+//    @Singleton
+//    fun provideRouteService(@NodeRoutesScarlet scarlet: Scarlet) =
+//        scarlet.create(ScarletRouteService::class.java)
 
-    @Singleton
-    @Provides
-    fun provideNodeTracesService(@NodeTracesScarlet scarlet: Scarlet) =
-        scarlet.create(TraceService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideNodeRoutesService(@NodeRoutesScarlet scarlet: Scarlet) =
-        scarlet.create(RoutesService::class.java)
-
-    @Singleton
     @Provides
     @NodeTracesScarlet
-    fun provideNodeTracesScarlet(
+    @Singleton
+    fun provideNodeTracesScarlet( // TODO Hilt map multiBinding
         client: OkHttpClient
     ) =
         Scarlet.Builder()
-            .webSocketFactory(client.newWebSocketFactory(NODE_TRACES_WEBSOCKET_URL))
-            .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory())
+            .webSocketFactory(client.newWebSocketFactory(NODE_TRACES_WS_URL))
+            .addMessageAdapterFactory(ProtobufMessageAdapter.Factory())
             .addStreamAdapterFactory(CustomStreamAdapter.Factory)
             .build()
 
-    @Singleton
     @Provides
     @NodeRoutesScarlet
+    @Singleton
     fun provideNodeRoutesScarlet(
         client: OkHttpClient
     ) =
         Scarlet.Builder()
-            .webSocketFactory(client.newWebSocketFactory(NODE_ROUTES_WEBSOCKET_URL))
-            .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory())
-            .addStreamAdapterFactory(CustomStreamAdapter.Factory)
+            .webSocketFactory(client.newWebSocketFactory(NODE_ROUTES_WS_URL))
+            .addMessageAdapterFactory(ProtobufMessageAdapter.Factory())
+            .addStreamAdapterFactory(CustomStreamAdapter.Factory) // TODO buffer capacity
             .build()
-
-
 
 
     @Provides
@@ -76,3 +68,16 @@ object WebSocketModule {
             .build()
 
 }
+
+//@Module
+//@InstallIn(SingletonComponent::class)
+//abstract class ScarletBindingsModule {
+//
+//    @Binds
+//    @Singleton
+//    abstract fun bindTraceService(service: ScarletTraceService): TraceService
+//
+//    @Binds
+//    @Singleton
+//    abstract fun bindRoutesService(service: ScarletRouteService): RouteService
+//}

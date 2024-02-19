@@ -1,4 +1,4 @@
-package io.architecture.playground.data.remote.websocket.scarlet;
+package io.architecture.playground.data.remote.websocket.scarlet.internal;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -11,4 +11,5 @@ import java.lang.annotation.Retention;
 @Retention(RUNTIME)
 public @interface Target {
     String type() default "";
+
 }

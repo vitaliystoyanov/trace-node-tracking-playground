@@ -1,7 +1,9 @@
 package io.architecture.playground.data.remote.model
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NetworkRoute(
     @SerializedName("type") var type: String = "",
     @SerializedName("n") var nodeId: String,

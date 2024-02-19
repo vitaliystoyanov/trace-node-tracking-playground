@@ -62,7 +62,7 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
         sourceLayer(TERRAIN_SOURCE_LAYER_ID)
         lineJoin(LineJoin.ROUND)
         lineCap(LineCap.ROUND)
-        lineColor(Color.parseColor("#ff69b4"))
+        lineColor(Color.parseColor("#8C3C64"))
         lineWidth(1.9)
     }
     bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
@@ -195,7 +195,6 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
                 literal("Point")
             }
         )
-        slot("top")
     }
 }
 

@@ -4,7 +4,7 @@ import io.architecture.playground.core.pool.PoolManager
 import io.architecture.playground.data.local.LocalDataSource
 import io.architecture.playground.data.local.model.NodeEntity
 import io.architecture.playground.data.mapping.assignProperties
-import io.architecture.playground.data.mapping.toExternal
+import io.architecture.playground.data.mapping.toExternalAs
 import io.architecture.playground.data.repository.interfaces.NodeRepository
 import io.architecture.playground.di.IoDispatcher
 import io.architecture.playground.model.Node
@@ -29,7 +29,7 @@ class DefaultNodeRepository @Inject constructor(
     }
 
     override fun streamAllNodes(): Flow<List<Node>> =
-        localDataSource.observeAllNodes().map { it.toExternal() }
+        localDataSource.observeAllNodes().map { it.toExternalAs() }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeNodeCount()
 

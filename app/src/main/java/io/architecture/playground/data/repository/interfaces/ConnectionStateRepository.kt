@@ -1,6 +1,5 @@
 package io.architecture.playground.data.repository.interfaces
 
-import io.architecture.playground.data.remote.model.ConnectionEvent
 import io.architecture.playground.model.Connection
 import io.architecture.playground.model.UpstreamRtt
 import kotlinx.coroutines.flow.Flow
@@ -11,9 +10,6 @@ interface ConnectionStateRepository {
 
     fun streamRoundTripTime(interval: Duration = 1.seconds): Flow<UpstreamRtt>
 
-    fun streamTraceConnectionEvents(): Flow<ConnectionEvent>
+    fun streamConnectionEvents(): Flow<Connection>
 
-    fun streamRouteConnectionEvents(): Flow<ConnectionEvent>
-
-    val connectionStateShared: Flow<Map<Int, Connection>>
 }

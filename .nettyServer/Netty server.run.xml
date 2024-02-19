@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Netty server" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="io.architecture.playground.ApplicationKt" />
+    <module name="node_traces_streaming.ktor-server.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

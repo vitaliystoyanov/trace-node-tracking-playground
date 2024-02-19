@@ -1,7 +1,7 @@
 package io.architecture.playground.domain
 
 import android.util.Log
-import io.architecture.playground.data.mapping.toExternal
+import io.architecture.playground.data.mapping.toExternalAs
 import io.architecture.playground.data.repository.interfaces.TraceRepository
 import io.architecture.playground.di.DefaultDispatcher
 import io.architecture.playground.di.IoDispatcher
@@ -25,7 +25,7 @@ class GetStreamTraceUseCase @Inject constructor(
     operator fun invoke(nodeId: String): Flow<Trace> = traceRepository
         .streamTracesBy(nodeId)
         .flowOn(ioDispatcher)
-        .map { traceEntity -> traceEntity.toExternal() }
+        .map { traceEntity -> traceEntity.toExternalAs() }
         .onEach { trace ->
             trace.formattedDatetime = formatDate(trace.sentAtTime)
             trace.direction = convertAzimuthToDirection(trace.azimuth)

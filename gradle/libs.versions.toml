@@ -1,7 +1,7 @@
 [versions]
 # Versions
 #TODO Map
-androidMinSdkVersion = "21"
+androidMinSdkVersion = "23"
 androidTargetSdkVersion = "33"
 androidCompileSdkVersion = "33"
 
@@ -20,19 +20,28 @@ exampleCompileSdkVersion = "33"
 exampleNdkVersion = "21.4.7075529"
 
 # Plugins
+composePlugin = "1.5.12"
+geojsonVersion = "0.2.1"
 hiltAndroidVersion = "2.46"
 hiltAndroidCompilerVersion = "2.46"
-kotlinxCoroutinesAndroidVersion = "1.7.3"
-kotlinxMetadataJvmVersion = "0.6.0"
+
+kotlinxSerializationJsonVersion = "1.6.3"
+kotlinxSerializationProtobufVersion = "1.6.3"
+
+ktorVersion = "2.3.8"
+
 lifecycleAndroidVersion = "0.1.12"
 loggingInterceptorVersion = "4.12.0"
 mapboxSdkTurfVersion = "6.15.0"
 mapsComposeVersion = "0.1.0"
 mapsStyleVersion = "11.1.0"
-messageAdapterGsonVersion = "0.1.12"
-messageAdapterMoshiVersion = "0.1.12"
-moshiKotlinCodegenVersion = "1.15.0"
+sarletMessageAdapterVersion = "0.1.12"
+moshiKotlinCodegenVersion = "1.15.1"
 okhttpVersion = "4.12.0"
+
+# ktor-server
+ktor = "2.3.8"
+logback = "1.4.14"
 
 # Dependencies
 androidxActivityCompose = "1.8.2"
@@ -41,16 +50,17 @@ androidxCore = "1.12.0"
 androidxLifecycle = "2.7.0"
 
 materialDesign = "1.11.0"
-composeBom = "2024.01.00"
+composeBom = "2024.02.00"
 
 androidxHiltNavigationCompose = "1.1.0"
 roomKtxVersion = "2.6.1"
 runtimeTracingVersion = "1.0.0-beta01"
 scarletVersion = "0.1.12"
+turfVersion = "0.2.1"
 websocketOkhttpVersion = "0.1.12"
 streamAdapterCoroutinesVersion = "0.1.12"
-material3Version = "1.2.0-rc01"
-accompanistSystemuicontrollerVersion = "0.27.0"
+material3Version = "1.2.0"
+accompanistSystemuicontrollerVersion = "0.34.0"
 agp = "8.2.2"
 androidx-benchmark = "1.1.1"
 runner = "1.5.2"
@@ -58,6 +68,8 @@ junit = "1.1.5"
 junit-junit = "4.13.2"
 benchmark-junit4 = "1.2.3"
 kotlin = "1.9.22"
+espresso-core = "3.5.1"
+annotation = "1.6.0"
 
 [libraries]
 
@@ -87,24 +99,35 @@ compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeB
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "geojsonVersion" }
 googleMaterialDesign = { module = "com.google.android.material:material", version.ref = "materialDesign" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroidVersion" }
-kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinxMetadataJvmVersion" }
+koltin-serialization-jvm = { module = "io.ktor:koltin-serialization-jvm", version.ref = "ktorVersion" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
+kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobufVersion" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorVersion" }
+ktor-client-logging-jvm = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktorVersion" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorVersion" }
+ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktorVersion" }
+ktor-serialization-kotlinx-protobuf = { module = "io.ktor:ktor-serialization-kotlinx-protobuf", version.ref = "ktorVersion" }
+
 lifecycle-android = { module = "com.tinder.scarlet:lifecycle-android", version.ref = "lifecycleAndroidVersion" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptorVersion" }
 mapbox-sdk-turf = { module = "com.mapbox.mapboxsdk:mapbox-sdk-turf", version.ref = "mapboxSdkTurfVersion" }
 maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsComposeVersion" }
 maps-style = { module = "com.mapbox.extension:maps-style", version.ref = "mapsStyleVersion" }
-message-adapter-gson = { module = "com.tinder.scarlet:message-adapter-gson", version.ref = "messageAdapterGsonVersion" }
-message-adapter-moshi = { module = "com.tinder.scarlet:message-adapter-moshi", version.ref = "messageAdapterMoshiVersion" }
+message-adapter-gson = { module = "com.tinder.scarlet:message-adapter-gson", version.ref = "sarletMessageAdapterVersion" }
+message-adapter-protobuf = { module = "com.tinder.scarlet:message-adapter-protobuf", version.ref = "sarletMessageAdapterVersion" }
 moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegenVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttpVersion" }
 scarlet = { module = "com.tinder.scarlet:scarlet", version.ref = "scarletVersion" }
+turf = { module = "io.github.dellisd.spatialk:turf", version.ref = "turfVersion" }
 websocket-okhttp = { module = "com.tinder.scarlet:websocket-okhttp", version.ref = "websocketOkhttpVersion" }
 stream-adapter-coroutines = { module = "com.tinder.scarlet:stream-adapter-coroutines", version.ref = "streamAdapterCoroutinesVersion" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
@@ -113,10 +136,25 @@ junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 benchmark-junit4 = { group = "androidx.benchmark", name = "benchmark-junit4", version.ref = "benchmark-junit4" }
 
+# Ktor server
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 
 [bundles]
 
 [plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchmark" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+# Ktor server
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+androidDynamicFeature = { id = "com.android.dynamic-feature", version.ref = "agp" }

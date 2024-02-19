@@ -19,7 +19,13 @@ class ObserveAndStoreRoutesUseCase @Inject constructor(
     // TODO to use for what type of work. This responsibility lies in the class that does the work
     suspend operator fun invoke() = withContext(ioDispatcher) {
         routesRepository.streamAndPersist()
-            .catch { error -> Log.d("SERVICE", "Error - $error") } // TODO Catching of throwables
+            .catch { error ->
+                Log.e(
+                    "REPOSITORY_DEBUG",
+                    "Error ",
+                    error
+                )
+            }// TODO Catching of throwables
             .collect()
     }
 }

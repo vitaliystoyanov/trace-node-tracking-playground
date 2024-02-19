@@ -6,8 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.architecture.playground.data.local.DefaultLocalDataSource
 import io.architecture.playground.data.local.LocalDataSource
-import io.architecture.playground.data.remote.DefaultNetworkDataSource
-import io.architecture.playground.data.remote.interfaces.NetworkDataSource
+import io.architecture.playground.data.remote.KtorNetworkDataSource
+import io.architecture.playground.data.remote.NetworkDataSource
 import javax.inject.Singleton
 
 @Module
@@ -16,7 +16,7 @@ abstract class DatasourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindNetworkDataSource(dataSource: DefaultNetworkDataSource): NetworkDataSource
+    abstract fun bindNetworkDataSource(dataSource: KtorNetworkDataSource): NetworkDataSource
 
     @Singleton
     @Binds

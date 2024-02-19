@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+
+// serial name 'io.architecture.playground.data.remote.model.NetworkTrace'
+message NetworkTrace {
+  // WARNING: a default value decoded when value is missing
+  optional string type = 1;
+  // WARNING: a default value decoded when value is missing
+  optional double lon = 2;
+  // WARNING: a default value decoded when value is missing
+  optional double lat = 3;
+  // WARNING: a default value decoded when value is missing
+  optional int32 speed = 4;
+  // WARNING: a default value decoded when value is missing
+  optional double azimuth = 5;
+  // WARNING: a default value decoded when value is missing
+  optional double alt = 6;
+  // WARNING: a default value decoded when value is missing
+  optional int64 sentAtTime = 7;
+  // WARNING: a default value decoded when value is missing
+  optional string nodeId = 8;
+  // WARNING: a default value decoded when value is missing
+  optional int32 mode = 9;
+}

@@ -1,3 +1,6 @@
+rootProject.name = "node_traces_streaming"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google()
@@ -5,6 +8,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -24,6 +28,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Websocket Realtime Map Playground"
 include(":app")
 include(":microbenchmark")
+//include(":shared")
+include(":ktor-server")

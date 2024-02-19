@@ -7,7 +7,7 @@ import io.architecture.playground.data.remote.model.NetworkTrace
 import io.architecture.playground.model.Trace
 import java.util.Date
 
-fun WebSocket.Event.toExternal(): ConnectionEvent = when (this) {
+fun WebSocket.Event.toExternalAs(): ConnectionEvent = when (this) {
     is WebSocket.Event.OnConnectionOpened<*> -> ConnectionEvent.OPENED
     is WebSocket.Event.OnConnectionClosed -> ConnectionEvent.CLOSED
     is WebSocket.Event.OnConnectionClosing -> ConnectionEvent.CLOSING
@@ -28,7 +28,7 @@ fun Trace.toLocal() = TraceEntity(
     lat = lat,
 )
 
-fun TraceEntity.toExternal() = Trace(
+fun TraceEntity.toExternalAs() = Trace(
     nodeId = nodeId,
     lon = lon,
     sentAtTime = sentAtTime,
@@ -61,7 +61,7 @@ fun TraceEntity.toNetwork() = NetworkTrace(
 
 fun Trace.toNetwork() = toLocal().toNetwork()
 
-fun NetworkTrace.toExternal() = toLocal().toExternal()
+fun NetworkTrace.toExternalAs() = toLocal().toExternalAs()
 
 fun List<TraceEntity>.toNetwork() = map(TraceEntity::toNetwork)
 
@@ -69,7 +69,7 @@ fun List<Trace>.toLocal() = map(Trace::toLocal)
 
 
 @JvmName("localToExternal")
-fun List<TraceEntity>.toExternal() = map(TraceEntity::toExternal)
+fun List<TraceEntity>.toExternalAs() = map(TraceEntity::toExternalAs)
 
 @JvmName("networkToLocal")
 fun List<NetworkTrace>.toLocal() = map(NetworkTrace::toLocal)
@@ -78,7 +78,7 @@ fun List<NetworkTrace>.toLocal() = map(NetworkTrace::toLocal)
 fun List<Trace>.toNetwork() = map(Trace::toNetwork)
 
 @JvmName("networkToExternal")
-fun List<NetworkTrace>.toExternal() = map(NetworkTrace::toExternal)
+fun List<NetworkTrace>.toExternalAs() = map(NetworkTrace::toExternalAs)
 
 
 fun TraceEntity.assignProperties(tracePooled: Trace, source: TraceEntity): Trace =
