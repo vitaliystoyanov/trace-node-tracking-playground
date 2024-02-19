@@ -1,4 +1,4 @@
-package io.architecture.scarlet
+package io.architecture.network.websocket.imp.scarlet
 
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.ConnectionEvent
@@ -27,5 +27,5 @@ class ScarletNetworkDataSource @Inject constructor(
     override fun streamServerTime(): Flow<NetworkServerTime> = traceService.streamServerTime()
 
     override fun streamConnectionEvents(): Flow<ConnectionEvent> =
-        traceService.streamConnection().map {ConnectionEvent.valueOf("OPENED") } // TODO !!!
+        traceService.streamConnection().map { ConnectionEvent.valueOf("OPENED") } // TODO !!!
 }

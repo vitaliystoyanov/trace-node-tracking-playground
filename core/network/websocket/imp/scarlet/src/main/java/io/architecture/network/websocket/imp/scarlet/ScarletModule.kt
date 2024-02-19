@@ -1,16 +1,6 @@
-package io.architecture.scarlet
+package io.architecture.network.websocket.imp.scarlet
 
-import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.messageadapter.protobuf.ProtobufMessageAdapter
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Qualifier
-import javax.inject.Singleton
 
 
 @Qualifier

@@ -1,4 +1,4 @@
-package io.architecture.scarlet.internal
+package io.architecture.network.websocket.imp.scarlet.internal
 
 import android.util.Log
 import com.tinder.scarlet.Message

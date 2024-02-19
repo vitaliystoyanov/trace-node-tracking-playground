@@ -1,4 +1,4 @@
-package io.architecture.scarlet.internal
+package io.architecture.network.websocket.imp.scarlet.internal
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter

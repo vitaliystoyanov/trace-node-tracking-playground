@@ -1,4 +1,4 @@
-package io.architecture.scarlet.internal;
+package io.architecture.network.websocket.imp.scarlet.internal;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

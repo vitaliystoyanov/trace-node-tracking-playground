@@ -1,10 +1,10 @@
-package io.architecture.scarlet
+package io.architecture.network.websocket.imp.scarlet
 
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import io.architecture.network.websocket.api.RouteService
 import io.architecture.network.websocket.api.model.NetworkRoute
-import io.architecture.scarlet.internal.Target
+import io.architecture.network.websocket.imp.scarlet.internal.Target
 import kotlinx.coroutines.flow.Flow
 
 interface ScarletRouteService : RouteService {
