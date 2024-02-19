@@ -1,4 +1,4 @@
-name: Build & Assemble artifacts & Tests
+name: CI Build & Tests & Artifacts
 
 on:
   push:
