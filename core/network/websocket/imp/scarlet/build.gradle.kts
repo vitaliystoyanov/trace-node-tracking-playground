@@ -1,21 +1,18 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlin.android)
     kotlin("kapt")
-    kotlin("plugin.serialization") version "1.9.22" // TODO move to libraries
+    alias(libs.plugins.kotlin.serialize)
 }
 
 android {
     namespace = "io.architecture.scarlet"
     compileSdk = 34
 
-
-
     buildTypes {
         release {
             isMinifyEnabled = false
-
         }
     }
     compileOptions {
@@ -47,10 +44,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
-
-    // Moshi
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.moshi.kotlin.codegen)
 
     // okhttp
     implementation(libs.okhttp)

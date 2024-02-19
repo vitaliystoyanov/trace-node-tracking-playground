@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.androidx.benchmark)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {

@@ -1,9 +1,9 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlin.android)
     kotlin("kapt")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -17,7 +17,6 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-
         }
     }
     compileOptions {
@@ -43,11 +42,16 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.activityCompose)
-    implementation(libs.googleMaterialDesign)
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.compose.uiTooling)
+
+    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.lifecycle.android)
+
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.appCompat)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.material3.android)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -61,18 +65,11 @@ dependencies {
     // Note that Compose extension is compatible with Maps SDK v11.0+.
     implementation(libs.maps.compose)
     implementation(libs.maps.style)
-    implementation(libs.mapbox.sdk.turf)
 
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
-
-    implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.appCompat)
-    implementation(libs.googleMaterialDesign)
-    implementation(libs.androidx.foundation.layout.android)
-    implementation(libs.androidx.material3.android)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.junit)

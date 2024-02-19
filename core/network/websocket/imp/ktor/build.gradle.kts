@@ -1,22 +1,19 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlin.android)
     kotlin("kapt")
-    id("com.google.dagger.hilt.android")
-    kotlin("plugin.serialization") version "1.9.22" // TODO move to libraries
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.serialize)
 }
 
 android {
     namespace = "io.architecture.network.websocket.ktor"
     compileSdk = 34
 
-
-
     buildTypes {
         release {
             isMinifyEnabled = false
-
         }
     }
     compileOptions {
@@ -33,6 +30,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network.websocket.api)
     implementation(projects.core.datasource.api)
+
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
