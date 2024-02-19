@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "io.architecture.api"
+    namespace = "io.architecture.network.websocket.api"
     compileSdk = 34
 
 

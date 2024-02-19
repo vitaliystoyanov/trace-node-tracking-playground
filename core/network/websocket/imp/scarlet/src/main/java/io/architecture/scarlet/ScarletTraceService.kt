@@ -3,10 +3,10 @@ package io.architecture.scarlet
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
-import io.architecture.api.TraceService
-import io.architecture.api.model.NetworkClientTime
-import io.architecture.api.model.NetworkServerTime
-import io.architecture.api.model.NetworkTrace
+import io.architecture.network.websocket.api.TraceService
+import io.architecture.network.websocket.api.model.NetworkTrace
+import io.architecture.network.websocket.model.NetworkClientTime
+import io.architecture.network.websocket.model.NetworkServerTime
 import io.architecture.scarlet.internal.Target
 import kotlinx.coroutines.flow.Flow
 

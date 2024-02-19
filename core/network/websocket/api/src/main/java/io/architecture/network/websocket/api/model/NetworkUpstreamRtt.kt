@@ -1,4 +1,4 @@
-package io.architecture.api.model
+package io.architecture.network.websocket.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

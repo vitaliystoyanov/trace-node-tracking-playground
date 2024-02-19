@@ -1,13 +1,13 @@
 package io.architecture.data.repository
 
 import android.util.Log
-import io.architecture.api.model.NetworkClientTime
 import io.architecture.common.ApplicationScope
 import io.architecture.common.IoDispatcher
-import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
+import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
+import io.architecture.network.websocket.model.NetworkClientTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay

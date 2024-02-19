@@ -1,7 +1,7 @@
 package io.architecture.data.mapping
 
 import io.architecture.database.api.model.CoordinateEntity
-import io.architecture.api.model.NetworkRoute
+import io.architecture.network.websocket.api.model.NetworkRoute
 import io.architecture.database.api.model.RouteEntity
 import io.architecture.model.Coordinate
 import io.architecture.model.Route

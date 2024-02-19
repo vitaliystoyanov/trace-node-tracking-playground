@@ -1,12 +1,12 @@
 package io.architecture.ktor
 
-import io.architecture.api.ConnectionEventStreamer
-import io.architecture.api.TraceService
-import io.architecture.api.model.NetworkTrace
 import io.architecture.common.ApplicationScope
 import io.architecture.common.DefaultDispatcher
 import io.architecture.ktor.internal.KtorProtobufClient
 import io.architecture.model.ConnectionEvent
+import io.architecture.network.websocket.api.ConnectionEventStreamer
+import io.architecture.network.websocket.api.TraceService
+import io.architecture.network.websocket.api.model.NetworkTrace
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

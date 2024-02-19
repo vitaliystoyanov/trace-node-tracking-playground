@@ -1,4 +1,4 @@
-package io.architecture.api
+package io.architecture.network.websocket.api
 
 import io.architecture.model.ConnectionEvent
 import kotlinx.coroutines.flow.Flow

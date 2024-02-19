@@ -1,4 +1,4 @@
-package io.architecture.api
+package io.architecture.network.websocket.api
 
 //@Module
 //@InstallIn(SingletonComponent::class)
