@@ -1,8 +1,9 @@
-package io.architecture.api.model
+package io.architecture.database.api.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.architecture.database.api.model.CoordinateEntity
 
 @Entity(
     tableName = "routes"

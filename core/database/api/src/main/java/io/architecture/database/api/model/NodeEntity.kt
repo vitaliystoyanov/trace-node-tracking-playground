@@ -1,4 +1,4 @@
-package io.architecture.api.model
+package io.architecture.database.api.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "io.architecture.api"
+    namespace = "io.architecture.database.api"
     compileSdk = 34
 
 

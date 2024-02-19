@@ -1,6 +1,6 @@
 package io.architecture.data.mapping
 
-import io.architecture.api.model.NodeEntity
+import io.architecture.database.api.model.NodeEntity
 import io.architecture.model.Node
 import io.architecture.model.NodeMode
 

@@ -1,11 +1,11 @@
 package io.architecture.database.imp.room
 
-import io.architecture.api.dao.NodeDao
-import io.architecture.api.dao.RouteDao
-import io.architecture.api.dao.TraceDao
-import io.architecture.api.model.NodeEntity
-import io.architecture.api.model.RouteEntity
-import io.architecture.api.model.TraceEntity
+import io.architecture.database.api.dao.NodeDao
+import io.architecture.database.api.dao.RouteDao
+import io.architecture.database.api.dao.TraceDao
+import io.architecture.database.api.model.NodeEntity
+import io.architecture.database.api.model.RouteEntity
+import io.architecture.database.api.model.TraceEntity
 import io.architecture.datasource.api.LocalDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

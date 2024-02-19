@@ -1,8 +1,8 @@
 package io.architecture.data.mapping
 
-import io.architecture.api.model.CoordinateEntity
+import io.architecture.database.api.model.CoordinateEntity
 import io.architecture.api.model.NetworkRoute
-import io.architecture.api.model.RouteEntity
+import io.architecture.database.api.model.RouteEntity
 import io.architecture.model.Coordinate
 import io.architecture.model.Route
 

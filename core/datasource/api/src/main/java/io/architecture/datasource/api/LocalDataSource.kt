@@ -1,8 +1,8 @@
 package io.architecture.datasource.api
 
-import io.architecture.api.model.NodeEntity
-import io.architecture.api.model.RouteEntity
-import io.architecture.api.model.TraceEntity
+import io.architecture.database.api.model.NodeEntity
+import io.architecture.database.api.model.RouteEntity
+import io.architecture.database.api.model.TraceEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {

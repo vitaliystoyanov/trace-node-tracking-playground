@@ -1,7 +1,7 @@
 package io.architecture.database.imp.room.convertors
 
 import androidx.room.TypeConverter
-import io.architecture.api.model.CoordinateEntity
+import io.architecture.database.api.model.CoordinateEntity
 
 private const val COORDINATE_DELIMITER = ","
 private const val COORDINATE_TERMINAL = ";"

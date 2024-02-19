@@ -2,7 +2,7 @@ package io.architecture.data.mapping
 
 //import com.tinder.scarlet.WebSocket
 import io.architecture.api.model.NetworkTrace
-import io.architecture.api.model.TraceEntity
+import io.architecture.database.api.model.TraceEntity
 import io.architecture.model.Node
 import io.architecture.model.Trace
 import java.util.Date

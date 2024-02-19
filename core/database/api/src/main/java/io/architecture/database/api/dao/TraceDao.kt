@@ -1,10 +1,10 @@
-package io.architecture.api.dao
+package io.architecture.database.api.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.architecture.api.model.TraceEntity
+import io.architecture.database.api.model.TraceEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,4 +1,4 @@
-package io.architecture.room
+package io.architecture.database.imp.room
 
 import android.content.Context
 import androidx.room.Room
@@ -7,9 +7,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.architecture.api.dao.NodeDao
-import io.architecture.api.dao.RouteDao
-import io.architecture.api.dao.TraceDao
+import io.architecture.database.api.dao.NodeDao
+import io.architecture.database.api.dao.RouteDao
+import io.architecture.database.api.dao.TraceDao
 import javax.inject.Singleton
 
 @Module
