@@ -1,14 +1,16 @@
 name: Build & Assemble artifacts & Tests
 
 on:
-  pull_request:
-    branches:
-      - "main"
+  push:
+    paths-ignore:
+      - '.github/**'
+    branches: [ "main" ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   unit-test:
+    name: Run unit-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,11 +19,10 @@ jobs:
       - name: Setup JDK And Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.6
           cache-read-only: false
           
       - name: Set Up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '17'
@@ -41,6 +42,7 @@ jobs:
 
   assemble-debug:
     needs: [unit-test]
+    name: Build debug artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,7 +51,6 @@ jobs:
       - name: Setup JDK And Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.6
           cache-read-only: false
           
       - name: Set Up JDK
@@ -79,7 +80,6 @@ jobs:
       - name: Setup JDK And Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.6
           cache-read-only: false
           
       - name: Set Up JDK
@@ -105,3 +105,13 @@ jobs:
         with:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
+          
+   detekt-all:
+     name: Static code analysis
+     runs-on: ubuntu-latest
+     steps:
+       - name: "checkout"
+         uses: actions/checkout@v4
+
+       - name: "detekt"
+         uses: natiginfo/action-detekt-all@1.23.5
