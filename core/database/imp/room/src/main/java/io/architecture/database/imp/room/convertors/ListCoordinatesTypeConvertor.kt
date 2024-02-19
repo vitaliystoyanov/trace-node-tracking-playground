@@ -1,4 +1,4 @@
-package io.architecture.room.convertors
+package io.architecture.database.imp.room.convertors
 
 import androidx.room.TypeConverter
 import io.architecture.api.model.CoordinateEntity

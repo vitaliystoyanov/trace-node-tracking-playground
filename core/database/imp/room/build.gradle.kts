@@ -7,15 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "io.architecture.room"
+    namespace = "io.architecture.database.imp.room"
     compileSdk = 34
-
-
 
     buildTypes {
         release {
             isMinifyEnabled = false
-
         }
     }
     compileOptions {

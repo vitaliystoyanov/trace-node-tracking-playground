@@ -1,4 +1,4 @@
-package io.architecture.room
+package io.architecture.database.imp.room
 
 import io.architecture.api.dao.NodeDao
 import io.architecture.api.dao.RouteDao

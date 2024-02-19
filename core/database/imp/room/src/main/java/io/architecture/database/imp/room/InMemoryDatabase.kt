@@ -9,8 +9,8 @@ import io.architecture.api.dao.TraceDao
 import io.architecture.api.model.NodeEntity
 import io.architecture.api.model.RouteEntity
 import io.architecture.api.model.TraceEntity
-import io.architecture.room.convertors.DateTypeConvertor
-import io.architecture.room.convertors.ListCoordinatesTypeConvertor
+import io.architecture.database.imp.room.convertors.DateTypeConvertor
+import io.architecture.database.imp.room.convertors.ListCoordinatesTypeConvertor
 
 @Database(
     entities = [NodeEntity::class, TraceEntity::class, RouteEntity::class],
