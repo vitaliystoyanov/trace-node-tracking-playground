@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "io.architecture.ktor"
+    namespace = "io.architecture.network.websocket.ktor"
     compileSdk = 34
 
 

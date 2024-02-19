@@ -1,11 +1,11 @@
-package io.architecture.ktor
+package io.architecture.network.websocket.imp.ktor
 
 import io.architecture.common.ApplicationScope
 import io.architecture.common.DefaultDispatcher
-import io.architecture.ktor.internal.KtorProtobufClient
 import io.architecture.model.ConnectionEvent
 import io.architecture.network.websocket.api.ConnectionEventStreamer
 import io.architecture.network.websocket.api.RttService
+import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
 import io.architecture.network.websocket.model.NetworkClientTime
 import io.architecture.network.websocket.model.NetworkServerTime
 import kotlinx.coroutines.CoroutineDispatcher

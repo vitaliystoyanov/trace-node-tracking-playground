@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import io.architecture.database.imp.room.DefaultLocalDataSource
 import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
-import io.architecture.ktor.KtorNetworkDataSource
+import io.architecture.network.websocket.imp.ktor.KtorNetworkDataSource
 import javax.inject.Singleton
 
 @Module

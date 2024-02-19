@@ -1,4 +1,4 @@
-package io.architecture.ktor
+package io.architecture.network.websocket.imp.ktor
 
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.ConnectionEvent

@@ -1,4 +1,4 @@
-package io.architecture.ktor.internal
+package io.architecture.network.websocket.imp.ktor.internal
 
 import android.util.Log
 import io.architecture.model.ConnectionEvent

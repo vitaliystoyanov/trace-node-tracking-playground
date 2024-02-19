@@ -1,4 +1,4 @@
-package io.architecture.ktor
+package io.architecture.network.websocket.imp.ktor
 
 import android.util.Log
 import dagger.Module
@@ -7,7 +7,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.architecture.common.ApplicationScope
 import io.architecture.common.DefaultDispatcher
-import io.architecture.ktor.internal.KtorProtobufClient
 import io.architecture.network.websocket.api.BASE_WS_HOST
 import io.architecture.network.websocket.api.BASE_WS_PORT
 import io.architecture.network.websocket.api.NODE_ROUTES_WS_PATH
@@ -18,6 +17,7 @@ import io.architecture.network.websocket.api.RttService
 import io.architecture.network.websocket.api.TraceService
 import io.architecture.network.websocket.api.model.NetworkRoute
 import io.architecture.network.websocket.api.model.NetworkTrace
+import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
 import io.architecture.network.websocket.model.NetworkClientTime
 import io.architecture.network.websocket.model.NetworkServerTime
 import io.ktor.client.HttpClient
