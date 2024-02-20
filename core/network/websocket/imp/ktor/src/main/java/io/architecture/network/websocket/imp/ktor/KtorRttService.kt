@@ -6,8 +6,8 @@ import io.architecture.model.ConnectionEvent
 import io.architecture.network.websocket.api.ConnectionEventStreamer
 import io.architecture.network.websocket.api.RttService
 import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
-import io.architecture.network.websocket.model.NetworkClientTime
-import io.architecture.network.websocket.model.NetworkServerTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkServerTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

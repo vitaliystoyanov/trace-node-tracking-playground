@@ -7,7 +7,7 @@ import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
-import io.architecture.network.websocket.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay

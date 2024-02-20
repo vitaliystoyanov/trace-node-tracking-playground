@@ -6,8 +6,8 @@ import com.tinder.scarlet.ws.Send
 import io.architecture.network.websocket.api.TraceService
 import io.architecture.network.websocket.api.model.NetworkTrace
 import io.architecture.network.websocket.imp.scarlet.internal.Target
-import io.architecture.network.websocket.model.NetworkClientTime
-import io.architecture.network.websocket.model.NetworkServerTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkServerTime
 import kotlinx.coroutines.flow.Flow
 
 

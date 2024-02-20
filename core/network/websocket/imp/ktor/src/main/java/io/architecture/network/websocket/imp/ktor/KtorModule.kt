@@ -18,8 +18,8 @@ import io.architecture.network.websocket.api.TraceService
 import io.architecture.network.websocket.api.model.NetworkRoute
 import io.architecture.network.websocket.api.model.NetworkTrace
 import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
-import io.architecture.network.websocket.model.NetworkClientTime
-import io.architecture.network.websocket.model.NetworkServerTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkServerTime
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.logging.LogLevel
