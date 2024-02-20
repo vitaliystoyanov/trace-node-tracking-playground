@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation(projects.core.database.api)
     implementation(projects.core.datasource.api)
+    implementation(projects.core.model)
 
     // Room
     implementation(libs.androidx.room.runtime)

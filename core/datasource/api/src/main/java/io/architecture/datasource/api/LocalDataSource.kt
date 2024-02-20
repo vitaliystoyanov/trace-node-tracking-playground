@@ -19,13 +19,11 @@ interface LocalDataSource {
 
     suspend fun getRouteBy(nodeId: String): RouteEntity?
 
-    suspend fun createOrUpdate(node: NodeEntity)
+    suspend fun deleteAllTraces()
 
     suspend fun createOrUpdate(trace: TraceEntity)
 
     suspend fun createOrUpdate(route: RouteEntity)
 
-    suspend fun getAllTraces(): List<TraceEntity>
-
-    suspend fun deleteAllTraces()
+    suspend fun createOrUpdate(node: NodeEntity)
 }

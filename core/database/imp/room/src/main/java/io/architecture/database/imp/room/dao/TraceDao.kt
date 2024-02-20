@@ -1,17 +1,18 @@
-package io.architecture.database.api.dao
+package io.architecture.database.imp.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.architecture.database.api.model.TraceEntity
+import io.architecture.database.api.dao.InterfaceTraceDao
+import io.architecture.database.imp.room.entity.RoomTraceEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface TraceDao {
+internal abstract class TraceDao : InterfaceTraceDao<RoomTraceEntity> {
 
     @Query("SELECT * FROM traces")
-    fun observeAll(): Flow<List<TraceEntity>>
+    abstract override fun observeAll(): Flow<List<RoomTraceEntity>>
 
     @Query(
         """
@@ -20,16 +21,14 @@ interface TraceDao {
         WHERE node_id = :nodeId LIMIT 1
     """
     )
-    fun observeById(nodeId: String): Flow<TraceEntity>
+    abstract override fun observeById(nodeId: String): Flow<RoomTraceEntity>
 
     @Query("SELECT COUNT(node_id) FROM traces")
-    fun observeCount(): Flow<Int>
+    abstract override fun observeCount(): Flow<Int>
 
-    @Query("SELECT * FROM traces")
-    suspend fun getAll(): List<TraceEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(trace: TraceEntity)
+    abstract override suspend fun insert(trace: RoomTraceEntity)
 
     @Query(
         """
@@ -37,7 +36,7 @@ interface TraceDao {
             VALUES(:node_id, :lon, :lat, :speed, :azimuth, :alt, :time)
     """
     )
-    suspend fun insert(
+    abstract override suspend fun insert(
         node_id: String,
         lon: Double,
         lat: Double,
@@ -48,9 +47,9 @@ interface TraceDao {
     )
 
     @Query("DELETE FROM traces WHERE node_id = :nodeId")
-    suspend fun deleteById(nodeId: String): Int
+    abstract override suspend fun deleteById(nodeId: String): Int
 
     @Query("DELETE FROM traces")
-    suspend fun deleteAll()
+    abstract override suspend fun deleteAll()
 
 }

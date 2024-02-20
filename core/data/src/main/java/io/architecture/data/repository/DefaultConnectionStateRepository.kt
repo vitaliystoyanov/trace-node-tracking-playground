@@ -3,7 +3,7 @@ package io.architecture.data.repository
 import android.util.Log
 import io.architecture.common.ApplicationScope
 import io.architecture.common.IoDispatcher
-import io.architecture.data.mapping.toExternalAs
+import io.architecture.data.mapping.toExternal
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
@@ -50,5 +50,5 @@ class DefaultConnectionStateRepository @Inject constructor(
 
     override fun streamConnectionEvents(): Flow<Connection> =
         network.streamConnectionEvents()
-            .map { it.toExternalAs() }
+            .map { it.toExternal() }
 }

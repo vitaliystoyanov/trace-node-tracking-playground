@@ -4,8 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.architecture.database.imp.room.DefaultLocalDataSource
-import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.network.websocket.imp.ktor.KtorNetworkDataSource
 import javax.inject.Singleton
@@ -18,7 +16,4 @@ abstract class DatasourceModule {
     @Binds
     abstract fun bindNetworkDataSource(dataSource: KtorNetworkDataSource): NetworkDataSource
 
-    @Singleton
-    @Binds
-    abstract fun bindLocalDataSource(dataSource: DefaultLocalDataSource): LocalDataSource
 }

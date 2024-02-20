@@ -1,9 +1,9 @@
 package io.architecture.data.repository.interfaces
 
 import io.architecture.common.IoDispatcher
+import io.architecture.database.api.model.toExternal
+import io.architecture.database.api.model.toLocal
 import io.architecture.datasource.api.LocalDataSource
-import io.architecture.data.mapping.toExternalAs
-import io.architecture.data.mapping.toLocal
 import io.architecture.model.Node
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DefaultNodeRepository @Inject constructor(
-    private val localDataSource: io.architecture.datasource.api.LocalDataSource,
+    private val localDataSource: LocalDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : NodeRepository {
 
@@ -21,7 +21,7 @@ class DefaultNodeRepository @Inject constructor(
     }
 
     override fun streamAllNodes(): Flow<List<Node>> =
-        localDataSource.observeAllNodes().map { it.toExternalAs() }
+        localDataSource.observeAllNodes().map { it.toExternal() }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeNodeCount()
 

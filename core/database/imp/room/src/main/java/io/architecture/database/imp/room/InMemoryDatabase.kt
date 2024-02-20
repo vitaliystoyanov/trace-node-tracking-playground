@@ -3,17 +3,17 @@ package io.architecture.database.imp.room
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import io.architecture.database.api.dao.NodeDao
-import io.architecture.database.api.dao.RouteDao
-import io.architecture.database.api.dao.TraceDao
-import io.architecture.database.api.model.NodeEntity
-import io.architecture.database.api.model.RouteEntity
-import io.architecture.database.api.model.TraceEntity
 import io.architecture.database.imp.room.convertors.DateTypeConvertor
 import io.architecture.database.imp.room.convertors.ListCoordinatesTypeConvertor
+import io.architecture.database.imp.room.dao.NodeDao
+import io.architecture.database.imp.room.dao.RouteDao
+import io.architecture.database.imp.room.dao.TraceDao
+import io.architecture.database.imp.room.entity.RoomNodeEntity
+import io.architecture.database.imp.room.entity.RoomRouteEntity
+import io.architecture.database.imp.room.entity.RoomTraceEntity
 
 @Database(
-    entities = [NodeEntity::class, TraceEntity::class, RouteEntity::class],
+    entities = [RoomNodeEntity::class, RoomTraceEntity::class, RoomRouteEntity::class],
     version = 1,
     exportSchema = false
 )

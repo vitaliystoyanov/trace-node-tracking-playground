@@ -2,6 +2,7 @@ package io.architecture.database.imp.room.convertors
 
 import androidx.room.TypeConverter
 import io.architecture.database.api.model.CoordinateEntity
+import io.architecture.database.imp.room.entity.RoomCoordinateEntity
 
 private const val COORDINATE_DELIMITER = ","
 private const val COORDINATE_TERMINAL = ";"
@@ -20,7 +21,7 @@ internal class ListCoordinatesTypeConvertor {
             .split(";")
             .asSequence()
             .map {
-                CoordinateEntity(
+                RoomCoordinateEntity(
                     it.split(COORDINATE_DELIMITER)[1].toDouble(),
                     it.split(COORDINATE_DELIMITER)[0].toDouble()
                 )

@@ -5,10 +5,12 @@ import io.architecture.common.ApplicationScope
 import io.architecture.common.DefaultDispatcher
 import io.architecture.common.IoDispatcher
 import io.architecture.data.mapping.toExternalAs
-import io.architecture.data.mapping.toLocal
+import io.architecture.data.mapping.toExternal
 import io.architecture.data.mapping.toNode
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.TraceRepository
+import io.architecture.database.api.model.toExternal
+import io.architecture.database.api.model.toLocal
 import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Trace
@@ -39,7 +41,7 @@ open class DefaultTraceRepository @Inject constructor(
 
     private val _sharedStreamTraces: SharedFlow<Trace> =
         networkDataSource.streamTraces()
-            .map { it.toExternalAs() }
+            .map { it.toExternal() }
             .shareIn(
                 applicationScope,
                 replay = 1,
@@ -76,6 +78,6 @@ open class DefaultTraceRepository @Inject constructor(
 
     override fun streamList(): Flow<List<Trace>> =
         localDataSource.observeAllTraces()
-            .map { it.toExternalAs() }
+            .map { it.toExternal() }
             .flowOn(defaultDispatcher)
 }

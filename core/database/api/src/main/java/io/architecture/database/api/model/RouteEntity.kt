@@ -1,16 +1,26 @@
 package io.architecture.database.api.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import io.architecture.database.api.model.CoordinateEntity
+import io.architecture.model.Coordinate
+import io.architecture.model.Route
 
-@Entity(
-    tableName = "routes"
+
+open class RouteEntity(
+    open var nodeId: String,
+    open var route: List<CoordinateEntity>?,
 )
-class RouteEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "node_id")
-    val nodeId: String,
-    val route: List<CoordinateEntity>?
+
+fun <T : RouteEntity> T.toExternal() = Route(
+    nodeId = nodeId,
+    coordinates = route?.map { Coordinate(it.lat, it.lon) } ?: emptyList()
 )
+
+@JvmName("localToExternal")
+fun <T : RouteEntity> List<T>.toExternal(): List<Route> = map { it.toExternal() }
+
+fun Route.toLocal(): RouteEntity = RouteEntity(
+    nodeId = nodeId,
+    route = coordinates.map { CoordinateEntity(it.lat, it.lon) }
+)
+
+@JvmName("externalToLocal")
+fun List<Route>.toLocal(): List<RouteEntity> = map { it.toLocal() }

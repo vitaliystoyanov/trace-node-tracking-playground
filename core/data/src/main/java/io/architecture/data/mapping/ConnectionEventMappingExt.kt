@@ -4,7 +4,7 @@ import io.architecture.model.Connection
 import io.architecture.model.ConnectionEvent
 import io.architecture.model.UpstreamRtt
 
-internal fun ConnectionEvent.toExternalAs(): Connection =
+internal fun ConnectionEvent.toExternal(): Connection =
     Connection(
         state = this.toExternalState(),
         rtt = UpstreamRtt(0L)
