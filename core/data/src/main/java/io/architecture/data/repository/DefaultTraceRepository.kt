@@ -4,8 +4,8 @@ import android.util.Log
 import io.architecture.common.ApplicationScope
 import io.architecture.common.DefaultDispatcher
 import io.architecture.common.IoDispatcher
-import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.mapping.toExternal
+import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.mapping.toNode
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.TraceRepository
@@ -52,12 +52,11 @@ open class DefaultTraceRepository @Inject constructor(
         localDataSource.observeTraceBy(nodeId)
             .map { it.toExternalAs() }
 
-    // TODO Bulk insertion of items in an SQLite table is always better than inserting each item individually
-    // TODO Extract _sharedStreamTraces logic
+    //  NOTE: Bulk insertion of items in an SQLite table is always better than inserting each item individually
     override fun streamAndPersist(): Flow<Trace> = _sharedStreamTraces
         .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
         .onEach { trace ->
-            localDataSource.createOrUpdate(trace.toLocal()) // TODO Move to TraceRepository
+            localDataSource.createOrUpdate(trace.toLocal())
             nodeRepository.createOrUpdate(trace.toNode())
         }
         .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }

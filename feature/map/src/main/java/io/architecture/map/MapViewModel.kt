@@ -62,7 +62,7 @@ class MapViewModel @Inject constructor(
         )
 
     val tracesUiState: StateFlow<Sequence<Trace>> =
-        getChunkedNodeWithTrace(1.seconds)
+        getChunkedNodeWithTrace(isDataBaseStream = false, interval = 1.seconds)
             .onEach {
                 Log.d(
                     "REPOSITORY_DEBUG_N",
