@@ -6,14 +6,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.expressions.dsl.generated.eq
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.extension.style.expressions.dsl.generated.match
+import com.mapbox.maps.extension.style.image.image
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
@@ -62,9 +65,9 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
         lineColor(Color.parseColor("#8C3C64"))
         lineWidth(1.9)
     }
-//   todo  bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
-//        +image(TRIANGLE_IMAGE_ID, it)
-//    }
+    bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
+        +image(TRIANGLE_IMAGE_ID, it)
+    }
     +circleLayer(LAYER_CIRCLE_ID, NODE_DATA_SOURCE_ID) {
         circleColor(match {
             get(MODE_KEY_PROPERTY)
@@ -195,9 +198,11 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
     drawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun drawableToBitmap(
     sourceDrawable: Drawable?,
     flipX: Boolean = false,

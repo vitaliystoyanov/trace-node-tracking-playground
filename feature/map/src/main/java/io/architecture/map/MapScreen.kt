@@ -110,7 +110,7 @@ fun MapNodesContent(
     nodeTraces: Sequence<Trace>,
     displayRoute: io.architecture.model.Route?,
     onNodeClick: (String) -> Unit,
-    onReleaseObjectFromPool: () -> Unit
+    onReleaseObjectFromPool: () -> Unit,
 ) {
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -144,15 +144,17 @@ fun MapNodesContent(
                 addOnMapClickListener { point ->
                     queryRenderedFeatures(
                         RenderedQueryGeometry(pixelForCoordinate(point)),
-                        RenderedQueryOptions(listOf(
-                            io.architecture.map.LAYER_SYMBOL_ID,
-                            io.architecture.map.LAYER_CIRCLE_ID
-                        ), null)
+                        RenderedQueryOptions(
+                            listOf(
+                                LAYER_SYMBOL_ID,
+                                LAYER_CIRCLE_ID
+                            ), null
+                        )
                     ) {
                         it.value?.forEach { renderedFeature ->
                             onNodeClick(
                                 renderedFeature.queriedFeature.feature.getStringProperty(
-                                    io.architecture.map.NODE_ID_KEY_PROPERTY
+                                    NODE_ID_KEY_PROPERTY
                                 )
                             )
                         }
@@ -188,7 +190,7 @@ fun MapNodesContent(
 private fun generateFeatures(
     mapOfNodes: Sequence<Trace>,
     features: MutableList<Feature>,
-    displayRoute: io.architecture.model.Route?
+    displayRoute: io.architecture.model.Route?,
 ) {
     val timeGeneration = measureTime {
         mapOfNodes
@@ -231,7 +233,10 @@ private fun toFeaturesFrom(entry: Trace) =
                     entry.speed
                 )
             )
-            addStringProperty(MODE_KEY_PROPERTY, io.architecture.model.NodeMode.ACTIVE.name) // TODO Not available from Trace class
+            addStringProperty(
+                MODE_KEY_PROPERTY,
+                io.architecture.model.NodeMode.ACTIVE.name
+            ) // TODO Not available from Trace class
             addStringProperty(NODE_ID_KEY_PROPERTY, entry.nodeId)
             addNumberProperty(BEARING_KEY_PROPERTY, entry.azimuth)
         }
