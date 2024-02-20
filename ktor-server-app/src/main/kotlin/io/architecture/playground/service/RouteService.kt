@@ -1,6 +1,6 @@
 package io.architecture.playground.service
 
-import io.architecture.playground.model.NetworkRoute
+import io.architecture.network.websocket.api.model.NetworkRoute
 import io.architecture.playground.model.SampleNode
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds

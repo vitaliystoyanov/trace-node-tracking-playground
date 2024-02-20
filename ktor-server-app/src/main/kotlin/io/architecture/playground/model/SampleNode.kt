@@ -1,5 +1,6 @@
 package io.architecture.playground.model
 
+import io.architecture.network.websocket.api.model.NetworkTrace
 import io.github.dellisd.spatialk.geojson.LineString
 
 data class SampleNode(

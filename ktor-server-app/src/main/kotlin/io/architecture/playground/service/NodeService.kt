@@ -1,6 +1,6 @@
 package io.architecture.playground.service
 
-import io.architecture.playground.model.NetworkTrace
+import io.architecture.network.websocket.api.model.NetworkTrace
 import io.architecture.playground.model.SampleNode
 import io.architecture.playground.model.toDto
 import io.architecture.playground.modules.LOGGER

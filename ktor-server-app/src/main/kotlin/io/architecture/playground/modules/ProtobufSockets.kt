@@ -1,7 +1,7 @@
 package io.architecture.playground.modules
 
-import io.architecture.playground.model.NetworkClientTime
-import io.architecture.playground.model.NetworkServerTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkServerTime
 import io.architecture.playground.service.sendRoutes
 import io.architecture.playground.service.sendTraces
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter

@@ -1,6 +1,6 @@
-import io.architecture.playground.model.NetworkClientTime
-import io.architecture.playground.model.NetworkServerTime
-import io.architecture.playground.model.NetworkTrace
+import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkServerTime
+import io.architecture.network.websocket.api.model.NetworkTrace
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.schema.ProtoBufSchemaGenerator
 import java.io.File

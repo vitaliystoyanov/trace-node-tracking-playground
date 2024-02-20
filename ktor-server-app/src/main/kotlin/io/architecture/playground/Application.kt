@@ -1,6 +1,6 @@
 package io.architecture.playground
 
-import io.architecture.playground.model.NetworkClientTime
+import io.architecture.network.websocket.api.model.NetworkClientTime
 import io.architecture.playground.modules.LOGGER
 import io.architecture.playground.modules.configureSockets
 import io.ktor.server.application.Application
