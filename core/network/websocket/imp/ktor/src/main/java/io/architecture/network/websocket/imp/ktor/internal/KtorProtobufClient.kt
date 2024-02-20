@@ -12,6 +12,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
             client: HttpClient,
             host: String,
             port: Int,
-            path: String
+            path: String,
         ) = KtorProtobufClient(S::class, R::class, client, host, port, path)
     }
 
@@ -51,7 +51,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
         client: HttpClient,
         host: String,
         port: Int,
-        path: String
+        path: String,
     ) {
         _client = client
         _host = host
@@ -65,7 +65,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
         client: HttpClient,
         host: String,
         port: Int,
-        path: String
+        path: String,
     ) : this(client, host, port, path) {
         _sendClass = sendClass
         _receiveClass = receiveClass
@@ -75,14 +75,20 @@ open class KtorProtobufClient<S : Any, R : Any> {
     private var _isSessionOpened = false
 
     @OptIn(DelicateCoroutinesApi::class)
-    private val _connectionEventsShared = MutableSharedFlow<ConnectionEvent>()
+    private val _connectionEventsShared =
+        MutableStateFlow(ConnectionEvent.UNDEFINED)
+
     private var _sendShared = MutableSharedFlow<S>()
     private val _receiveShared = MutableSharedFlow<R>()
 
     @OptIn(DelicateCoroutinesApi::class)
     val connectionEventsShared = _connectionEventsShared
         .shareIn(
-            scope = GlobalScope, started = SharingStarted.WhileSubscribed(), replay = 1
+            scope = GlobalScope,
+            started = SharingStarted.Eagerly, // Important! SharingStarted.Eagerly to receive
+                                              // replay cache on app launch & connection opened (avoid race condition)
+                                              // Cache will have always latest connection event on flow collect
+            replay = 1
         )
     val sendShared: MutableSharedFlow<S> = _sendShared
 
@@ -141,8 +147,14 @@ open class KtorProtobufClient<S : Any, R : Any> {
     private suspend fun DefaultClientWebSocketSession.consumeIncoming() {
         incoming
             .consumeAsFlow()
-            .onStart { _connectionEventsShared.emit(ConnectionEvent.OPENED) }
-            .onEach { _connectionEventsShared.emit(ConnectionEvent.MESSAGE_RECEIVED) }
+            .onStart {
+                Log.d(
+                    "KTOR_SERVICE",
+                    "consumeIncoming() -> [ws(s)://$_host:$_port$_path] -> ConnectionEvent.OPENED"
+                )
+                _connectionEventsShared.emit(ConnectionEvent.OPENED)
+            }
+//            .onEach { _connectionEventsShared.emit(ConnectionEvent.MESSAGE_RECEIVED) }
             .onCompletion { _connectionEventsShared.emit(ConnectionEvent.CLOSED) }
 
             .mapNotNull { it as? Frame.Binary }

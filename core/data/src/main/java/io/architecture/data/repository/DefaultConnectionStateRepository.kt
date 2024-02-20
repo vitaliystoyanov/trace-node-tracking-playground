@@ -3,16 +3,20 @@ package io.architecture.data.repository
 import android.util.Log
 import io.architecture.common.ApplicationScope
 import io.architecture.common.IoDispatcher
-import io.architecture.data.mapping.toExternal
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
+import io.architecture.model.ConnectionEvent
+import io.architecture.model.UpstreamRtt
 import io.architecture.network.websocket.api.model.NetworkClientTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -28,13 +32,13 @@ class DefaultConnectionStateRepository @Inject constructor(
 ) : ConnectionStateRepository {
 
     private val skipMessageReceived =
-        { event: io.architecture.model.ConnectionEvent -> event.let { event != io.architecture.model.ConnectionEvent.MESSAGE_RECEIVED } }
+        { event: ConnectionEvent -> event.let { event != ConnectionEvent.MESSAGE_RECEIVED } }
 
-    override fun streamRoundTripTime(interval: Duration): Flow<io.architecture.model.UpstreamRtt> =
+    override fun streamRoundTripTime(interval: Duration): Flow<UpstreamRtt> =
         network.streamServerTime()
             .onStart { sendClientTimeWith(2.seconds) } // TODO Start on connection
             .onEach { sendClientTimeWith(interval) }
-            .map { serverTime -> io.architecture.model.UpstreamRtt(System.currentTimeMillis() - serverTime.clientSentTime) }
+            .map { serverTime -> UpstreamRtt(System.currentTimeMillis() - serverTime.clientSentTime) }
             .catch { error -> Log.e("RTT_NETWORK", "streamRoundTripTime ", error) }
             .flowOn(ioDispatcher)
 
@@ -48,7 +52,27 @@ class DefaultConnectionStateRepository @Inject constructor(
         }
     }
 
-    override fun streamConnectionEvents(): Flow<Connection> =
-        network.streamConnectionEvents()
-            .map { it.toExternal() }
+    override fun streamConnectionEvents(): SharedFlow<ConnectionEvent> {
+        Log.d(
+            "RTT_NETWORK",
+            "streamConnectionEvents: Connection events to replay on subscribe -> " +
+                    "${network.streamConnectionEvents().replayCache.size}"
+        )
+        return network.streamConnectionEvents()
+    }
+}
+
+fun ConnectionEvent.toExternal(): Connection =
+    Connection(
+        state = toExternalState(),
+        rtt = UpstreamRtt(0L)
+    )
+
+internal fun ConnectionEvent.toExternalState(): Connection.State = when (this) {
+    ConnectionEvent.UNDEFINED -> Connection.State.UNDEFINED
+    ConnectionEvent.OPENED -> Connection.State.OPENED
+    ConnectionEvent.CLOSED -> Connection.State.CLOSED
+    ConnectionEvent.CLOSING -> Connection.State.CLOSING
+    ConnectionEvent.FAILED -> Connection.State.FAILED
+    ConnectionEvent.MESSAGE_RECEIVED -> Connection.State.MESSAGE_RECEIVED
 }

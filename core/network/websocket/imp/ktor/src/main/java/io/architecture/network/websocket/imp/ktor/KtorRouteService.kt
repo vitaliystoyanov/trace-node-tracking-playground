@@ -10,12 +10,13 @@ import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
 class KtorRouteService @Inject constructor(
     private val client: KtorProtobufClient<Any, NetworkRoute>,
     @ApplicationScope private val scope: CoroutineScope,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : RouteService, ConnectionEventStreamer {
 
     override fun streamRoutes(): Flow<NetworkRoute> {
@@ -23,7 +24,7 @@ class KtorRouteService @Inject constructor(
         return client.receiveShared
     }
 
-    override fun streamConnectionEvents(): Flow<ConnectionEvent> =
+    override fun streamConnectionEvents(): SharedFlow<ConnectionEvent> =
         client.connectionEventsShared
 
 }

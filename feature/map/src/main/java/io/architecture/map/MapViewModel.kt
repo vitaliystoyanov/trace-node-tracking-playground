@@ -37,12 +37,6 @@ class MapViewModel @Inject constructor(
     private val _displayDetails = MutableStateFlow(DetailsUiState(null, null))
 
     val connectionsUiState = connectionState()
-        .onEach {
-            Log.d(
-                "REPOSITORY_DEBUG",
-                "VIEW_MODEL -> connectionsUiState -> state - $it"
-            )
-        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

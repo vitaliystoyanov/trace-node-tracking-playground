@@ -1,5 +1,6 @@
 package io.architecture.network.websocket.imp.scarlet
 
+import androidx.compose.runtime.collectAsState
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.ConnectionEvent
 import io.architecture.network.websocket.api.model.NetworkRoute
@@ -7,6 +8,8 @@ import io.architecture.network.websocket.api.model.NetworkTrace
 import io.architecture.network.websocket.api.model.NetworkClientTime
 import io.architecture.network.websocket.api.model.NetworkServerTime
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -26,6 +29,10 @@ internal class ScarletNetworkDataSource @Inject constructor(
 
     override fun streamServerTime(): Flow<NetworkServerTime> = traceService.streamServerTime()
 
-    override fun streamConnectionEvents(): Flow<ConnectionEvent> =
-        traceService.streamConnection().map { ConnectionEvent.valueOf("OPENED") } // TODO !!!
+    override fun streamConnectionEvents(): StateFlow<ConnectionEvent> {
+        TODO("Not yet implemented")
+    }
+
+//    override fun streamConnectionEvents(): StateFlow<ConnectionEvent>
+//        traceService.streamConnection().map { ConnectionEvent.valueOf("OPENED") } // TODO !!!
 }

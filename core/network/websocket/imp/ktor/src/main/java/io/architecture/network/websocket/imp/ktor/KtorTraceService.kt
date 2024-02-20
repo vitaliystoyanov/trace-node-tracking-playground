@@ -10,12 +10,13 @@ import io.architecture.network.websocket.imp.ktor.internal.KtorProtobufClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
 class KtorTraceService @Inject constructor(
     private val client: KtorProtobufClient<Any, NetworkTrace>,
     @ApplicationScope private val scope: CoroutineScope,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : TraceService, ConnectionEventStreamer {
 
     override fun streamTraces(): Flow<NetworkTrace> {
@@ -23,5 +24,6 @@ class KtorTraceService @Inject constructor(
         return client.receiveShared
     }
 
-    override fun streamConnectionEvents(): Flow<ConnectionEvent> = client.connectionEventsShared
+    override fun streamConnectionEvents(): SharedFlow<ConnectionEvent> =
+        client.connectionEventsShared
 }

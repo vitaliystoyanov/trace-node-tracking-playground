@@ -1,8 +1,8 @@
 package io.architecture.network.websocket.api
 
 import io.architecture.model.ConnectionEvent
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface ConnectionEventStreamer {
-    fun streamConnectionEvents(): Flow<ConnectionEvent>
+    fun streamConnectionEvents(): SharedFlow<ConnectionEvent>
 }
