@@ -1,0 +1,91 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {"primaryTextColor":"#fff","primaryColor":"#6A00FF","primaryBorderColor":"#6A00FF","lineColor":"#f5a623","tertiaryColor":"#40375c","fontSize":"11px"}
+  }
+}%%
+
+graph LR
+
+    subgraph :core
+        :common
+        :data
+        :designsystem
+        :domain
+        :model
+        :ui
+        subgraph :database
+            subgraph :api
+            end
+        end
+
+        subgraph :network
+            subgraph :webscoket:imp
+                :ktor
+                :scarlet
+            end
+            subgraph :websocket:api
+                :api
+            end
+        end
+
+        subgraph :datasource:api
+        end
+
+
+        subgraph :database
+            subgraph :database:iml
+                :room
+            end
+        end
+
+        subgraph :runtime
+            :logging
+            :metrics
+            :configuration
+
+        end
+
+    end
+
+
+
+    subgraph :feature
+        :map
+    end
+%% :map --> :common
+    :map --> :domain
+    :map --> :data
+    :map --> :designsystem
+
+
+%% :data --> :common
+    :data --> :websocket:api
+    :data --> :datasource:api
+    :data --> :database --> :api
+
+    :domain --> :data
+%% :domain --> :common
+
+
+    :datasource:api --> :database --> :api
+    :datasource:api --> :websocket:api
+%% :database:api --> :common
+
+    :compose-app --> :common
+    :compose-app --> :domain
+    :compose-app --> :map
+    :compose-app --> :api
+    :compose-app --> :ktor
+    :compose-app --> :room
+
+    :room --> :api
+    :room --> :datasource:api
+
+%% :ktor --> :common
+    :ktor --> :websocket:api
+    :ktor --> :datasource:api
+    :scarlet --> :websocket:api
+    :scarlet --> :datasource:api
+
+    :ktor-server-app --> :websocket:api
