@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -25,6 +26,15 @@ android {
         versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    applicationVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
+        }
     }
 
     buildTypes {
@@ -69,10 +79,11 @@ dependencies {
     implementation(projects.core.datasource.api)
     implementation(projects.core.network.websocket.imp.ktor)
     implementation(projects.core.database.imp.room)
+    implementation(projects.core.runtime.configuration)
 
     implementation(libs.lifecycle.android)
     implementation(libs.androidx.multidex)
-    implementation (libs.googleMaterialDesign)
+    implementation(libs.googleMaterialDesign)
 
     // Lifecycles
     implementation(libs.androidx.lifecycle)
@@ -88,8 +99,13 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-
     kapt(libs.hilt.android.compiler)
+
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.ksp.compiler)
 }
 
 val getLocalIPv4: List<String>

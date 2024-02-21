@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.modulegraph)
+    alias(libs.plugins.ksp)
 }
 
 moduleGraphConfig {
