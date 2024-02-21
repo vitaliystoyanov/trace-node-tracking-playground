@@ -60,6 +60,8 @@ mapsStyleVersion = "11.1.0"
 sarletMessageAdapterVersion = "0.1.12"
 okhttpVersion = "4.12.0"
 
+modulegraphMermaid = "0.5.0"
+
 [libraries]
 
 # Dependencies
@@ -153,6 +155,7 @@ androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchm
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidVersion" }
+modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 
 # Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
