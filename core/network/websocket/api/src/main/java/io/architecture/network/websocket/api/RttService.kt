@@ -5,7 +5,7 @@ import io.architecture.network.websocket.api.model.NetworkServerTime
 import kotlinx.coroutines.flow.Flow
 
 interface RttService {
-    fun sendClientTime(time: NetworkClientTime)
+    suspend fun sendClientTime(time: NetworkClientTime)
 
     fun streamServerTime(): Flow<NetworkServerTime>
 }

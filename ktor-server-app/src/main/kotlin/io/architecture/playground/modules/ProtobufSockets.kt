@@ -16,6 +16,7 @@ import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readBytes
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -66,11 +67,12 @@ fun Application.configureSockets() {
                         it.readBytes()
                     )
                 } // Workaround. Instead of receiveSerialized(...)
+                .catch {  LOGGER.error("/rtt onError -> ${closeReason.await()}", it) }
                 .collect {
-                    LOGGER.info("client time is $it")
+                    LOGGER.info("RTT: client time is $it")
 
                     val response = NetworkServerTime("rtt", it.time, System.currentTimeMillis())
-                    LOGGER.info("server rtt respond  $response")
+                    LOGGER.info("RTT: server rtt respond  $response")
                     sendSerialized(response)
                 }
         }

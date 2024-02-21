@@ -19,7 +19,7 @@ interface NetworkDataSource {
 
     fun streamRoutes(): Flow<NetworkRoute>
 
-    fun sendClientTime(time: NetworkClientTime)
+    suspend fun sendClientTime(time: NetworkClientTime)
 
     fun streamServerTime(): Flow<NetworkServerTime>
 

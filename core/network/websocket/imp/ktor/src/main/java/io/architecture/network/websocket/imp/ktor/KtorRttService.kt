@@ -20,9 +20,13 @@ class KtorRttService @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : RttService, ConnectionEventStreamer {
 
-    override fun sendClientTime(time: NetworkClientTime) {
+
+    init {
         client.openSession() // First open
-        client.sendShared.tryEmit(time)
+    }
+
+    override suspend fun sendClientTime(time: NetworkClientTime) {
+        client.sendShared.emit(time)
     }
 
     override fun streamServerTime(): Flow<NetworkServerTime> = client.receiveShared

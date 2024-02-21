@@ -26,5 +26,4 @@ class KtorRouteService @Inject constructor(
 
     override fun streamConnectionEvents(): SharedFlow<ConnectionEvent> =
         client.connectionEventsShared
-
 }

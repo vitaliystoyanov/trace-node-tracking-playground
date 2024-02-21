@@ -22,7 +22,7 @@ internal class ScarletNetworkDataSource @Inject constructor(
 
     override fun streamRoutes(): Flow<NetworkRoute> = routeService.streamRoutes()
 
-    override fun sendClientTime(time: NetworkClientTime) = traceService.sendClientTime(time)
+    override suspend fun sendClientTime(time: NetworkClientTime) = traceService.sendClientTime(time)
 
     override fun streamServerTime(): Flow<NetworkServerTime> = traceService.streamServerTime()
 

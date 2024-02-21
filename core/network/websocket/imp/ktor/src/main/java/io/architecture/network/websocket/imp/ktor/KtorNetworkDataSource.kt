@@ -29,7 +29,7 @@ class KtorNetworkDataSource @Inject constructor(
         return routeService.streamRoutes()
     }
 
-    override fun sendClientTime(time: NetworkClientTime) {
+    override suspend fun sendClientTime(time: NetworkClientTime) {
         rttService.sendClientTime(time)
     }
 
