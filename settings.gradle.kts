@@ -41,11 +41,13 @@ include(":core:domain")
 include(":core:network:websocket:api")
 include(":core:network:websocket:imp:ktor")
 include(":core:network:websocket:imp:scarlet")
+include(":core:runtime:configuration")
 include(":core:runtime:logging")
 include(":core:runtime:metrics")
 include(":core:ui")
 
 include(":feature:map")
+
 
 
 
