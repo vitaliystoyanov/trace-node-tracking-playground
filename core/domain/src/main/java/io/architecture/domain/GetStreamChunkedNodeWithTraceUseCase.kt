@@ -1,8 +1,6 @@
 package io.architecture.domain
 
 import android.util.Log
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.common.ext.chunked
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.TraceRepository
@@ -21,18 +19,17 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
+class GetStreamChunkedNodeWithTraceUseCase(
     private var nodeRepository: NodeRepository,
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val defaultAreEquivalentCoordinates: (old: Trace, new: Trace) -> Boolean =
@@ -54,12 +51,12 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
     * */
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
-        isDataBaseStream: Boolean,
+        isDatabaseOutgoingStream: Boolean,
         interval: Duration = 1.seconds,
     ): Flow<Sequence<Trace>> {
         require(interval > 0.milliseconds) { "'interval' must be positive: $interval" }
 
-        fun streamTracesViaNetwork() = traceRepository.streamViaNetwork()
+        fun streamTracesViaNetwork() = traceRepository.streamTraces(isPersisted = true)
             .onEach { trace ->
                 trace.formattedDatetime = formatDate(trace.sentAtTime)
                 trace.direction = convertAzimuthToDirection(trace.azimuth)
@@ -79,7 +76,7 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
         val downstreamFlow = channelFlow {
             val activeNodesIds = LinkedHashSet<String>()
 
-            nodeRepository.streamAllNodes()
+            nodeRepository.streamNodes()
                 .flowOn(ioDispatcher)
                 .flatMapLatest { nodeList -> nodeList.asFlow() }
                 .distinctUntilChangedBy { it.id }
@@ -92,10 +89,10 @@ class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
                     }
                 }
                 .flowOn(defaultDispatcher)
-                .catch { error -> Log.e("REPOSITORY_DEBUG", "streamAllNodes: ", error) }
+                .catch { error -> Log.e("REPOSITORY_DEBUG", "streamNodes: ", error) }
                 .collect { node -> activeNodesIds.add(node.id) }
         }
-        return if (isDataBaseStream) downstreamFlow
+        return if (isDatabaseOutgoingStream) downstreamFlow
             .chunked(20_000, interval)
             .cached()
         else streamTracesViaNetwork()

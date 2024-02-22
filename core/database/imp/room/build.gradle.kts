@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,6 +13,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+        }
+    }
+    libraryVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
         }
     }
     compileOptions {
@@ -38,10 +46,10 @@ dependencies {
     //  Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    ksp(libs.koin.ksp.compiler)
 
     implementation(libs.androidx.coreKtx)
     testImplementation(libs.junit.junit)

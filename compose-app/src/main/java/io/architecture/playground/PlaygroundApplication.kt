@@ -1,14 +1,43 @@
 package io.architecture.playground
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import android.util.Log
+import io.architecture.core.di.coreKoinModules
+import io.architecture.core.runtime.configuration.WebsocketRuntimeConfiguration
+import io.architecture.map.featureMapModule
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.lazyModules
+import org.koin.core.runOnKoinStarted
+import org.koin.dsl.lazyModule
+import org.koin.mp.KoinPlatform
 
-@HiltAndroidApp
 class PlaygroundApplication : Application() {
 
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate() {
-        super.onCreate()
         if (BuildConfig.DEBUG) setupCoroutineDebugMode()
+
+        val modules = lazyModule {
+            includes(coreKoinModules, featureMapModule)
+        }
+
+        startKoin {
+            androidLogger()
+            androidContext(this@PlaygroundApplication)
+            lazyModules(modules)
+        }
+
+        val koin = KoinPlatform.getKoin()
+
+        koin.runOnKoinStarted { _ ->
+            val runtimeConfig: WebsocketRuntimeConfiguration by inject()
+            Log.d("RUNTIME_CONFIG", "Runtime configuration -> $runtimeConfig")
+            super.onCreate()
+        }
     }
 
     private fun setupCoroutineDebugMode() {

@@ -3,12 +3,11 @@ package io.architecture.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.domain.GetConnectionStateUseCase
 import io.architecture.domain.GetStreamChunkedNodeWithTraceUseCase
-import io.architecture.domain.GetStreamTraceUseCase
+import io.architecture.domain.GetStreamTraceByIdUseCase
 import io.architecture.model.Route
 import io.architecture.model.Trace
 import kotlinx.coroutines.Job
@@ -19,18 +18,16 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 data class DetailsUiState(val route: Route?, val lastTrace: Trace?)
 
-@HiltViewModel
-class MapViewModel @Inject constructor(
-    private val getStreamTrace: GetStreamTraceUseCase,
-    private val routeRepository: RouteRepository,
+class MapViewModel(
+    private val getStreamTrace: GetStreamTraceByIdUseCase,
+    private val routeRepository: RouteRepository, // TODO Extract to use case
     getChunkedNodeWithTrace: GetStreamChunkedNodeWithTraceUseCase,
     connectionState: GetConnectionStateUseCase,
-    nodeRepository: NodeRepository,
+    nodeRepository: NodeRepository,  // TODO Extract to use case
 ) : ViewModel() {
 
     private lateinit var job: Job
@@ -62,7 +59,7 @@ class MapViewModel @Inject constructor(
         )
 
     val tracesUiState: StateFlow<Sequence<Trace>> =
-        getChunkedNodeWithTrace(isDataBaseStream = false, interval = 1.seconds)
+        getChunkedNodeWithTrace(isDatabaseOutgoingStream = false, interval = 1.seconds)
             .onEach {
                 Log.d(
                     "REPOSITORY_DEBUG_N",

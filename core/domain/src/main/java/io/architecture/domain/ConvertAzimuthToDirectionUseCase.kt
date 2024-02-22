@@ -1,8 +1,6 @@
 package io.architecture.domain
 
-import javax.inject.Inject
-
-class ConvertAzimuthToDirectionUseCase @Inject constructor() { // TODO Support locale from user data repository
+class ConvertAzimuthToDirectionUseCase { // TODO Support locale from user data repository
 
     operator fun invoke(azimuth: Double) = when (azimuth) {
         in 0.0..22.5 -> "N"

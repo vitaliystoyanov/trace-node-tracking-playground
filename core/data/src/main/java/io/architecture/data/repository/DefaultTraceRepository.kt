@@ -1,9 +1,6 @@
 package io.architecture.data.repository
 
 import android.util.Log
-import io.architecture.common.ApplicationScope
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.data.mapping.toExternal
 import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.mapping.toNode
@@ -27,15 +24,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-open class DefaultTraceRepository @Inject constructor(
+open class DefaultTraceRepository(
     private val nodeRepository: NodeRepository,
     networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
-    @ApplicationScope private val applicationScope: CoroutineScope,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher
+    applicationScope: CoroutineScope,
+    private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : TraceRepository {
 
@@ -52,17 +47,16 @@ open class DefaultTraceRepository @Inject constructor(
         localDataSource.observeTraceBy(nodeId)
             .map { it.toExternalAs() }
 
-    //  NOTE: Bulk insertion of items in an SQLite table is always better than inserting each item individually
-    override fun streamAndPersist(): Flow<Trace> = _sharedStreamTraces
+    //  NOTE: Bulk insertion of items in an SQLite table is always better than inserting each item individually}
+    override fun streamTraces(isPersisted: Boolean): Flow<Trace> = _sharedStreamTraces
         .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
         .onEach { trace ->
-            localDataSource.createOrUpdate(trace.toLocal())
-            nodeRepository.createOrUpdate(trace.toNode())
+            if (isPersisted) {
+                localDataSource.createOrUpdate(trace.toLocal())
+                nodeRepository.createOrUpdate(trace.toNode())
+            }
         }
-        .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
-
-    override fun streamViaNetwork(): Flow<Trace> = _sharedStreamTraces
-        .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        .flowOn(ioDispatcher)
         .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeTraceCount()

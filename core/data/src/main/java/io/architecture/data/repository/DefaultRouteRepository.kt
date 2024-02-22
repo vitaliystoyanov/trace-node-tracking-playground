@@ -1,39 +1,37 @@
 package io.architecture.data.repository
 
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.data.mapping.toExternal
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.database.api.model.toExternal
 import io.architecture.database.api.model.toLocal
 import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
+import io.architecture.model.Route
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class DefaultRouteRepository @Inject constructor(
+class DefaultRouteRepository(
     private val networkDataSource: NetworkDataSource,
-    private val localTraceRouteDataSource: LocalDataSource,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val localDataSource: LocalDataSource,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : RouteRepository {
 
-    override suspend fun add(route: io.architecture.model.Route) = withContext(ioDispatcher) {
-        localTraceRouteDataSource.createOrUpdate(route.toLocal())
+    override suspend fun add(route: Route) = withContext(ioDispatcher) {
+        localDataSource.createOrUpdate(route.toLocal())
     }
 
-    override fun streamAndPersist() =
+    override fun streamRoutes(isPersisted: Boolean) =
         networkDataSource.streamRoutes()
             .map { it.toExternal() }
             .flowOn(defaultDispatcher)
-            .onEach { localTraceRouteDataSource.createOrUpdate(it.toLocal()) }
+            .onEach { if (isPersisted) localDataSource.createOrUpdate(it.toLocal()) }
             .flowOn(ioDispatcher)
 
     override suspend fun getRouteBy(nodeId: String) = withContext(ioDispatcher) {
-        localTraceRouteDataSource.getRouteBy(nodeId)?.toExternal()
+        localDataSource.getRouteBy(nodeId)?.toExternal()
     }
 }

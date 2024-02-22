@@ -11,11 +11,9 @@ interface TraceRepository {
 
     fun streamList(): Flow<List<Trace>>
 
-    fun streamAndPersist(): Flow<Trace>
-
     fun streamCount(): Flow<Int>
 
     suspend fun deleteAll()
 
-    fun streamViaNetwork(): Flow<Trace>
+    fun streamTraces(isPersisted: Boolean): Flow<Trace>
 }

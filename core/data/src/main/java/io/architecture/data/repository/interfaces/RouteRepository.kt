@@ -7,8 +7,7 @@ interface RouteRepository {
 
     suspend fun add(route: Route)
 
-    fun streamAndPersist(): Flow<Route>
-
     suspend fun getRouteBy(nodeId: String): Route?
 
+    fun streamRoutes(isPersisted: Boolean): Flow<Route>
 }

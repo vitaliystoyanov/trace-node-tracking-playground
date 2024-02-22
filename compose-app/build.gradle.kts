@@ -4,8 +4,7 @@ import java.net.NetworkInterface
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -25,6 +24,15 @@ android {
         versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    applicationVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
+        }
     }
 
     buildTypes {
@@ -54,42 +62,35 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
-    // Allow references to generated code
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
-    implementation(projects.core.common)
+    implementation(projects.core.di)
     implementation(projects.core.domain)
+    implementation(projects.core.runtime.configuration)
+
     implementation(projects.feature.map)
-    implementation(projects.core.model)
-    implementation(projects.core.database.api)
-    implementation(projects.core.datasource.api)
-    implementation(projects.core.network.websocket.imp.ktor)
-    implementation(projects.core.database.imp.room)
 
     implementation(libs.lifecycle.android)
     implementation(libs.androidx.multidex)
-    implementation (libs.googleMaterialDesign)
+    implementation(libs.googleMaterialDesign)
 
     // Lifecycles
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-
-    kapt(libs.hilt.android.compiler)
+    // Koin
+    implementation(libs.koin.core.coroutine)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    ksp(libs.koin.ksp.compiler)
 }
 
 val getLocalIPv4: List<String>

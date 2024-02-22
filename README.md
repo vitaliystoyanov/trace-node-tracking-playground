@@ -30,7 +30,7 @@ Nothing special :)
   * [Scarlet coroutines stream adapter](https://github.com/Tinder/Scarlet/tree/main/scarlet-stream-adapter-coroutines)
 * [Room database](https://developer.android.com/training/data-storage/room)
 * [OkHttp](http://square.github.io/okhttp/)
-* [Hilt](https://developer.android.com/training/dependency-injection/hilt-jetpack)
+* [Koin: Kotlin & Kotlin Multiplatform DI framework](https://insert-koin.io/)
 
 ## Functionality
 * Supports websocket connections in background

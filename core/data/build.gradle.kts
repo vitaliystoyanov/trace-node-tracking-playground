@@ -2,8 +2,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,6 +12,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+        }
+    }
+    libraryVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
         }
     }
     compileOptions {
@@ -31,10 +38,10 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network.websocket.api)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    ksp(libs.koin.ksp.compiler)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.junit)

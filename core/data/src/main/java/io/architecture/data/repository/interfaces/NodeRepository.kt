@@ -9,5 +9,5 @@ interface NodeRepository {
 
     fun streamCount(): Flow<Int>
 
-    fun streamAllNodes(): Flow<List<Node>>
+    fun streamNodes(): Flow<List<Node>>
 }
