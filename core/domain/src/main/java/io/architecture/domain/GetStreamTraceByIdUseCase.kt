@@ -1,8 +1,8 @@
 package io.architecture.domain
 
-import android.util.Log
 import io.architecture.data.repository.interfaces.TraceRepository
 import io.architecture.model.Trace
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -25,5 +25,5 @@ class GetStreamTraceByIdUseCase(
             trace.direction = convertAzimuthToDirection(trace.azimuth)
         }
         .flowOn(defaultDispatcher)
-        .catch { error -> Log.e("REPOSITORY_DEBUG", "GetStreamTraceByIdUseCase: ", error) }
+        .catch { error -> Logger.error("REPOSITORY_DEBUG", "GetStreamTraceByIdUseCase: ", error) }
 }

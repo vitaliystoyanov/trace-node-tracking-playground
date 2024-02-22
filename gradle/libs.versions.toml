@@ -13,6 +13,7 @@ geojsonVersion = "0.2.1"
 kotlinxSerializationJsonVersion = "1.6.3"
 kotlinxSerializationProtobufVersion = "1.6.3"
 kotlinxCoroutineAndroid = "1.7.3"
+kotlinxCoroutineCore = "1.8.0"
 
 # ktor-server
 ktor = "2.3.8"
@@ -114,6 +115,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 
 koltin-serialization-jvm = { module = "io.ktor:koltin-serialization-jvm", version.ref = "ktorVersion" }
 kotlinx-coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutineAndroid" }
+kotlinx-coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutineCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobufVersion" }
 

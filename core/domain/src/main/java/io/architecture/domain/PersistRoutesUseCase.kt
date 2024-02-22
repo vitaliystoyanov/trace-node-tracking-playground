@@ -1,7 +1,7 @@
 package io.architecture.domain
 
-import android.util.Log
 import io.architecture.data.repository.interfaces.RouteRepository
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -18,5 +18,5 @@ class PersistRoutesUseCase(
         .streamRoutes(isPersisted = true)
         .flowOn(ioDispatcher)
         .map { }
-        .catch { error -> Log.e("REPOSITORY_DEBUG", "PersistRoutesUseCase: ", error) }
+        .catch { error -> Logger.error("REPOSITORY_DEBUG", "PersistRoutesUseCase: ", error) }
 }

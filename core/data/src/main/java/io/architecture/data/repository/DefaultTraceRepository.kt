@@ -1,6 +1,5 @@
 package io.architecture.data.repository
 
-import android.util.Log
 import io.architecture.data.mapping.toExternal
 import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.mapping.toNode
@@ -11,6 +10,7 @@ import io.architecture.database.api.model.toLocal
 import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Trace
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -57,7 +57,7 @@ open class DefaultTraceRepository(
             }
         }
         .flowOn(ioDispatcher)
-        .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
+        .catch { error -> Logger.debug("REPOSITORY_DEBUG", "error - $error") }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeTraceCount()
 

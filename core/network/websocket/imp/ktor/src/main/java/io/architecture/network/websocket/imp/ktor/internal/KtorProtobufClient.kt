@@ -1,7 +1,7 @@
 package io.architecture.network.websocket.imp.ktor.internal
 
-import android.util.Log
 import io.architecture.model.ConnectionEvent
+import io.architecture.runtime.logging.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.ws
@@ -112,7 +112,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     open fun openSession() {
         if (!_isSessionOpened) {
-            Log.d(
+            Logger.debug(
                 "KTOR_SERVICE",
                 "openSession() -> Default [ws(s):/$_host:$_port$_path] websocket session is OPENED"
             )
@@ -129,7 +129,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
                 }
             }
         } else {
-            Log.d(
+            Logger.debug(
                 "KTOR_SERVICE",
                 "openSession() -> Skipped. Default [ws(s)://$_host:$_port$_path] websocket session is is ALREADY OPENED!"
             )
@@ -140,7 +140,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
     private suspend fun DefaultClientWebSocketSession.produceOutgoing() {
         _sendShared
             .onEach {
-                Log.d(
+                Logger.debug(
                     "KTOR_SERVICE",
                     "produceOutgoing() -> [ws(s)://$_host:$_port$_path] -> sending -> $it"
                 )
@@ -154,7 +154,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
                 }
             }
             .catch {
-                Log.e(
+                Logger.error(
                     "KTOR_SERVICE",
                     "produceOutgoing() -> Default [ws(s):/$_host:$_port$_path] websocket session -> an error occurred -> ",
                     it
@@ -163,7 +163,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
             .launchIn(scope)
         scope.launch {
             _sendShared.subscriptionCount.collect {
-                Log.d(
+                Logger.debug(
                     "KTOR_SERVICE",
                     "produceOutgoing() -> Default [ws(s):/$_host:$_port$_path] websocket session" +
                             " send channel subscriptionCount -> $it"
@@ -177,7 +177,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
         incoming
             .consumeAsFlow()
             .onStart {
-                Log.d(
+                Logger.debug(
                     "KTOR_SERVICE",
                     "consumeIncoming() -> [ws(s)://$_host:$_port$_path] -> ConnectionEvent.OPENED"
                 )
@@ -194,7 +194,7 @@ open class KtorProtobufClient<S : Any, R : Any> {
             }
 
             .catch {
-                Log.e(
+                Logger.error(
                     "KTOR_SERVICE",
                     "consumeIncoming() -> Default [ws(s):/$_host:$_port$_path] websocket session -> an error occurred -> ",
                     it

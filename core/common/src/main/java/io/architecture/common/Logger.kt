@@ -1,6 +1,7 @@
 package io.architecture.common
 
-import android.util.Log
+import io.architecture.runtime.logging.Logger
+
 
 internal fun logCoroutineInfo(tag: String, msg: String) =
-    Log.d(tag, "Running on: [${Thread.currentThread().name}] | $msg")
+    Logger.debug(tag, "Running on: [${Thread.currentThread().name}] | $msg")

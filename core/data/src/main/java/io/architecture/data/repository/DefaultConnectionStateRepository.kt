@@ -1,12 +1,12 @@
 package io.architecture.data.repository
 
-import android.util.Log
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
 import io.architecture.model.ConnectionEvent
 import io.architecture.model.UpstreamRtt
 import io.architecture.network.websocket.api.model.NetworkClientTime
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -32,7 +32,7 @@ class DefaultConnectionStateRepository(
     override fun streamRoundTripTime(interval: Duration): Flow<UpstreamRtt> =
         network.streamServerTime()
             .onStart {
-                Log.d(
+                Logger.debug(
                     "RTT_NETWORK",
                     "streamRoundTripTime: RTT: sending the first client time..."
                 )
@@ -40,7 +40,7 @@ class DefaultConnectionStateRepository(
             }
             .map { serverTime -> UpstreamRtt(System.currentTimeMillis() - serverTime.clientSentTime) }
             .onEach { sendClientTimeWith(interval) }
-            .catch { error -> Log.e("RTT_NETWORK", "streamRoundTripTime ", error) }
+            .catch { error -> Logger.error("RTT_NETWORK", "streamRoundTripTime ", error) }
             .flowOn(ioDispatcher)
 
     private suspend fun sendClientTimeWith(interval: Duration) {
@@ -48,12 +48,12 @@ class DefaultConnectionStateRepository(
         try {
             network.sendClientTime(NetworkClientTime(System.currentTimeMillis()))
         } catch (exception: Exception) {
-            Log.e("RTT_NETWORK", "sendClientTimeWith: error -> ", exception)
+            Logger.error("RTT_NETWORK", "sendClientTimeWith: error -> ", exception)
         }
     }
 
     override fun streamConnectionEvents(): SharedFlow<ConnectionEvent> {
-        Log.d(
+        Logger.debug(
             "RTT_NETWORK",
             "streamConnectionEvents: Connection events to replay connection events on collect -> " +
                     "${network.streamConnectionEvents().replayCache.size}"

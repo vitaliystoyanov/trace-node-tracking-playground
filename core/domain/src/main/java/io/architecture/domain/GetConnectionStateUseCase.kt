@@ -1,10 +1,10 @@
 package io.architecture.domain
 
-import android.util.Log
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.data.repository.toExternal
 import io.architecture.model.Connection
 import io.architecture.model.UpstreamRtt
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -30,6 +30,6 @@ class GetConnectionStateUseCase(
                 connection.rtt = rtt
                 connection
             }
-            .onEach { Log.d("RTT_NETWORK", "GetConnectionStateUseCase: Connection -> $it") }
+            .onEach { Logger.debug("RTT_NETWORK", "GetConnectionStateUseCase: Connection -> $it") }
 
 }

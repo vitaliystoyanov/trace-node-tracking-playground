@@ -11,7 +11,6 @@ import io.architecture.domain.GetStreamChunkedNodeWithTraceUseCase
 import io.architecture.domain.GetStreamTraceByIdUseCase
 import io.architecture.domain.PersistRoutesUseCase
 import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

@@ -1,10 +1,10 @@
 package io.architecture.domain
 
-import android.util.Log
 import io.architecture.common.ext.chunked
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.TraceRepository
 import io.architecture.model.Trace
+import io.architecture.runtime.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -71,7 +71,7 @@ class GetStreamChunkedNodeWithTraceUseCase(
                 trace.direction = convertAzimuthToDirection(trace.azimuth)
             }
             .flowOn(defaultDispatcher)
-            .catch { error -> Log.e("REPOSITORY_DEBUG", "streamTracesLocally: ", error) }
+            .catch { error -> Logger.error("REPOSITORY_DEBUG", "streamTracesLocally: ", error) }
 
         val downstreamFlow = channelFlow {
             val activeNodesIds = LinkedHashSet<String>()
@@ -89,7 +89,7 @@ class GetStreamChunkedNodeWithTraceUseCase(
                     }
                 }
                 .flowOn(defaultDispatcher)
-                .catch { error -> Log.e("REPOSITORY_DEBUG", "streamNodes: ", error) }
+                .catch { error -> Logger.error("REPOSITORY_DEBUG", "streamNodes: ", error) }
                 .collect { node -> activeNodesIds.add(node.id) }
         }
         return if (isDatabaseOutgoingStream) downstreamFlow

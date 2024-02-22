@@ -1,6 +1,5 @@
 package io.architecture.network.websocket.imp.ktor.di
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.logging.LogLevel
@@ -12,6 +11,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import io.architecture.runtime.logging.Logger as LoggerInternal
 
 val ktorModule = module {
     includes(ktorServiceModule)
@@ -27,7 +27,7 @@ val ktorModule = module {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Log.i("KTOR_SERVICE", message)
+                        LoggerInternal.debug("KTOR_SERVICE", message)
                     }
                 }
                 level = LogLevel.ALL
