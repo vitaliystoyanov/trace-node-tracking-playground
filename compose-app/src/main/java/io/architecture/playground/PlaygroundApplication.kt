@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import io.architecture.core.di.coreKoinModules
 import io.architecture.core.runtime.configuration.WebsocketRuntimeConfiguration
+import io.architecture.database.imp.room.di.roomDaoModule
+import io.architecture.database.imp.room.di.roomDatabaseModule
 import io.architecture.map.featureMapModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -22,7 +24,12 @@ class PlaygroundApplication : Application() {
         if (BuildConfig.DEBUG) setupCoroutineDebugMode()
 
         val modules = lazyModule {
-            includes(coreKoinModules, featureMapModule)
+            includes(
+                coreKoinModules,
+                roomDaoModule,
+                roomDatabaseModule,
+                featureMapModule
+            )
         }
 
         startKoin {

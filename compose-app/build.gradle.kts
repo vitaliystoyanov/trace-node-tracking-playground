@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.core.di)
     implementation(projects.core.domain)
     implementation(projects.core.runtime.configuration)
+    implementation(projects.core.database.imp.room)
 
     implementation(projects.feature.map)
 
