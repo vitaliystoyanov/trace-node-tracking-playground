@@ -2,8 +2,6 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -34,14 +32,6 @@ android {
 }
 
 dependencies {
-
-    // Koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.annotations)
-    testImplementation(libs.koin.test)
-    androidTestImplementation(libs.koin.android.test)
-
+    implementation(libs.kotlinx.coroutine.android)
     testImplementation(libs.junit.junit)
-    ksp(libs.koin.ksp.compiler)
 }

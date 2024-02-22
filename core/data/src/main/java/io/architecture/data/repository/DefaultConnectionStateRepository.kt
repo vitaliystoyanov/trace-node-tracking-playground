@@ -17,15 +17,12 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class DefaultConnectionStateRepository(
-    @Named("applicationScope") private val applicationScope: CoroutineScope,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val applicationScope: CoroutineScope,
+    private val ioDispatcher: CoroutineDispatcher,
     private val network: NetworkDataSource,
 ) : ConnectionStateRepository {
 

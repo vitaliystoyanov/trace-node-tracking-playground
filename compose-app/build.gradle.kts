@@ -65,15 +65,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
+    implementation(projects.core.di)
     implementation(projects.core.domain)
-    implementation(projects.feature.map)
-    implementation(projects.core.model)
-    implementation(projects.core.database.api)
-    implementation(projects.core.datasource.api)
-    implementation(projects.core.network.websocket.imp.ktor)
-    implementation(projects.core.database.imp.room)
     implementation(projects.core.runtime.configuration)
+
+    implementation(projects.feature.map)
 
     implementation(libs.lifecycle.android)
     implementation(libs.androidx.multidex)

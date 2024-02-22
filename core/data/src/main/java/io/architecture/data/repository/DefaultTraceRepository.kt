@@ -24,17 +24,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 
 open class DefaultTraceRepository(
     private val nodeRepository: NodeRepository,
     networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
-    @Named("applicationScope") private val applicationScope: CoroutineScope,
-    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
-    @Named("ioDispatcher")
+    applicationScope: CoroutineScope,
+    private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : TraceRepository {
 

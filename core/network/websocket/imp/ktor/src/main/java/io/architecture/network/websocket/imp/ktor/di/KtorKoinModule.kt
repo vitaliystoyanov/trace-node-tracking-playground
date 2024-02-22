@@ -10,6 +10,7 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val ktorModule = module(createdAtStart = true) {
@@ -32,5 +33,5 @@ val ktorModule = module(createdAtStart = true) {
                 level = LogLevel.ALL
             }
         }
-    }
+    } bind HttpClient::class
 }

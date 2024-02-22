@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import io.architecture.map.MapScreen
+import org.koin.compose.KoinContext
 
 class MapActivity : ComponentActivity() {
 
@@ -13,7 +14,9 @@ class MapActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MapScreen()
+            KoinContext {
+                MapScreen()
+            }
         }
 
         Intent(this, NetworkForegroundService::class.java).also {

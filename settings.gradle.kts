@@ -37,6 +37,7 @@ include(":core:datasource:api")
 include(":core:database:api")
 include(":core:database:imp:room")
 include(":core:designsystem")
+include(":core:di")
 include(":core:domain")
 include(":core:network:websocket:api")
 include(":core:network:websocket:imp:ktor")
@@ -47,7 +48,4 @@ include(":core:runtime:metrics")
 include(":core:ui")
 
 include(":feature:map")
-
-
-
 

@@ -1,15 +1,13 @@
-package io.architecture.common.di
+package io.architecture.core.di
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 @Module(includes = [CoroutineDispatcherKoinModule::class])
-@ComponentScan("io.architecture.common")
 internal class CoroutineScopeKoinModule {
 
     @Single

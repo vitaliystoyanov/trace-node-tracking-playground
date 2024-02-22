@@ -2,14 +2,13 @@ package io.architecture.playground
 
 import android.app.Application
 import android.util.Log
-import io.architecture.core.runtime.configuration.RuntimeConfigurationModule
+import io.architecture.core.di.coreKoinModules
 import io.architecture.core.runtime.configuration.WebsocketRuntimeConfiguration
-import io.architecture.map.viewModelModule
+import io.architecture.map.featureMapModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
-import org.koin.ksp.generated.module
 
 class PlaygroundApplication : Application() {
 
@@ -21,7 +20,10 @@ class PlaygroundApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@PlaygroundApplication)
-            modules(RuntimeConfigurationModule().module, viewModelModule)
+            modules(
+                coreKoinModules,
+                featureMapModule,
+            )
         }
 
         val runtimeConfig: WebsocketRuntimeConfiguration by inject()

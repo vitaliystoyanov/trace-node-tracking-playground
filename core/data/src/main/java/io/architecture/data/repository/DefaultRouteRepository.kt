@@ -11,15 +11,12 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 
 class DefaultRouteRepository(
     private val networkDataSource: NetworkDataSource,
     private val localTraceRouteDataSource: LocalDataSource,
-    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : RouteRepository {
 
     override suspend fun add(route: io.architecture.model.Route) = withContext(ioDispatcher) {

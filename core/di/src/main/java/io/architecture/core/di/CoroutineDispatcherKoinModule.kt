@@ -1,4 +1,4 @@
-package io.architecture.common.di
+package io.architecture.core.di
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

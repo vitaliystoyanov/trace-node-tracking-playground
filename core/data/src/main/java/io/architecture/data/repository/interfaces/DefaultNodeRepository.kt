@@ -8,12 +8,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
 
 class DefaultNodeRepository(
     private val localDataSource: LocalDataSource,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : NodeRepository {
 
     override suspend fun createOrUpdate(node: Node): Unit = withContext(ioDispatcher) {
