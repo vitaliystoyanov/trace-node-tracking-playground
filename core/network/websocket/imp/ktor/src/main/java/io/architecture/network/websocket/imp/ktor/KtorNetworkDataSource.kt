@@ -11,7 +11,6 @@ import io.architecture.network.websocket.api.model.NetworkServerTime
 import io.architecture.network.websocket.api.model.NetworkTrace
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import org.koin.core.annotation.Single
 
 class KtorNetworkDataSource(
     private val traceService: TraceService,

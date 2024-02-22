@@ -9,12 +9,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import org.koin.core.annotation.Named
 
 class KtorRouteService(
     private val client: KtorProtobufClient<Any, NetworkRoute>,
-    @Named("applicationScope") private val scope: CoroutineScope,
-    @Named("defaultDispatcher") private val dispatcher: CoroutineDispatcher,
+    private val scope: CoroutineScope,
+    private val dispatcher: CoroutineDispatcher,
 ) : RouteService, ConnectionEventStreamer {
 
     override fun streamRoutes(): Flow<NetworkRoute> {

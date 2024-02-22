@@ -6,12 +6,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 
 class ObserveAndStoreRoutesUseCase(
     private var routesRepository: RouteRepository,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     // TODO  This pattern makes your app more scalable,

@@ -12,14 +12,12 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 import kotlin.time.Duration.Companion.milliseconds
 
 class GetConnectionStateUseCase(
     private var stateRepository: ConnectionStateRepository,
-    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(): Flow<Connection> =
         stateRepository.streamConnectionEvents()

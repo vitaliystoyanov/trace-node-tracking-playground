@@ -29,6 +29,7 @@ val ktorServiceModule = module {
             get<CoroutineDispatcher>(named("defaultDispatcher")),
         )
     } bind RttService::class
+
     single {
         KtorTraceService(
             get<KtorProtobufClient<Any, NetworkTrace>>(named("ktorTraceClient")),
@@ -36,6 +37,7 @@ val ktorServiceModule = module {
             get<CoroutineDispatcher>(named("defaultDispatcher")),
         )
     } bind TraceService::class
+
     single {
         KtorRouteService(
             get<KtorProtobufClient<Any, NetworkRoute>>(named("ktorRouteClient")),

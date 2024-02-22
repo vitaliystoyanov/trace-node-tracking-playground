@@ -1,11 +1,10 @@
 package io.architecture.domain
 
-import org.koin.core.annotation.Single
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class FormatDatetimeUseCase() {
+class FormatDatetimeUseCase {
 
     operator fun invoke(date: Date, preferredPattern: String = DEFAULT_DATETIME_FORMAT): String =
         SimpleDateFormat(

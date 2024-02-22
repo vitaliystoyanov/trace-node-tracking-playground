@@ -42,7 +42,8 @@ open class KtorProtobufClient<S : Any, R : Any> {
     private val scope = CoroutineScope(Job())
 
     companion object {
-        inline fun <reified S : Any, reified R : Any> create( // TODO Not used in Koin
+        inline fun <reified S : Any, reified R : Any> create(
+            // TODO Not used in Koin
             client: HttpClient,
             host: String,
             port: Int,

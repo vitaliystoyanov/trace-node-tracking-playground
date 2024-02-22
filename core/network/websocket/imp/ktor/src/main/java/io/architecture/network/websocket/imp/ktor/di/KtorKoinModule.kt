@@ -13,7 +13,7 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val ktorModule = module(createdAtStart = true) {
+val ktorModule = module {
     includes(ktorServiceModule)
 
     @OptIn(ExperimentalSerializationApi::class)

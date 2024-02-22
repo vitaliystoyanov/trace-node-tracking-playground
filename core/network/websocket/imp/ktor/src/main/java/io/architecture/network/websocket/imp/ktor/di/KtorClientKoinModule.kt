@@ -25,6 +25,7 @@ val ktorClientModule = module {
             NODE_TRACES_WS_PATH
         )
     }
+
     single(named("ktorRouteClient")) {
         KtorProtobufClient.create(
             Any::class,
@@ -35,6 +36,7 @@ val ktorClientModule = module {
             NODE_ROUTES_WS_PATH
         )
     }
+
     single(named("ktorRttClient")) {
         KtorProtobufClient.create(
             NetworkClientTime::class,

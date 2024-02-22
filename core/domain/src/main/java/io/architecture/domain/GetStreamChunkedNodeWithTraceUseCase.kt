@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -30,8 +28,8 @@ class GetStreamChunkedNodeWithTraceUseCase(
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
-    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val defaultAreEquivalentCoordinates: (old: Trace, new: Trace) -> Boolean =

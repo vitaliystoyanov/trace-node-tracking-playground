@@ -11,7 +11,6 @@ import io.architecture.database.imp.room.entity.RoomRouteEntity
 import io.architecture.database.imp.room.entity.RoomTraceEntity
 import io.architecture.datasource.api.LocalDataSource
 import kotlinx.coroutines.flow.Flow
-import org.koin.core.annotation.Single
 
 internal class InMemoryDataSource(
     private val nodeDao: NodeDao,

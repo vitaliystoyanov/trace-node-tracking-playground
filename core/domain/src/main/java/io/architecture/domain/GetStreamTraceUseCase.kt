@@ -8,15 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 
 class GetStreamTraceUseCase(
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
-    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
-    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     operator fun invoke(nodeId: String): Flow<Trace> = traceRepository
