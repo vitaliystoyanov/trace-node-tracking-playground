@@ -47,17 +47,16 @@ open class DefaultTraceRepository(
         localDataSource.observeTraceBy(nodeId)
             .map { it.toExternalAs() }
 
-    //  NOTE: Bulk insertion of items in an SQLite table is always better than inserting each item individually
-    override fun streamAndPersist(): Flow<Trace> = _sharedStreamTraces
+    //  NOTE: Bulk insertion of items in an SQLite table is always better than inserting each item individually}
+    override fun streamTraces(isPersisted: Boolean): Flow<Trace> = _sharedStreamTraces
         .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
         .onEach { trace ->
-            localDataSource.createOrUpdate(trace.toLocal())
-            nodeRepository.createOrUpdate(trace.toNode())
+            if (isPersisted) {
+                localDataSource.createOrUpdate(trace.toLocal())
+                nodeRepository.createOrUpdate(trace.toNode())
+            }
         }
-        .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
-
-    override fun streamViaNetwork(): Flow<Trace> = _sharedStreamTraces
-        .buffer(1000, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        .flowOn(ioDispatcher)
         .catch { error -> Log.d("REPOSITORY_DEBUG", "error - $error") }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeTraceCount()

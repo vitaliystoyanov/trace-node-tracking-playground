@@ -1,5 +1,6 @@
-package io.architecture.data.repository.interfaces
+package io.architecture.data
 
+import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.database.api.model.toExternal
 import io.architecture.database.api.model.toLocal
 import io.architecture.datasource.api.LocalDataSource
@@ -18,7 +19,7 @@ class DefaultNodeRepository(
         localDataSource.createOrUpdate(node.toLocal())
     }
 
-    override fun streamAllNodes(): Flow<List<Node>> =
+    override fun streamNodes(): Flow<List<Node>> =
         localDataSource.observeAllNodes().map { it.toExternal() }
 
     override fun streamCount(): Flow<Int> = localDataSource.observeNodeCount()

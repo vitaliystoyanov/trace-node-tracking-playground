@@ -25,11 +25,11 @@ class GetConnectionStateUseCase(
             .map { it.toExternal() }
             .combine(
                 stateRepository.streamRoundTripTime(interval = 500.milliseconds)
-                    .onStart { emit(UpstreamRtt(0)) } // To kick of combine if server doesn't response
+                    .onStart { emit(UpstreamRtt(0)) } // To kick off combine if server doesn't response
             ) { connection: Connection, rtt: UpstreamRtt ->
                 connection.rtt = rtt
                 connection
             }
-            .onEach { Log.d("RTT_NETWORK", "Connection -> $it") }
+            .onEach { Log.d("RTT_NETWORK", "GetConnectionStateUseCase: Connection -> $it") }
 
 }

@@ -4,7 +4,6 @@ import io.architecture.data.repository.DefaultConnectionStateRepository
 import io.architecture.data.repository.DefaultRouteRepository
 import io.architecture.data.repository.DefaultTraceRepository
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
-import io.architecture.data.repository.interfaces.DefaultNodeRepository
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.data.repository.interfaces.TraceRepository
@@ -15,14 +14,14 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    factory {
+    single {
         DefaultNodeRepository(
             get<LocalDataSource>(),
             get(named("ioDispatcher"))
         )
     } bind NodeRepository::class
 
-    factory {
+    single {
         DefaultConnectionStateRepository(
             get(named("applicationScope")),
             get(named("ioDispatcher")),
@@ -30,7 +29,7 @@ val repositoryModule = module {
         )
     } bind ConnectionStateRepository::class
 
-    factory {
+    single {
         DefaultRouteRepository(
             get<NetworkDataSource>(),
             get<LocalDataSource>(),
@@ -39,7 +38,7 @@ val repositoryModule = module {
         )
     } bind RouteRepository::class
 
-    factory {
+    single {
         DefaultTraceRepository(
             get<NodeRepository>(),
             get<NetworkDataSource>(),

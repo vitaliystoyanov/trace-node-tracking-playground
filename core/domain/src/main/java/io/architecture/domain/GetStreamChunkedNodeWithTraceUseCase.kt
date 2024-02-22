@@ -51,12 +51,12 @@ class GetStreamChunkedNodeWithTraceUseCase(
     * */
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
-        isDataBaseStream: Boolean,
+        isDatabaseOutgoingStream: Boolean,
         interval: Duration = 1.seconds,
     ): Flow<Sequence<Trace>> {
         require(interval > 0.milliseconds) { "'interval' must be positive: $interval" }
 
-        fun streamTracesViaNetwork() = traceRepository.streamViaNetwork()
+        fun streamTracesViaNetwork() = traceRepository.streamTraces(isPersisted = true)
             .onEach { trace ->
                 trace.formattedDatetime = formatDate(trace.sentAtTime)
                 trace.direction = convertAzimuthToDirection(trace.azimuth)
@@ -76,7 +76,7 @@ class GetStreamChunkedNodeWithTraceUseCase(
         val downstreamFlow = channelFlow {
             val activeNodesIds = LinkedHashSet<String>()
 
-            nodeRepository.streamAllNodes()
+            nodeRepository.streamNodes()
                 .flowOn(ioDispatcher)
                 .flatMapLatest { nodeList -> nodeList.asFlow() }
                 .distinctUntilChangedBy { it.id }
@@ -89,10 +89,10 @@ class GetStreamChunkedNodeWithTraceUseCase(
                     }
                 }
                 .flowOn(defaultDispatcher)
-                .catch { error -> Log.e("REPOSITORY_DEBUG", "streamAllNodes: ", error) }
+                .catch { error -> Log.e("REPOSITORY_DEBUG", "streamNodes: ", error) }
                 .collect { node -> activeNodesIds.add(node.id) }
         }
-        return if (isDataBaseStream) downstreamFlow
+        return if (isDatabaseOutgoingStream) downstreamFlow
             .chunked(20_000, interval)
             .cached()
         else streamTracesViaNetwork()

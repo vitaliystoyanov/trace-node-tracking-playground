@@ -8,10 +8,10 @@ import io.architecture.domain.ConvertAzimuthToDirectionUseCase
 import io.architecture.domain.FormatDatetimeUseCase
 import io.architecture.domain.GetConnectionStateUseCase
 import io.architecture.domain.GetStreamChunkedNodeWithTraceUseCase
-import io.architecture.domain.GetStreamTraceUseCase
-import io.architecture.domain.ObserveAndStoreRoutesUseCase
-import io.architecture.domain.ObserveAndStoreTracesUseCase
+import io.architecture.domain.GetStreamTraceByIdUseCase
+import io.architecture.domain.PersistRoutesUseCase
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -21,22 +21,16 @@ val useCaseModule = module {
     factoryOf(::FormatDatetimeUseCase)
     factoryOf(::ConvertAzimuthToDirectionUseCase)
 
-    factory {
-        ObserveAndStoreTracesUseCase(
-            get<TraceRepository>(),
-            get(named("ioDispatcher")),
-        )
-    }
-
-    factory {
-        ObserveAndStoreRoutesUseCase(
+    single {
+        PersistRoutesUseCase(
             get<RouteRepository>(),
+            get(named("defaultDispatcher")),
             get(named("ioDispatcher")),
         )
     }
 
-    factory {
-        GetStreamTraceUseCase(
+    single {
+        GetStreamTraceByIdUseCase(
             get<TraceRepository>(),
             get<FormatDatetimeUseCase>(),
             get<ConvertAzimuthToDirectionUseCase>(),
@@ -45,7 +39,7 @@ val useCaseModule = module {
         )
     }
 
-    factory {
+    single {
         GetStreamChunkedNodeWithTraceUseCase(
             get<NodeRepository>(),
             get<TraceRepository>(),
@@ -56,7 +50,7 @@ val useCaseModule = module {
         )
     }
 
-    factory {
+    single {
         GetConnectionStateUseCase(
             get<ConnectionStateRepository>(),
             get(named("defaultDispatcher")),

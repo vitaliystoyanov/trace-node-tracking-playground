@@ -7,7 +7,7 @@ import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.domain.GetConnectionStateUseCase
 import io.architecture.domain.GetStreamChunkedNodeWithTraceUseCase
-import io.architecture.domain.GetStreamTraceUseCase
+import io.architecture.domain.GetStreamTraceByIdUseCase
 import io.architecture.model.Route
 import io.architecture.model.Trace
 import kotlinx.coroutines.Job
@@ -23,11 +23,11 @@ import kotlin.time.Duration.Companion.seconds
 data class DetailsUiState(val route: Route?, val lastTrace: Trace?)
 
 class MapViewModel(
-    private val getStreamTrace: GetStreamTraceUseCase,
-    private val routeRepository: RouteRepository,
+    private val getStreamTrace: GetStreamTraceByIdUseCase,
+    private val routeRepository: RouteRepository, // TODO Extract to use case
     getChunkedNodeWithTrace: GetStreamChunkedNodeWithTraceUseCase,
     connectionState: GetConnectionStateUseCase,
-    nodeRepository: NodeRepository,
+    nodeRepository: NodeRepository,  // TODO Extract to use case
 ) : ViewModel() {
 
     private lateinit var job: Job
@@ -59,7 +59,7 @@ class MapViewModel(
         )
 
     val tracesUiState: StateFlow<Sequence<Trace>> =
-        getChunkedNodeWithTrace(isDataBaseStream = false, interval = 1.seconds)
+        getChunkedNodeWithTrace(isDatabaseOutgoingStream = false, interval = 1.seconds)
             .onEach {
                 Log.d(
                     "REPOSITORY_DEBUG_N",

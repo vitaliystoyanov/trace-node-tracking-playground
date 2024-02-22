@@ -14,9 +14,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import io.architecture.domain.ObserveAndStoreRoutesUseCase
-import io.architecture.domain.ObserveAndStoreTracesUseCase
+import io.architecture.domain.PersistRoutesUseCase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
 import org.koin.android.ext.android.inject
 import java.util.*
 
@@ -33,9 +33,7 @@ enum class ServiceState {
 class NetworkForegroundService :
     LifecycleService() {   // TODO Extract notifications operations to Notifier class
 
-    val observeAndStoreTraces: ObserveAndStoreTracesUseCase by inject()
-
-    val observeAndStoreRoutes: ObserveAndStoreRoutesUseCase by inject()
+    private val persistRoutes: PersistRoutesUseCase by inject()
 
     private var supervisorJob = SupervisorJob(parent = null)
     private var wakeLock: PowerManager.WakeLock? = null
@@ -99,12 +97,8 @@ class NetworkForegroundService :
                 }
             }
 
-        val serviceJob = lifecycleScope.launch {
-            launch {
-                launch { observeAndStoreTraces() }
-                observeAndStoreRoutes()
-            }
-        }
+        // Trigger socket connection and persist to db
+        val serviceJob = persistRoutes().launchIn(lifecycleScope)
         supervisorJob[serviceJob.key]
         supervisorJob.cancel()
     }

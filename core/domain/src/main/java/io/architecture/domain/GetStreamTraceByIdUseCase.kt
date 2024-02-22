@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 
-class GetStreamTraceUseCase(
+class GetStreamTraceByIdUseCase(
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
@@ -25,5 +25,5 @@ class GetStreamTraceUseCase(
             trace.direction = convertAzimuthToDirection(trace.azimuth)
         }
         .flowOn(defaultDispatcher)
-        .catch { error -> Log.e("REPOSITORY_DEBUG", "streamTracesLocally: ", error) }
+        .catch { error -> Log.e("REPOSITORY_DEBUG", "GetStreamTraceByIdUseCase: ", error) }
 }

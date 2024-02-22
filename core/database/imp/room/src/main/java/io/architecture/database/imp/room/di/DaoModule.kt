@@ -3,6 +3,8 @@ package io.architecture.database.imp.room.di
 import io.architecture.database.imp.room.InMemoryDataSource
 import io.architecture.database.imp.room.InMemoryDatabase
 import io.architecture.datasource.api.LocalDataSource
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val roomDaoModule = module {
@@ -12,5 +14,5 @@ val roomDaoModule = module {
     single { get<InMemoryDatabase>().traceDao() }
     single { get<InMemoryDatabase>().routeDao() }
 
-    single<LocalDataSource> { InMemoryDataSource(get(), get(), get()) }
+    singleOf(::InMemoryDataSource ) bind LocalDataSource::class
 }
