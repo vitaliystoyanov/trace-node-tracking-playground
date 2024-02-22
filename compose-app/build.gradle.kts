@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.coreKtx)
 
     // Koin
+    implementation(libs.koin.core.coroutine)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     ksp(libs.koin.ksp.compiler)

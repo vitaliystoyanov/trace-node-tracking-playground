@@ -89,6 +89,7 @@ annotation = { group = "androidx.annotation", name = "annotation", version.ref =
 
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
+koin-core-coroutine = { group = "io.insert-koin", name = "koin-core-coroutines", version.ref = "koinCore" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinCore" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCore" }
 koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinAnnotations" }
