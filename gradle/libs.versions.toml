@@ -4,7 +4,7 @@ minSdk = "23"
 tragetSdk = "34"
 compileSdk = "34"
 
-kotlinCompilerExtensionVersion = "1.5.8"
+kotlinCompilerExtensionVersion = "1.5.7"
 jvmTarget = "1.8"
 
 # Plugins
@@ -41,7 +41,7 @@ runner = "1.5.2"
 junit = "1.1.5"
 junit-junit = "4.13.2"
 benchmark-junit4 = "1.2.3"
-kotlin = "1.9.22"
+kotlin = "1.9.21"
 espresso-core = "3.5.1"
 annotation = "1.6.0"
 animationCoreAndroidVersion = "1.6.1"
