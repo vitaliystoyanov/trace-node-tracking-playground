@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -43,6 +42,7 @@ import io.architecture.map.MapBoxParams.CAMERA_INITIAL_ZOOM
 import io.architecture.model.Trace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 import kotlin.time.measureTime
 
 
@@ -55,9 +55,7 @@ object MapBoxParams {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MapScreen(
-    viewModel: MapViewModel = hiltViewModel(),
-) {
+fun MapScreen(viewModel: MapViewModel = koinViewModel()) {
     val details by viewModel.detailsUiState.collectAsStateWithLifecycle()
     val traces by viewModel.tracesUiState.collectAsStateWithLifecycle()
     val nodesCounter by viewModel.nodeCounterUiState.collectAsStateWithLifecycle()

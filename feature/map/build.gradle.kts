@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,7 +13,14 @@ android {
     buildFeatures {
         compose = true
     }
-
+    libraryVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -66,10 +73,12 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.maps.style)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
+    implementation(libs.koin.compose)
+    ksp(libs.koin.ksp.compiler)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.junit)

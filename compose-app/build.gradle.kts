@@ -4,8 +4,6 @@ import java.net.NetworkInterface
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
-    alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
 }
 
@@ -64,10 +62,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
-    // Allow references to generated code
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -89,22 +83,17 @@ dependencies {
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.lifecycleKtx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.coreKtx)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
-
     // Koin
-    implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.annotations)
+    implementation(libs.koin.compose)
     ksp(libs.koin.ksp.compiler)
 }
 

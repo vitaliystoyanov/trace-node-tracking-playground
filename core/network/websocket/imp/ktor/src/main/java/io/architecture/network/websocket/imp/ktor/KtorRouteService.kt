@@ -1,7 +1,5 @@
 package io.architecture.network.websocket.imp.ktor
 
-import io.architecture.common.ApplicationScope
-import io.architecture.common.DefaultDispatcher
 import io.architecture.model.ConnectionEvent
 import io.architecture.network.websocket.api.ConnectionEventStreamer
 import io.architecture.network.websocket.api.RouteService
@@ -11,12 +9,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import javax.inject.Inject
+import org.koin.core.annotation.Named
 
-class KtorRouteService @Inject constructor(
+class KtorRouteService(
     private val client: KtorProtobufClient<Any, NetworkRoute>,
-    @ApplicationScope private val scope: CoroutineScope,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    @Named("applicationScope") private val scope: CoroutineScope,
+    @Named("defaultDispatcher") private val dispatcher: CoroutineDispatcher,
 ) : RouteService, ConnectionEventStreamer {
 
     override fun streamRoutes(): Flow<NetworkRoute> {

@@ -1,8 +1,6 @@
 package io.architecture.data.repository
 
 import android.util.Log
-import io.architecture.common.ApplicationScope
-import io.architecture.common.IoDispatcher
 import io.architecture.data.repository.interfaces.ConnectionStateRepository
 import io.architecture.datasource.api.NetworkDataSource
 import io.architecture.model.Connection
@@ -19,13 +17,15 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class DefaultConnectionStateRepository @Inject constructor(
-    @ApplicationScope private val applicationScope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+class DefaultConnectionStateRepository(
+    @Named("applicationScope") private val applicationScope: CoroutineScope,
+    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
     private val network: NetworkDataSource,
 ) : ConnectionStateRepository {
 

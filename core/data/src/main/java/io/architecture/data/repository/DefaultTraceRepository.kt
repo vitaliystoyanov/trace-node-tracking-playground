@@ -1,9 +1,6 @@
 package io.architecture.data.repository
 
 import android.util.Log
-import io.architecture.common.ApplicationScope
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.data.mapping.toExternal
 import io.architecture.data.mapping.toExternalAs
 import io.architecture.data.mapping.toNode
@@ -27,15 +24,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-open class DefaultTraceRepository @Inject constructor(
+open class DefaultTraceRepository(
     private val nodeRepository: NodeRepository,
     networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
-    @ApplicationScope private val applicationScope: CoroutineScope,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher
+    @Named("applicationScope") private val applicationScope: CoroutineScope,
+    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
+    @Named("ioDispatcher")
     private val ioDispatcher: CoroutineDispatcher,
 ) : TraceRepository {
 

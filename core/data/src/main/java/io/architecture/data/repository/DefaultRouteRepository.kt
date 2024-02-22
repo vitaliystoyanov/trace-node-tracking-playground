@@ -1,7 +1,5 @@
 package io.architecture.data.repository
 
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.data.mapping.toExternal
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.database.api.model.toExternal
@@ -13,13 +11,15 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-class DefaultRouteRepository @Inject constructor(
+class DefaultRouteRepository(
     private val networkDataSource: NetworkDataSource,
     private val localTraceRouteDataSource: LocalDataSource,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
+    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
 ) : RouteRepository {
 
     override suspend fun add(route: io.architecture.model.Route) = withContext(ioDispatcher) {

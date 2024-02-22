@@ -1,8 +1,6 @@
 package io.architecture.domain
 
 import android.util.Log
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.common.ext.chunked
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.TraceRepository
@@ -21,18 +19,19 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class GetStreamChunkedNodeWithTraceUseCase @Inject constructor(
+class GetStreamChunkedNodeWithTraceUseCase(
     private var nodeRepository: NodeRepository,
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
+    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val defaultAreEquivalentCoordinates: (old: Trace, new: Trace) -> Boolean =

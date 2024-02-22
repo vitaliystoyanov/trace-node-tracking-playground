@@ -3,7 +3,6 @@ package io.architecture.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.architecture.data.repository.interfaces.NodeRepository
 import io.architecture.data.repository.interfaces.RouteRepository
 import io.architecture.domain.GetConnectionStateUseCase
@@ -19,13 +18,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 data class DetailsUiState(val route: Route?, val lastTrace: Trace?)
 
-@HiltViewModel
-class MapViewModel @Inject constructor(
+class MapViewModel(
     private val getStreamTrace: GetStreamTraceUseCase,
     private val routeRepository: RouteRepository,
     getChunkedNodeWithTrace: GetStreamChunkedNodeWithTraceUseCase,

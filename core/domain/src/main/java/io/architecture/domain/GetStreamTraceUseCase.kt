@@ -1,8 +1,6 @@
 package io.architecture.domain
 
 import android.util.Log
-import io.architecture.common.DefaultDispatcher
-import io.architecture.common.IoDispatcher
 import io.architecture.data.repository.interfaces.TraceRepository
 import io.architecture.model.Trace
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,14 +8,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-class GetStreamTraceUseCase @Inject constructor(
+class GetStreamTraceUseCase(
     private var traceRepository: TraceRepository,
     private val formatDate: FormatDatetimeUseCase,
     private val convertAzimuthToDirection: ConvertAzimuthToDirectionUseCase,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher,
+    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     operator fun invoke(nodeId: String): Flow<Trace> = traceRepository

@@ -1,8 +1,8 @@
 package io.architecture.database.imp.room
 
+import io.architecture.database.api.model.NodeEntity
 import io.architecture.database.api.model.RouteEntity
 import io.architecture.database.api.model.TraceEntity
-import io.architecture.database.api.model.NodeEntity
 import io.architecture.database.imp.room.dao.NodeDao
 import io.architecture.database.imp.room.dao.RouteDao
 import io.architecture.database.imp.room.dao.TraceDao
@@ -11,9 +11,9 @@ import io.architecture.database.imp.room.entity.RoomRouteEntity
 import io.architecture.database.imp.room.entity.RoomTraceEntity
 import io.architecture.datasource.api.LocalDataSource
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-internal class InMemoryDataSource @Inject constructor(
+internal class InMemoryDataSource(
     private val nodeDao: NodeDao,
     private val traceDao: TraceDao,
     private val routeDao: RouteDao,

@@ -8,9 +8,10 @@ import io.architecture.network.websocket.api.model.NetworkServerTime
 import io.architecture.network.websocket.api.model.NetworkTrace
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class KtorNetworkDataSource @Inject constructor(
+@Single
+class KtorNetworkDataSource(
     private val traceService: KtorTraceService,
     private val routeService: KtorRouteService,
     private val rttService: KtorRttService,

@@ -1,7 +1,5 @@
 package io.architecture.network.websocket.imp.ktor
 
-import io.architecture.common.ApplicationScope
-import io.architecture.common.DefaultDispatcher
 import io.architecture.model.ConnectionEvent
 import io.architecture.network.websocket.api.ConnectionEventStreamer
 import io.architecture.network.websocket.api.RttService
@@ -12,12 +10,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import javax.inject.Inject
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-class KtorRttService @Inject constructor(
+@Single
+class KtorRttService(
     val client: KtorProtobufClient<NetworkClientTime, NetworkServerTime>,
-    @ApplicationScope private val scope: CoroutineScope,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    @Named("applicationScope") private val scope: CoroutineScope,
+    @Named("defaultDispatcher") private val dispatcher: CoroutineDispatcher,
 ) : RttService, ConnectionEventStreamer {
 
 

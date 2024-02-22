@@ -1,17 +1,17 @@
 package io.architecture.domain
 
 import android.util.Log
-import io.architecture.common.IoDispatcher
 import io.architecture.data.repository.interfaces.RouteRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-class ObserveAndStoreRoutesUseCase @Inject constructor(
+class ObserveAndStoreRoutesUseCase(
     private var routesRepository: RouteRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     // TODO  This pattern makes your app more scalable,

@@ -14,12 +14,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.domain.ObserveAndStoreRoutesUseCase
 import io.architecture.domain.ObserveAndStoreTracesUseCase
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import java.util.*
-import javax.inject.Inject
 
 enum class Actions {
     START,
@@ -31,15 +30,12 @@ enum class ServiceState {
     STOPPED,
 }
 
-@AndroidEntryPoint
 class NetworkForegroundService :
     LifecycleService() {   // TODO Extract notifications operations to Notifier class
 
-    @Inject
-    lateinit var observeAndStoreTraces: ObserveAndStoreTracesUseCase
+    val observeAndStoreTraces: ObserveAndStoreTracesUseCase by inject()
 
-    @Inject
-    lateinit var observeAndStoreRoutes: ObserveAndStoreRoutesUseCase
+    val observeAndStoreRoutes: ObserveAndStoreRoutesUseCase by inject()
 
     private var supervisorJob = SupervisorJob(parent = null)
     private var wakeLock: PowerManager.WakeLock? = null

@@ -10,8 +10,6 @@ jvmTarget = "1.8"
 # Plugins
 composePlugin = "1.5.12"
 geojsonVersion = "0.2.1"
-hiltAndroidVersion = "2.46"
-hiltAndroidCompilerVersion = "2.46"
 kotlinxSerializationJsonVersion = "1.6.3"
 kotlinxSerializationProtobufVersion = "1.6.3"
 kotlinxCoroutineAndroid = "1.7.3"
@@ -28,7 +26,6 @@ androidxLifecycle = "2.7.0"
 mapBox = "11.1.0"
 mapsComposeVersion = "0.1.0"
 composeBom = "2024.02.00"
-androidxHiltNavigationCompose = "1.1.0"
 multidexVersion = "2.0.1"
 roomKtxVersion = "2.6.1"
 runtimeTracingVersion = "1.0.0-beta01"
@@ -93,8 +90,11 @@ annotation = { group = "androidx.annotation", name = "annotation", version.ref =
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinCore" }
+koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCore" }
 koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinAnnotations" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinAnnotations" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koinCore" }
+koin-android-test = { group = "io.insert-koin", name = "koin-android-test", version.ref = "koinCore" }
 
 
 
@@ -109,9 +109,6 @@ androidx-material3-android = { group = "androidx.compose.material3", name = "mat
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroidVersion" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 androidx-runtime-tracing = { module = "androidx.compose.runtime:runtime-tracing", version.ref = "runtimeTracingVersion" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 
 koltin-serialization-jvm = { module = "io.ktor:koltin-serialization-jvm", version.ref = "ktorVersion" }
@@ -165,7 +162,6 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidx-benchmark" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidVersion" }
 modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

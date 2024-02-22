@@ -5,10 +5,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import dagger.hilt.android.AndroidEntryPoint
 import io.architecture.map.MapScreen
 
-@AndroidEntryPoint
 class MapActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) { // TODO Implement Splash screen API + user data fetching

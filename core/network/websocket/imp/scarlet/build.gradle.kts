@@ -2,8 +2,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
     alias(libs.plugins.kotlin.serialize)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,6 +13,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+        }
+    }
+    libraryVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
         }
     }
     compileOptions {
@@ -40,10 +48,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.protobuf)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.ksp.compiler)
 
     // okhttp
     implementation(libs.okhttp)
