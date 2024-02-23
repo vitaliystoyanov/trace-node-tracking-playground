@@ -27,8 +27,25 @@ dependencyResolutionManagement {
 
     }
 }
+include(":ktor-server-app")
+include(":compose-app")
 
-include(":app")
-include(":microbenchmark")
-//include(":shared")
-include(":ktor-server")
+include(":core:common")
+include(":core:model")
+include(":core:data")
+include(":core:datasource:api")
+include(":core:database:api")
+include(":core:database:imp:room")
+include(":core:designsystem")
+include(":core:di")
+include(":core:domain")
+include(":core:network:websocket:api")
+include(":core:network:websocket:imp:ktor")
+include(":core:network:websocket:imp:scarlet")
+include(":core:runtime:configuration")
+include(":core:runtime:logging")
+include(":core:runtime:metrics")
+include(":core:ui")
+
+include(":feature:map")
+

@@ -1,0 +1,81 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {"primaryTextColor":"#fff","primaryColor":"#6A00FF","primaryBorderColor":"#6A00FF","lineColor":"#f5a623","tertiaryColor":"#40375c","fontSize":"11px"}
+  }
+}%%
+
+graph LR
+
+    subgraph :core
+        :common[":common / jvm module"]
+        :data[":data / jvm module"]
+        :designsystem[":designsystem / android module"]
+        :domain[":domain / jvm module"]
+        :model[":model / jvm module"]
+        :di[":di / jvm module"]
+        :ui[":ui / android module"]
+        subgraph :database
+            subgraph :api[":api / jvm module"]
+            end
+        end
+
+        subgraph :network
+            subgraph :webscoket:imp
+                :ktor[":ktor / jvm module"]
+                :scarlet[":scarlet / android module"]
+            end
+            subgraph :websocket:api[":websocket:api / jvm module"]
+            end
+        end
+
+        subgraph :datasource:api[":datasource:api / jvm module"]
+        end
+
+
+        subgraph :database
+            subgraph :database:iml
+                :room[":room / android module"]
+            end
+        end
+
+        subgraph :runtime
+            :logging[":logging / jvm module"]
+            :metrics[":metrics / jvm module"]
+            :configuration[":configuration / jvm module"]
+
+        end
+
+    end
+
+
+    subgraph :feature
+        :map[":map / android module"]
+    end
+    :map --> :domain
+    :map --> :data
+    :map --> :designsystem
+
+    :data --> :websocket:api
+    :data --> :datasource:api
+    :data --> :database --> :api
+
+    :domain --> :data
+
+    :datasource:api --> :database --> :api
+    :datasource:api --> :websocket:api
+
+    :compose-app[":compose-app / android application"] --> :di
+    :compose-app --> :domain
+    :compose-app --> :configuration
+    :compose-app --> :room
+
+    :room --> :api
+    :room --> :datasource:api
+
+    :ktor --> :websocket:api
+    :ktor --> :datasource:api
+    :scarlet --> :websocket:api
+    :scarlet --> :datasource:api
+
+    :ktor-server-app[":ktor-server-app / jvm module"] --> :websocket:api

@@ -34,8 +34,11 @@ google-services.json
 *.hprof
 
 *.drawio.bkp
+.DS_Store
 
 server/
+ktor-server/build/
+
 
 app/src/main/res/values/developer-config.xml
 
