@@ -28,7 +28,7 @@ dependencyResolutionManagement {
     }
 }
 include(":ktor-server-app")
-include(":compose-app")
+include(":compose-android-app")
 
 include(":core:common")
 include(":core:model")
