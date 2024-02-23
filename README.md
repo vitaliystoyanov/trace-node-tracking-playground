@@ -54,6 +54,8 @@ Nothing special :)
 
 ## Gradle module dependencies
 
+* Android modules are configured Gradle modules with applied `com.android.library` plugin
+* JVM modules are configured Gradle modules with applied `org.jetbrains.kotlin.jvm` plugin
 ```mermaid
 %%{
   init: {
@@ -64,88 +66,78 @@ Nothing special :)
 
 graph LR
 
-    subgraph :core
-        :common
-        :data
-        :designsystem
-        :domain
-        :model
-        :ui
-        subgraph :database
-            subgraph :api
-            end
-        end
+  subgraph :core
+    :common[":common / jvm module"]
+    :data[":data / jvm module"]
+    :designsystem[":designsystem / android module"]
+    :domain[":domain / jvm module"]
+    :model[":model / jvm module"]
+    :di[":di / jvm module"]
+    :ui[":ui / android module"]
+    subgraph :database
+      subgraph :api[":api / jvm module"]
+      end
+    end
 
-        subgraph :network
-            subgraph :webscoket:imp
-                :ktor
-                :scarlet
-            end
-            subgraph :websocket:api
-                :api
-            end
-        end
+    subgraph :network
+      subgraph :webscoket:imp
+        :ktor[":ktor / jvm module"]
+        :scarlet[":scarlet / android module"]
+      end
+      subgraph :websocket:api[":websocket:api / jvm module"]
+      end
+    end
 
-        subgraph :datasource:api
-        end
-
-
-        subgraph :database
-            subgraph :database:iml
-                :room
-            end
-        end
-
-        subgraph :runtime
-            :logging
-            :metrics
-            :configuration
-
-        end
-
+    subgraph :datasource:api[":datasource:api / jvm module"]
     end
 
 
-
-    subgraph :feature
-        :map
+    subgraph :database
+      subgraph :database:iml
+        :room[":room / android module"]
+      end
     end
-%% :map --> :common
-    :map --> :domain
-    :map --> :data
-    :map --> :designsystem
+
+    subgraph :runtime
+      :logging[":logging / jvm module"]
+      :metrics[":metrics / jvm module"]
+      :configuration[":configuration / jvm module"]
+
+    end
+
+  end
 
 
-%% :data --> :common
-    :data --> :websocket:api
-    :data --> :datasource:api
-    :data --> :database --> :api
+  subgraph :feature
+    :map[":map / android module"]
+  end
+  :map --> :domain
+  :map --> :data
+  :map --> :designsystem
 
-    :domain --> :data
-%% :domain --> :common
+  :data --> :websocket:api
+  :data --> :datasource:api
+  :data --> :database --> :api
 
+  :domain --> :data
 
-    :datasource:api --> :database --> :api
-    :datasource:api --> :websocket:api
-%% :database:api --> :common
+  :datasource:api --> :database --> :api
+  :datasource:api --> :websocket:api
 
-    :compose-app --> :common
-    :compose-app --> :domain
-    :compose-app --> :map
-    :compose-app --> :api
-    :compose-app --> :ktor
-    :compose-app --> :room
+  :compose-app[":compose-app / android application"] --> :di
+  :compose-app --> :domain
+  :compose-app --> :configuration
+  :compose-app --> :room
 
-    :room --> :api
-    :room --> :datasource:api
+  :room --> :api
+  :room --> :datasource:api
 
-%% :ktor --> :common
-    :ktor --> :websocket:api
-    :ktor --> :datasource:api
-    :scarlet --> :websocket:api
-    :scarlet --> :datasource:api
+  :ktor --> :websocket:api
+  :ktor --> :datasource:api
+  :scarlet --> :websocket:api
+  :scarlet --> :datasource:api
 
-    :ktor-server-app --> :websocket:api
+  :ktor-server-app[":ktor-server-app / jvm module"] --> :websocket:api
 ```
 
 ## Streaming node traces with Ktor
@@ -153,7 +145,7 @@ graph LR
 ### How to run local server
 
 If your dev environment is emulator:
-1. Change your local IP address under res/xml/network_security.xml. For example, 192.168.0.101:
+1. Change your local IPv4 address under res/xml/network_security.xml. For example, 192.168.0.101:
   ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -163,22 +155,6 @@ If your dev environment is emulator:
 </network-security-config>
 ```
 2. Change `BASE_WS_HOST=YOUR_IP_ADDRESS` network configuration in https://github.com/vitaliystoyanov/trace-node-tracking-playground/blob/eb427caf772dd6dff62a5f223fb1511d1701f1f9/core/network/websocket/api/src/main/java/io/architecture/network/websocket/api/Configuration.kt#L14
-```kotlin
-package io.architecture.network.websocket.api
-
-const val BASE_WS_HOST = "192.168.1.197" <-- HERE
-const val BASE_WS_PORT = 8080
-const val BASE_WS_URL = "ws://$BASE_WS_HOST}:$BASE_WS_PORT"
-
-// Scarlet uses:
-const val NODE_TRACES_WS_URL = "$BASE_WS_URL/nodes/traces"
-const val NODE_ROUTES_WS_URL = "$BASE_WS_URL/nodes/routes"
-
-// Ktor uses:
-const val NODE_TRACES_WS_PATH = "/nodes/traces"
-const val NODE_ROUTES_WS_PATH = "/nodes/routes"
-const val RTT_WS_PATH = "/rtt"
-```
 3. Run 'Netty server' IDE configuration
 ```
 2024-02-21 17:00:53.181 [main] INFO  ktor.application - Autoreload is disabled because the development mode is off.

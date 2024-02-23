@@ -8,84 +8,74 @@
 graph LR
 
     subgraph :core
-        :common
-        :data
-        :designsystem
-        :domain
-        :model
-        :ui
+        :common[":common / jvm module"]
+        :data[":data / jvm module"]
+        :designsystem[":designsystem / android module"]
+        :domain[":domain / jvm module"]
+        :model[":model / jvm module"]
+        :di[":di / jvm module"]
+        :ui[":ui / android module"]
         subgraph :database
-            subgraph :api
+            subgraph :api[":api / jvm module"]
             end
         end
 
         subgraph :network
             subgraph :webscoket:imp
-                :ktor
-                :scarlet
+                :ktor[":ktor / jvm module"]
+                :scarlet[":scarlet / android module"]
             end
-            subgraph :websocket:api
-                :api
+            subgraph :websocket:api[":websocket:api / jvm module"]
             end
         end
 
-        subgraph :datasource:api
+        subgraph :datasource:api[":datasource:api / jvm module"]
         end
 
 
         subgraph :database
             subgraph :database:iml
-                :room
+                :room[":room / android module"]
             end
         end
 
         subgraph :runtime
-            :logging
-            :metrics
-            :configuration
+            :logging[":logging / jvm module"]
+            :metrics[":metrics / jvm module"]
+            :configuration[":configuration / jvm module"]
 
         end
 
     end
 
 
-
     subgraph :feature
-        :map
+        :map[":map / android module"]
     end
-%% :map --> :common
     :map --> :domain
     :map --> :data
     :map --> :designsystem
 
-
-%% :data --> :common
     :data --> :websocket:api
     :data --> :datasource:api
     :data --> :database --> :api
 
     :domain --> :data
-%% :domain --> :common
-
 
     :datasource:api --> :database --> :api
     :datasource:api --> :websocket:api
-%% :database:api --> :common
 
-    :compose-app --> :common
+    :compose-app[":compose-app / android application"] --> :di
     :compose-app --> :domain
-    :compose-app --> :map
-    :compose-app --> :api
-    :compose-app --> :ktor
+    :compose-app --> :configuration
     :compose-app --> :room
 
     :room --> :api
     :room --> :datasource:api
 
-%% :ktor --> :common
     :ktor --> :websocket:api
     :ktor --> :datasource:api
     :scarlet --> :websocket:api
     :scarlet --> :datasource:api
 
-    :ktor-server-app --> :websocket:api
+    :ktor-server-app[":ktor-server-app / jvm module"] --> :websocket:api
