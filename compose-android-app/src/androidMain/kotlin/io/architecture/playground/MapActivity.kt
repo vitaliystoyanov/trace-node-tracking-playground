@@ -1,12 +1,11 @@
 package io.architecture.playground
 
+import AppWrapper
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import getPlatform
 import io.architecture.map.MapScreen
 import org.koin.compose.KoinContext
 
@@ -15,11 +14,10 @@ class MapActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) { // TODO Implement Splash screen API + user data fetching
         super.onCreate(savedInstanceState)
 
-        Toast.makeText(this, getPlatform().name, Toast.LENGTH_LONG).show()
-
         setContent {
             KoinContext {
                 MapScreen()
+//                AppWrapper()
             }
         }
 

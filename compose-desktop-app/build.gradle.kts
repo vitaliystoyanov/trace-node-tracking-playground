@@ -14,6 +14,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(projects.composeCommon)
             implementation(compose.desktop.currentOs)
+            implementation(projects.shared)
+
+            // Koin
+            implementation(libs.koin.core.coroutine)
+            implementation(libs.koin.mp.compose)
         }
     }
 }

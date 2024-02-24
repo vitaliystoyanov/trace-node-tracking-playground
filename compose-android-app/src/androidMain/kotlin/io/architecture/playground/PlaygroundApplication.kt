@@ -1,13 +1,7 @@
 package io.architecture.playground
 
 import android.app.Application
-import android.util.Log
-import io.architecture.core.di.coreKoinModules
-import io.architecture.core.runtime.configuration.WebsocketRuntimeConfiguration
-import io.architecture.database.imp.room.di.roomDaoModule
-import io.architecture.database.imp.room.di.roomDatabaseModule
-import io.architecture.map.featureMapModule
-import org.koin.android.ext.android.inject
+import appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -24,12 +18,7 @@ class PlaygroundApplication : Application() {
         if (BuildConfig.DEBUG) setupCoroutineDebugMode()
 
         val modules = lazyModule {
-            includes(
-                coreKoinModules,
-                roomDaoModule,
-                roomDatabaseModule,
-                featureMapModule
-            )
+            includes(appModule)
         }
 
         startKoin {
@@ -41,8 +30,6 @@ class PlaygroundApplication : Application() {
         val koin = KoinPlatform.getKoin()
 
         koin.runOnKoinStarted { _ ->
-            val runtimeConfig: WebsocketRuntimeConfiguration by inject()
-            Log.d("RUNTIME_CONFIG", "Runtime configuration -> $runtimeConfig")
             super.onCreate()
         }
     }

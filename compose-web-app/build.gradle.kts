@@ -40,7 +40,10 @@ kotlin {
                 implementation(compose.ui)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-                implementation(projects.composeCommon)
+                implementation(projects.shared)
+
+                // Koin
+                implementation(libs.koin.mp.compose)
             }
         }
     }
