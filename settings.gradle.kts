@@ -3,14 +3,14 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
-        mavenCentral()
         gradlePluginPortal()
+        mavenCentral()
     }
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -24,11 +24,17 @@ dependencyResolutionManagement {
             credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").get()
             authentication.create<BasicAuthentication>("basic")
         }
-
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 include(":ktor-server-app")
+include(":shared")
+
+include(":compose-common")
 include(":compose-android-app")
+include(":compose-desktop-app")
+//include(":compose-ios-app")
+include(":compose-web-app")
 
 include(":core:common")
 include(":core:model")
