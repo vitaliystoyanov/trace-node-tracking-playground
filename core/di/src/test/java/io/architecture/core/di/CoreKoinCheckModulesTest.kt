@@ -1,6 +1,6 @@
 package io.architecture.core.di
 
-import io.architecture.core.runtime.configuration.RuntimeConfigurationModule
+import io.architecture.core.runtime.configuration.runtimeModule
 import io.architecture.data.repositoryModule
 import io.architecture.datasource.api.LocalDataSource
 import io.architecture.datasource.api.NetworkDataSource
@@ -19,7 +19,7 @@ class CoreKoinCheckModulesTest {
     private val coreModule = module {
         includes(
             CoroutineKoinModule().module,
-            RuntimeConfigurationModule().module,
+            runtimeModule,
             repositoryModule,
             useCaseModule,
             ktorModule,

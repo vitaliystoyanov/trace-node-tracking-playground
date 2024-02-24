@@ -1,6 +1,7 @@
 package io.architecture.playground
 
 import android.app.Application
+import androidx.multidex.BuildConfig
 import appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

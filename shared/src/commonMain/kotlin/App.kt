@@ -1,5 +1,4 @@
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
@@ -12,9 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.DrawableResource
+import io.architecture.core.runtime.configuration.Runtime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalResourceApi::class)
@@ -22,7 +20,7 @@ import org.koin.compose.koinInject
 fun AppContainer() {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
-        val platform = koinInject<Platform>()
+        val runtime = koinInject<Runtime>()
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { showContent = !showContent }) {
                 Text("Click me!")
@@ -33,8 +31,8 @@ fun AppContainer() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Web app stuck on it
-                    Image(painterResource(DrawableResource("compose-multiplatform.xml")), null)
-                    Text("Compose: ${platform.name}")
+//                    Image(painterResource(DrawableResource("compose-multiplatform.xml")), null)
+                    Text("Compose: ${runtime.platform.name},\nRuntime configuration: ${runtime.websocketConfiguration}")
                 }
             }
         }

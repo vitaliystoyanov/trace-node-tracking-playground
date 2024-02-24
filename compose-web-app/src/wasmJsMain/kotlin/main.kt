@@ -5,8 +5,8 @@ import org.koin.compose.KoinApplication
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     CanvasBasedWindow(canvasElementId = "ComposeTarget") {
-        KoinApplication(application = {
-            modules(platformModule)
+        KoinApplication(application = {// TODO Move to shared for all targets
+            modules(appModule)
         }) {
             AppContainer()
         }

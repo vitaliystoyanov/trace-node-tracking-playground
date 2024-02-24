@@ -1,15 +1,57 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
-    alias(libs.plugins.kotlinJvm)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
 }
 
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
+kotlin {
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.koin.core)
+            }
+        }
+        val wasmJsMain by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+    }
 }
 
-dependencies {
-    implementation(libs.koin.core)
-    implementation(libs.koin.annotations)
-    ksp(libs.koin.ksp.compiler)
+android {
+    namespace = "io.architecture.playground.runtime"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }

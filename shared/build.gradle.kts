@@ -55,6 +55,8 @@ kotlin {
                 implementation(compose.ui)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+
+                implementation(projects.core.runtime.configuration)
             }
         }
         val iosX64Main by getting
@@ -77,6 +79,7 @@ kotlin {
         }
         val wasmJsMain by getting {
             dependencies {
+
             }
         }
     }
