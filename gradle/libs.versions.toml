@@ -9,6 +9,7 @@ jvmTarget = "1.8"
 
 # Plugins
 composePlugin = "1.6.0-beta02"
+androidTools = "31.2.0"
 geojsonVersion = "0.2.1"
 kotlinxSerializationJsonVersion = "1.6.3"
 kotlinxSerializationProtobufVersion = "1.6.3"
@@ -158,6 +159,13 @@ ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "kto
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
 
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "roomKtxVersion" }
+
 [bundles]
 
 [plugins]
@@ -170,6 +178,9 @@ kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.r
 modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+
+# Plugins of build-logic
+convention-android-library = { id = "io.architecture.android.library", version = "unspecified" }
 
 # Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

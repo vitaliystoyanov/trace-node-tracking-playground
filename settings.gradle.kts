@@ -2,6 +2,7 @@ rootProject.name = "node_traces_streaming"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
@@ -54,4 +55,3 @@ include(":core:runtime:metrics")
 include(":core:ui")
 
 include(":feature:map")
-
