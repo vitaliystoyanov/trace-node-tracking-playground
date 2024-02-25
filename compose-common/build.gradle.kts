@@ -3,12 +3,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.convention.android.library)
     alias(libs.plugins.jetbrainsCompose)
 }
 
 kotlin {
-
+    // Apply the default hierarchy again
+    applyDefaultHierarchyTemplate()
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
@@ -43,28 +44,5 @@ kotlin {
                 implementation(compose.components.resources)
             }
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-    }
-}
-
-android {
-    namespace = "io.architecture.playground.compose.common"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
