@@ -26,12 +26,14 @@ dependencyResolutionManagement {
             authentication.create<BasicAuthentication>("basic")
         }
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        // https://youtrack.jetbrains.com/issue/KTOR-5587/Ktor-client-for-Kotlin-Wasm#focus=Comments-27-8735419.0-0
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
 }
+
 include(":ktor-server-app")
 include(":shared")
 
-include(":compose-common")
 include(":compose-android-app")
 include(":compose-desktop-app")
 //include(":compose-ios-app")

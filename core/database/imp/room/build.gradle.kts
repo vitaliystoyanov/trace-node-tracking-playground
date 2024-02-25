@@ -33,6 +33,8 @@ dependencies {
     implementation(projects.core.datasource.api)
     implementation(projects.core.model)
 
+    implementation(libs.kotlinx.datetime)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.material3)

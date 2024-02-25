@@ -1,7 +1,7 @@
 package io.architecture.network.websocket.imp.ktor.di
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+// todo import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -18,7 +18,10 @@ val ktorModule = module {
 
     @OptIn(ExperimentalSerializationApi::class)
     single {
-        HttpClient(CIO) {
+        // NOTE: If you call the HttpClient constructor without an argument, the client will choose
+        // an engine automatically depending on the artifacts added in a build script.
+        // https://ktor.io/docs/http-client-engines.html#default
+        HttpClient {
 
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(ProtoBuf)

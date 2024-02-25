@@ -7,12 +7,11 @@ import io.architecture.network.websocket.imp.ktor.di.ktorClientModule
 import io.architecture.network.websocket.imp.ktor.di.ktorModule
 import io.architecture.network.websocket.imp.ktor.di.ktorServiceModule
 import org.koin.dsl.module
-import org.koin.ksp.generated.module
 
 // umbrella module
 val coreKoinModules = module {
     includes(
-        CoroutineKoinModule().module,
+        coroutineModule,
         runtimeModule,
         repositoryModule,
         useCaseModule,

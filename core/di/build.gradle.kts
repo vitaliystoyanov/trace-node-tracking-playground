@@ -1,35 +1,41 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
-    alias(libs.plugins.kotlinJvm)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.convention.android.library)
 }
 
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
-}
+kotlin {
+    // Apply the default hierarchy again
+    applyDefaultHierarchyTemplate()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+    androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+    jvm()
 
-dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.domain)
-    implementation(projects.core.data)
-    implementation(projects.core.network.websocket.imp.ktor)
-    implementation(projects.core.runtime.configuration)
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.common)
+            implementation(projects.core.domain)
+            implementation(projects.core.data)
+            implementation(projects.core.network.websocket.imp.ktor)
+            implementation(projects.core.runtime.configuration)
 
-    implementation(libs.kotlinx.coroutine.android)
+            implementation(libs.kotlinx.coroutine.core)
+            implementation(libs.koin.core)
+        }
+        commonTest.dependencies {
+            implementation(projects.core.datasource.api)
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.annotations)
-    implementation(libs.koin.test)
-    ksp(libs.koin.ksp.compiler)
-
-    testImplementation(projects.core.datasource.api)
-
-    testImplementation(libs.ktor.client.core)
-    testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.websockets)
-    testImplementation(libs.ktor.client.serialization.jvm)
-    testImplementation(libs.ktor.serialization.kotlinx.protobuf)
-    testImplementation(libs.ktor.client.logging.jvm)
-
-    testImplementation(libs.junit.junit)
+            implementation(kotlin("reflect"))
+            implementation(libs.ktor.client.core)
+            implementation(libs.koin.test)
+            implementation(libs.junit.junit)
+        }
+    }
 }

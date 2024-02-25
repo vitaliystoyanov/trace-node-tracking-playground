@@ -1,31 +1,28 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.convention.android.library)
 }
 
-android {
-    namespace = "io.architecture.core.pool"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        jvmTarget = libs.versions.minSdk.get().toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+kotlin {
+    // Apply the default hierarchy again
+    applyDefaultHierarchyTemplate()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
     }
+    androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+    jvm()
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.koin.core)
+            }
+        }
     }
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
-    }
-}
-
-dependencies {
-    implementation(projects.core.model)
-
-    testImplementation(libs.junit.junit)
-    androidTestImplementation(libs.junit)
 }

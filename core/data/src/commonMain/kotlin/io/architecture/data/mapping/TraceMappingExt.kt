@@ -14,7 +14,7 @@ internal fun Trace.toNode() = Node(id = nodeId, mode = 1) // TODO mode is always
 internal fun NetworkTrace.toLocal() = TraceEntity(
     nodeId = nodeId,
     lon = lon,
-    sentAtTime = Instant.parse(sentAtTime.toString()).toLocalDateTime(TimeZone.UTC), // TODO look up details
+    sentAtTime = Instant.fromEpochMilliseconds(sentAtTime).toLocalDateTime(TimeZone.UTC),
     speed = speed,
     azimuth = azimuth,
     alt = alt,

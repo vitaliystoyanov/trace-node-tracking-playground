@@ -13,6 +13,7 @@ androidTools = "31.2.0"
 geojsonVersion = "0.2.1"
 kotlinxSerializationJsonVersion = "1.6.3"
 kotlinxSerializationProtobufVersion = "1.6.3"
+serializationVersion = "1.6.3"
 kotlinxCoroutineAndroid = "1.7.3"
 kotlinxCoroutineCore = "1.8.0"
 kotlinxDatetimeVersion = "0.5.0"
@@ -51,7 +52,7 @@ animationCoreAndroidVersion = "1.6.1"
 foundationLayoutAndroidVersion = "1.6.1"
 material3AndroidVersion = "1.2.0"
 uiGraphicsAndroidVersion = "1.6.1"
-ktorVersion = "2.3.8"
+ktorVersion = "3.0.0-wasm1"
 gson = "2.10.1"
 lifecycleAndroidVersion = "0.1.12"
 loggingInterceptorVersion = "4.12.0"
@@ -95,9 +96,8 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinC
 koin-core-coroutine = { group = "io.insert-koin", name = "koin-core-coroutines", version.ref = "koinCore" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinCore" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCore" }
-# TODO naming
+
 koin-mp-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCore" }
-koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinAnnotations" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinAnnotations" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koinCore" }
 koin-android-test = { group = "io.insert-koin", name = "koin-android-test", version.ref = "koinCore" }
@@ -123,13 +123,21 @@ kotlinx-coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobufVersion" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetimeVersion" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serializationVersion" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorVersion" }
-ktor-client-logging-jvm = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktorVersion" }
-ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorVersion" }
-ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktorVersion" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorVersion" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-protobuf = { module = "io.ktor:ktor-serialization-kotlinx-protobuf", version.ref = "ktorVersion" }
+# See more https://ktor.io/docs/http-client-engines.html#limitations
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorVersion" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorVersion" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktorVersion" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktorVersion" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorVersion" }
+
+
+
 
 # Mapbox SDK
 android = { module = "com.mapbox.maps:android", version.ref = "mapBox" }

@@ -16,8 +16,8 @@ class MapActivity : ComponentActivity() {
 
         setContent {
             KoinContext {
-//                MapScreen()
-                AppWrapper()
+                MapScreen()
+//                AppWrapper()
             }
         }
 

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.architecture.database.api.model.TraceEntity
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 @Entity(
     tableName = "traces"
@@ -18,7 +18,7 @@ internal data class RoomTraceEntity(
     override var speed: Int,
     override var azimuth: Double,
     override var alt: Double,
-    override var sentAtTime: Date,
+    override var sentAtTime: LocalDateTime,
 ) : TraceEntity(nodeId, lon, lat, speed, azimuth, alt, sentAtTime) {
 
     companion object {

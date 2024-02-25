@@ -1,19 +1,11 @@
 package io.architecture.core.di
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-@Module
-internal class CoroutineDispatcherKoinModule {
-
-    @Single
-    @Named("ioDispatcher")
-    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @Single
-    @Named("defaultDispatcher")
-    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+internal val coroutineDispatcherModule = module {
+    single(named("ioDispatcher")) { Dispatchers.IO }
+    single(named("defaultDispatcher")) { Dispatchers.Default }
+    single(named("mainDispatcher")) { Dispatchers.Main }
 }

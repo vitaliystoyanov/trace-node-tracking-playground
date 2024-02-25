@@ -1,10 +1,6 @@
 package io.architecture.network.websocket.imp.ktor.di
 
-import io.architecture.network.websocket.api.BASE_WS_HOST
-import io.architecture.network.websocket.api.BASE_WS_PORT
-import io.architecture.network.websocket.api.NODE_ROUTES_WS_PATH
-import io.architecture.network.websocket.api.NODE_TRACES_WS_PATH
-import io.architecture.network.websocket.api.RTT_WS_PATH
+import io.architecture.core.runtime.configuration.WebsocketRuntimeConfiguration
 import io.architecture.network.websocket.api.model.NetworkClientTime
 import io.architecture.network.websocket.api.model.NetworkRoute
 import io.architecture.network.websocket.api.model.NetworkServerTime
@@ -20,9 +16,9 @@ val ktorClientModule = module {
             Any::class,
             NetworkTrace::class,
             get<HttpClient>(),
-            BASE_WS_HOST,
-            BASE_WS_PORT,
-            NODE_TRACES_WS_PATH
+            get<WebsocketRuntimeConfiguration>().BASE_WS_HOST, // TODO Refactor it :)
+            get<WebsocketRuntimeConfiguration>().BASE_WS_PORT,
+            get<WebsocketRuntimeConfiguration>().NODE_TRACES_WS_PATH
         )
     }
 
@@ -31,9 +27,9 @@ val ktorClientModule = module {
             Any::class,
             NetworkRoute::class,
             get<HttpClient>(),
-            BASE_WS_HOST,
-            BASE_WS_PORT,
-            NODE_ROUTES_WS_PATH
+            get<WebsocketRuntimeConfiguration>().BASE_WS_HOST,
+            get<WebsocketRuntimeConfiguration>().BASE_WS_PORT,
+            get<WebsocketRuntimeConfiguration>().NODE_ROUTES_WS_PATH
         )
     }
 
@@ -42,9 +38,9 @@ val ktorClientModule = module {
             NetworkClientTime::class,
             NetworkServerTime::class,
             get<HttpClient>(),
-            BASE_WS_HOST,
-            BASE_WS_PORT,
-            RTT_WS_PATH
+            get<WebsocketRuntimeConfiguration>().BASE_WS_HOST,
+            get<WebsocketRuntimeConfiguration>().BASE_WS_PORT,
+            get<WebsocketRuntimeConfiguration>().RTT_WS_PATH
         )
     }
 }

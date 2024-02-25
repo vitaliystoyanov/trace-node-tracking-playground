@@ -11,14 +11,14 @@ import io.architecture.network.websocket.imp.ktor.di.ktorServiceModule
 import org.junit.Test
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.module
-import org.koin.ksp.generated.module
 import org.koin.test.verify.verify
 
-class CoreKoinCheckModulesTest {
+class CoreKoinCheckModulesTest { // TODO Test fails due to kotlin-reflect. Too long (10 mins) to
+                                 // sync Gradle project after deps changes (ktor module is slow down build speed)
 
     private val coreModule = module {
         includes(
-            CoroutineKoinModule().module,
+            coroutineModule,
             runtimeModule,
             repositoryModule,
             useCaseModule,

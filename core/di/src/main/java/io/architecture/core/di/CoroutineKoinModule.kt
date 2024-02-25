@@ -1,8 +1,7 @@
 package io.architecture.core.di
 
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import org.koin.dsl.module
 
-@Module(includes = [CoroutineScopeKoinModule::class, CoroutineDispatcherKoinModule::class])
-@ComponentScan("io.architecture.common")
-class CoroutineKoinModule
+val coroutineModule = module {
+    includes(coroutineDispatcherModule, coroutineScopeModule)
+}
