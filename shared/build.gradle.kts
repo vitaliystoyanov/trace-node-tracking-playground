@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.convention.android.library)
     alias(libs.plugins.jetbrainsCompose)
 }
 
@@ -13,13 +13,7 @@ kotlin {
         browser()
     }
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        }
-    }
+    androidTarget()
 
     listOf(
         iosX64(),
@@ -82,17 +76,5 @@ kotlin {
 
             }
         }
-    }
-}
-
-android {
-    namespace = "io.architecture.playground.shared"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }

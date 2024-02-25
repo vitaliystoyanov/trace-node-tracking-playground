@@ -10,11 +10,6 @@ android {
     namespace = "io.architecture.scarlet"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-        }
-    }
     libraryVariants.all {
         val variantName = name
         sourceSets {
@@ -24,8 +19,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = libs.versions.jvmTarget.get()

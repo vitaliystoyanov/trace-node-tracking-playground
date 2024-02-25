@@ -1,7 +1,6 @@
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
-import io.architecture.build.logic.libs
-import org.gradle.api.JavaVersion
+import io.architecture.build.logic.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -15,17 +14,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("com.android.library")
             }
             extensions.configure<LibraryExtension> {
-                namespace = "io.architecture.playground" + path.replace(":", ".")
-
-                compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()
-                defaultConfig.targetSdk =
-                    libs.findVersion("tragetSdk").get().requiredVersion.toInt()
-
-                compileOptions.sourceCompatibility = JavaVersion.VERSION_17
-                compileOptions.targetCompatibility = JavaVersion.VERSION_17
+                configureKotlinAndroid(this)
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
-
             }
             dependencies {
                 add("testImplementation", kotlin("test"))
