@@ -1,6 +1,6 @@
 package io.architecture.model
 
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 data class Trace(
     var nodeId: String = "",
@@ -9,9 +9,9 @@ data class Trace(
     var speed: Int = 0,
     var azimuth: Double = 0.0,
     var alt: Double = 0.0,
-    var sentAtTime: Date,
+    var sentAtTime: LocalDateTime,
 
     var formattedDatetime: String? = "",
-    var direction: String? = ""
+    var direction: String? = "",
 )
 
