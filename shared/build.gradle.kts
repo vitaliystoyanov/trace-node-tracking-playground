@@ -44,6 +44,10 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.core.di)
+                // Used to mock LocalDatasource temporary
+                implementation(projects.core.datasource.api)
+                implementation(projects.core.database.api)
+
                 implementation(projects.core.ui) // TODO for tests
 
                 implementation(libs.koin.core)
@@ -62,7 +66,10 @@ kotlin {
                 implementation(libs.koin.mp.compose)
             }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+            }
+        }
         //        val wasmJsMain by getting {
 //            dependencies {
 //

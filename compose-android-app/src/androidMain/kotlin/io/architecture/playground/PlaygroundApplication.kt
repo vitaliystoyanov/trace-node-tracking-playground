@@ -18,21 +18,22 @@ class PlaygroundApplication : Application() {
     override fun onCreate() {
         if (BuildConfig.DEBUG) setupCoroutineDebugMode()
 
-        val modules = lazyModule {
-            includes(appModule)
-        }
-
-        startKoin {
-            androidLogger()
-            androidContext(this@PlaygroundApplication)
-            lazyModules(modules)
-        }
-
-        val koin = KoinPlatform.getKoin()
-
-        koin.runOnKoinStarted { _ ->
+// TODO Extract Lazy load in shared module!
+//       val modules = lazyModule {
+//            includes(appModule)
+//        }
+//
+//        startKoin {
+//            androidLogger()
+//            androidContext(this@PlaygroundApplication)
+//            lazyModules(modules)
+//        }
+//
+//        val koin = KoinPlatform.getKoin()
+//
+//        koin.runOnKoinStarted { _ ->
             super.onCreate()
-        }
+//        }
     }
 
     private fun setupCoroutineDebugMode() {

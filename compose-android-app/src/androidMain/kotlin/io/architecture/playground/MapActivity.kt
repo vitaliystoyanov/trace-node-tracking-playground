@@ -1,12 +1,11 @@
 package io.architecture.playground
 
-import AppWrapper
+import ComposeApplication
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import io.architecture.map.MapScreen
 import org.koin.compose.KoinContext
 
 class MapActivity : ComponentActivity() {
@@ -15,10 +14,10 @@ class MapActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            KoinContext {
+//            KoinContext { // Native feature + viewmodel
 //                MapScreen()
-                AppWrapper()
-            }
+                ComposeApplication()
+//            }
         }
 
         Intent(this, NetworkForegroundService::class.java).also {
