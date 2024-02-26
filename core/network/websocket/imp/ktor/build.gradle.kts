@@ -1,6 +1,3 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.convention.android.library)
@@ -14,6 +11,9 @@ kotlin {
 //    wasmJs {
 //        browser()
 //    }
+    js(IR) {
+        browser()
+    }
     androidTarget()
     iosX64()
     iosArm64()
@@ -48,10 +48,13 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
-//            implementation(libs.ktor.client.darwin)
+            implementation(libs.ktor.client.darwin)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+        }
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
         }
     }
 }

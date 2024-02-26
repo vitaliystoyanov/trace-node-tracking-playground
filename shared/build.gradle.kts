@@ -14,6 +14,9 @@ kotlin {
 //    wasmJs {
 //        browser()
 //    }
+    js(IR) {
+        browser()
+    }
 
     androidTarget()
 
@@ -59,15 +62,13 @@ kotlin {
                 implementation(libs.koin.mp.compose)
             }
         }
-        val jvmMain by getting {
-            dependencies {
-
-            }
-        }
-//        val wasmJsMain by getting {
+        val jvmMain by getting
+        //        val wasmJsMain by getting {
 //            dependencies {
 //
 //            }
 //        }
+        val jsMain by getting
+        val jsTest by getting
     }
 }

@@ -1,5 +1,4 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,6 +13,9 @@ kotlin {
 //    wasmJs {
 //        browser()
 //    }
+    js(IR) {
+        browser()
+    }
     androidTarget()
     iosX64()
     iosArm64()
