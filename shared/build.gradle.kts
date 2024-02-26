@@ -10,10 +10,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
 
     androidTarget()
 
@@ -33,16 +33,16 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                implementation(projects.core.di)
                 implementation(projects.core.database.imp.room)
 
-                implementation(projects.feature.map)
+                api(projects.feature.map)
             }
         }
         val commonMain by getting {
             dependencies {
+                api(projects.core.di)
+
                 implementation(libs.koin.core)
-                implementation(libs.koin.test)
                 implementation(libs.koin.mp.compose)
 
                 implementation(compose.runtime)
@@ -51,8 +51,6 @@ kotlin {
                 implementation(compose.ui)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-
-                implementation(projects.core.runtime.configuration)
             }
         }
         val iosMain by getting {
@@ -62,13 +60,13 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(projects.core.di)
-            }
-        }
-        val wasmJsMain by getting {
-            dependencies {
 
             }
         }
+//        val wasmJsMain by getting {
+//            dependencies {
+//
+//            }
+//        }
     }
 }

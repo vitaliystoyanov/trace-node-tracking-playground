@@ -6,7 +6,7 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-internal val coroutineScopeModule = module {
+val coroutineScopeModule = module {
     single(named("applicationScope")) {
         CoroutineScope(
             SupervisorJob() + get<CoroutineDispatcher>(

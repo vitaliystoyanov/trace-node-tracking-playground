@@ -14,7 +14,7 @@ geojsonVersion = "0.2.1"
 kotlinxSerializationJsonVersion = "1.6.3"
 kotlinxSerializationProtobufVersion = "1.6.3"
 serializationVersion = "1.6.3"
-kotlinxCoroutineAndroid = "1.7.3"
+kotlinxCoroutineAndroid = "1.8.0"
 kotlinxCoroutineCore = "1.8.0"
 kotlinxDatetimeVersion = "0.5.0"
 
@@ -52,7 +52,8 @@ animationCoreAndroidVersion = "1.6.1"
 foundationLayoutAndroidVersion = "1.6.1"
 material3AndroidVersion = "1.2.0"
 uiGraphicsAndroidVersion = "1.6.1"
-ktorVersion = "3.0.0-wasm1"
+#ktorVersion = "3.0.0-wasm1"
+ktorVersion = "2.3.8"
 gson = "2.10.1"
 lifecycleAndroidVersion = "0.1.12"
 loggingInterceptorVersion = "4.12.0"
@@ -102,13 +103,12 @@ koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", vers
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koinCore" }
 koin-android-test = { group = "io.insert-koin", name = "koin-android-test", version.ref = "koinCore" }
 
-
-
 # Jetpack Compose
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-uiToolingData = { module = "androidx.compose.ui:ui-tooling-data" }
 androidx-animation-core-android = { group = "androidx.compose.animation", name = "animation-core-android", version.ref = "animationCoreAndroidVersion" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3AndroidVersion" }
@@ -145,7 +145,7 @@ maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "ma
 maps-style = { module = "com.mapbox.extension:maps-style", version.ref = "mapsStyleVersion" }
 
 # Tinder scarlet & OkHTTP
-lifecycle-android = { module = "com.tinder.scarlet:lifecycle-android", version.ref = "lifecycleAndroidVersion" }
+scarlet-lifecycle-android = { module = "com.tinder.scarlet:lifecycle-android", version.ref = "lifecycleAndroidVersion" }
 message-adapter-gson = { module = "com.tinder.scarlet:message-adapter-gson", version.ref = "sarletMessageAdapterVersion" }
 message-adapter-protobuf = { module = "com.tinder.scarlet:message-adapter-protobuf", version.ref = "sarletMessageAdapterVersion" }
 scarlet = { module = "com.tinder.scarlet:scarlet", version.ref = "scarletVersion" }

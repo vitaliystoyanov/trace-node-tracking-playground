@@ -10,10 +10,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
     androidTarget()
     iosX64()
     iosArm64()
@@ -48,7 +48,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+//            implementation(libs.ktor.client.darwin)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)

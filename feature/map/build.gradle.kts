@@ -2,8 +2,6 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -35,10 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.model)
-    implementation(projects.core.common) // TODO
-    implementation(projects.core.domain)
-    implementation(projects.core.data)
+    implementation(projects.core.di)
     implementation(projects.core.designsystem)
 
     implementation(platform(libs.compose.bom))
@@ -46,22 +41,19 @@ dependencies {
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.activityCompose)
     implementation(libs.compose.uiToolingPreview)
+    implementation(libs.compose.uiToolingData)
     implementation(libs.compose.uiTooling)
 
     implementation(libs.accompanist.systemuicontroller)
-    implementation(libs.lifecycle.android)
 
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.lifecycle)
-    implementation(libs.androidx.lifecycleKtx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.lifecycle.service)
 
     // Mapbox Maps SDK
     implementation(libs.android)
@@ -73,7 +65,6 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
-    ksp(libs.koin.ksp.compiler)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.junit)

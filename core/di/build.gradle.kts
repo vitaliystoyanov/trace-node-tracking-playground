@@ -8,10 +8,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
     androidTarget()
     iosX64()
     iosArm64()
@@ -20,22 +20,26 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.common)
-            implementation(projects.core.domain)
-            implementation(projects.core.data)
-            implementation(projects.core.network.websocket.imp.ktor)
-            implementation(projects.core.runtime.configuration)
+            api(projects.core.common)
+            api(projects.core.domain)
+            api(projects.core.data)
+            api(projects.core.model)
+            api(projects.core.network.websocket.imp.ktor)
+            api(projects.core.runtime.configuration)
 
             implementation(libs.kotlinx.coroutine.core)
             implementation(libs.koin.core)
+            implementation(libs.koin.test)
         }
         commonTest.dependencies {
             implementation(projects.core.datasource.api)
+            implementation(projects.core.network.websocket.api)
+            implementation(projects.core.database.api)
+            implementation(projects.core.model)
+
 
             implementation(kotlin("reflect"))
-            implementation(libs.ktor.client.core)
-            implementation(libs.koin.test)
-            implementation(libs.junit.junit)
+            implementation(kotlin("test"))
         }
     }
 }

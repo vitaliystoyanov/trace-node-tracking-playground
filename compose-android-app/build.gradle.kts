@@ -4,15 +4,33 @@ import java.net.NetworkInterface
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
     androidTarget()
     sourceSets {
+        commonMain.dependencies {
+            implementation(projects.shared)
+            // Koin
+            implementation(libs.koin.core.coroutine)
+        }
         val androidMain by getting {
             dependencies {
-                implementation(projects.shared)
+                implementation(libs.koin.android)
+                implementation(libs.koin.compose)
+                implementation(libs.kotlinx.coroutine.android)
+
+                implementation(libs.scarlet.lifecycle.android)
+                implementation(libs.androidx.multidex)
+                implementation(libs.googleMaterialDesign)
+
+                // Lifecycles
+                implementation(libs.androidx.lifecycle)
+                implementation(libs.androidx.lifecycleKtx)
+                implementation(libs.androidx.lifecycle.service)
+                implementation(libs.androidx.activityCompose)
+                implementation(libs.androidx.appCompat)
+                implementation(libs.androidx.coreKtx)
             }
         }
     }
@@ -21,6 +39,10 @@ kotlin {
 android {
     namespace = "io.architecture.playground"
     compileSdk = libs.versions.compileSdk.get().toInt()
+
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     buildFeatures {
         compose = true
@@ -35,15 +57,6 @@ android {
         versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    applicationVariants.all {
-        val variantName = name
-        sourceSets {
-            getByName("main") {
-                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
-            }
-        }
     }
 
     buildTypes {
@@ -70,33 +83,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
-}
-
-dependencies {
-    implementation(projects.core.domain)
-
-    implementation(projects.feature.map)
-
-    implementation(libs.lifecycle.android)
-    implementation(libs.androidx.multidex)
-    implementation(libs.googleMaterialDesign)
-
-    // Lifecycles
-    implementation(libs.androidx.lifecycle)
-    implementation(libs.androidx.lifecycleKtx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewModelCompose)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.lifecycle.service)
-    implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.appCompat)
-    implementation(libs.androidx.coreKtx)
-
-    // Koin
-    implementation(libs.koin.core.coroutine)
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose)
-    ksp(libs.koin.ksp.compiler)
 }
 
 val getLocalIPv4: List<String>

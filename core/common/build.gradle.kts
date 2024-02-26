@@ -8,10 +8,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
     androidTarget()
     iosX64()
     iosArm64()
@@ -25,8 +25,8 @@ kotlin {
              implementation(projects.core.runtime.logging)
         }
         androidMain.dependencies {
-            // https://github.com/Kotlin/kotlinx.coroutines?tab=readme-ov-file#multiplatform
-            implementation(libs.kotlinx.coroutine.android)
+//             https://github.com/Kotlin/kotlinx.coroutines?tab=readme-ov-file#multiplatform
+//            implementation(libs.kotlinx.coroutine.android)
         }
     }
 }
