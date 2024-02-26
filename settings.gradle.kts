@@ -37,7 +37,7 @@ include(":shared")
 include(":compose-android-app")
 include(":compose-desktop-app")
 //include(":compose-ios-app")
-include(":compose-web-app")
+include(":compose-web-wasm-app")
 
 include(":core:common")
 include(":core:model")
