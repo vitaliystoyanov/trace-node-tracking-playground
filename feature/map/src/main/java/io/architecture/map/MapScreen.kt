@@ -78,7 +78,7 @@ fun MapScreen(viewModel: MapViewModel = koinViewModel()) {
         ) {
 
         }
-        StatusBar(
+        io.architecture.ui.StatusBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
@@ -95,7 +95,7 @@ fun MapScreen(viewModel: MapViewModel = koinViewModel()) {
                 },
                 sheetState = sheetState
             ) {
-                NodeBottomSheetContent(details, selectedNodeId)
+                io.architecture.ui.NodeDetailsContent(details.lastTrace, selectedNodeId)
             }
         }
     }

@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation(projects.core.di)
     implementation(projects.core.designsystem)
+    implementation(projects.core.ui)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)

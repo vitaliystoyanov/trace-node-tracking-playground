@@ -22,6 +22,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.core.designsystem)
+            implementation(projects.core.model)
+
             implementation(libs.koin.core)
             implementation(libs.koin.mp.compose)
 

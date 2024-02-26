@@ -1,4 +1,4 @@
-package io.architecture.map
+package io.architecture.ui
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.LinearEasing
@@ -8,7 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+// TODO import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.architecture.core.design.system.theme.black
 import io.architecture.core.design.system.theme.teal_700
 import io.architecture.core.design.system.theme.teal_700_dark
@@ -26,7 +26,7 @@ import io.architecture.model.Connection
 
 @Composable
 fun StatusBar(modifier: Modifier, connection: Connection, nodesCount: Int) {
-    val systemUiController = rememberSystemUiController()
+//    TODO val systemUiController = rememberSystemUiController()
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
 
     val color by infiniteTransition.animateColor(
@@ -53,7 +53,7 @@ fun StatusBar(modifier: Modifier, connection: Connection, nodesCount: Int) {
 
 
     val colorOnState = if (connection.state != Connection.State.OPENED) bgColor else color
-    systemUiController.setStatusBarColor(colorOnState)
+//  TODO   systemUiController.setStatusBarColor(colorOnState)
     Row(
         modifier = modifier
             .drawBehind {

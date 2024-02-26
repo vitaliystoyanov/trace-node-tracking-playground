@@ -41,6 +41,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.core.di)
+                implementation(projects.core.ui) // TODO for tests
 
                 implementation(libs.koin.core)
                 implementation(libs.koin.mp.compose)
