@@ -15,7 +15,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
+        // https://youtrack.jetbrains.com/issue/KTOR-5587/Ktor-client-for-Kotlin-Wasm#focus=Comments-27-8735419.0-0
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
         // Mapbox Maven repository
         maven {
             url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
@@ -26,8 +27,6 @@ dependencyResolutionManagement {
             authentication.create<BasicAuthentication>("basic")
         }
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        // https://youtrack.jetbrains.com/issue/KTOR-5587/Ktor-client-for-Kotlin-Wasm#focus=Comments-27-8735419.0-0
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
 }
 
