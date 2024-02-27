@@ -34,13 +34,17 @@ kotlin {
         val wasmJsTest by getting
         val wasmJsMain by getting {
             dependencies {
+                implementation(projects.core.di)
+                implementation(projects.core.datasource.api)
+                implementation(projects.feature.map)
+
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.ui)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-                implementation(projects.shared)
+
 
                 // Koin
                 implementation(libs.koin.mp.compose)

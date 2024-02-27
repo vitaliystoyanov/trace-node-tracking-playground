@@ -16,10 +16,13 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(projects.shared)
-        }
         jsMain.dependencies {
+            implementation(projects.core.di)
+            implementation(projects.core.datasource.api)
+            implementation(projects.feature.map)
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.mp.compose)
             implementation(compose.runtime)
             implementation(compose.html.core)
         }

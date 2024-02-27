@@ -12,12 +12,13 @@ kotlin {
     sourceSets {
         val desktopMain by getting
         desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(projects.shared)
+            implementation(projects.core.di)
+            implementation(projects.core.datasource.api)
+            implementation(projects.feature.map)
 
-            // Koin
-            implementation(libs.koin.core.coroutine)
+            implementation(libs.koin.core)
             implementation(libs.koin.mp.compose)
+            implementation(compose.desktop.currentOs)
         }
     }
 }

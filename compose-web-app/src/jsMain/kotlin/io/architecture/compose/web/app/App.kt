@@ -4,12 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import io.architecture.core.di.coreKoinModules
+import io.architecture.datasource.api.emptyMockLocalDatasourceModule
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
+import org.koin.compose.KoinApplication
 
 fun main() {
     renderComposable(rootElementId = "root") {
@@ -17,6 +20,12 @@ fun main() {
 
         if (isDarkTheme) Style(Dark) else Style(Light)
         Style(MainStyleSheet)
+
+        KoinApplication(application = {
+            modules(coreKoinModules, emptyMockLocalDatasourceModule)
+        }) {
+            // TODO Compose HTML
+        }
 
         Div(attrs = { classes(MainStyleSheet.overlay) }) {
             Div {

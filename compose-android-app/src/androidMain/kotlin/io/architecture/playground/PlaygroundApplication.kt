@@ -2,7 +2,10 @@ package io.architecture.playground
 
 import android.app.Application
 import androidx.multidex.BuildConfig
-import appModule
+import io.architecture.core.di.coreKoinModules
+import io.architecture.database.imp.room.di.roomDaoModule
+import io.architecture.database.imp.room.di.roomDatabaseModule
+import io.architecture.map.featureMapModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -18,22 +21,26 @@ class PlaygroundApplication : Application() {
     override fun onCreate() {
         if (BuildConfig.DEBUG) setupCoroutineDebugMode()
 
-// TODO Extract Lazy load in shared module!
-//       val modules = lazyModule {
-//            includes(appModule)
-//        }
-//
-//        startKoin {
-//            androidLogger()
-//            androidContext(this@PlaygroundApplication)
-//            lazyModules(modules)
-//        }
-//
-//        val koin = KoinPlatform.getKoin()
-//
-//        koin.runOnKoinStarted { _ ->
+        val modules = lazyModule {
+            includes(
+                coreKoinModules,
+                roomDaoModule,
+                roomDatabaseModule,
+                featureMapModule
+            )
+        }
+
+        startKoin {
+            androidLogger()
+            androidContext(this@PlaygroundApplication)
+            lazyModules(modules)
+        }
+
+        val koin = KoinPlatform.getKoin()
+
+        koin.runOnKoinStarted { _ ->
             super.onCreate()
-//        }
+        }
     }
 
     private fun setupCoroutineDebugMode() {

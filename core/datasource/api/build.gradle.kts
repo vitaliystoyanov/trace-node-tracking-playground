@@ -11,6 +11,7 @@ kotlin {
             implementation(projects.core.database.api)
             implementation(projects.core.network.websocket.api)
 
+            implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutine.core)
         }
     }

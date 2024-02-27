@@ -10,28 +10,29 @@ kotlin {
     androidTarget()
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared)
-            // Koin
             implementation(libs.koin.core.coroutine)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.koin.android)
-                implementation(libs.koin.compose)
-                implementation(libs.kotlinx.coroutine.android)
+        androidMain.dependencies {
+            implementation(projects.core.database.imp.room)
+            implementation(projects.core.di)
+            implementation(projects.core.domain)
+            implementation(projects.feature.map)
 
-                implementation(libs.scarlet.lifecycle.android)
-                implementation(libs.androidx.multidex)
-                implementation(libs.googleMaterialDesign)
+            implementation(libs.koin.android)
+            implementation(libs.koin.compose)
+            implementation(libs.kotlinx.coroutine.android)
 
-                // Lifecycles
-                implementation(libs.androidx.lifecycle)
-                implementation(libs.androidx.lifecycleKtx)
-                implementation(libs.androidx.lifecycle.service)
-                implementation(libs.androidx.activityCompose)
-                implementation(libs.androidx.appCompat)
-                implementation(libs.androidx.coreKtx)
-            }
+            implementation(libs.scarlet.lifecycle.android)
+            implementation(libs.androidx.multidex)
+            implementation(libs.googleMaterialDesign)
+
+            // Lifecycles
+            implementation(libs.androidx.lifecycle)
+            implementation(libs.androidx.lifecycleKtx)
+            implementation(libs.androidx.lifecycle.service)
+            implementation(libs.androidx.activityCompose)
+            implementation(libs.androidx.appCompat)
+            implementation(libs.androidx.coreKtx)
         }
     }
 }

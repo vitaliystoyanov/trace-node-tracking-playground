@@ -65,9 +65,10 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
         lineColor(Color.parseColor("#8C3C64"))
         lineWidth(1.9)
     }
-    bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
-        +image(TRIANGLE_IMAGE_ID, it)
-    }
+//  TODO maybe resource not included in source set
+//   +bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
+//        +image(TRIANGLE_IMAGE_ID, it)
+//    }
     +circleLayer(LAYER_CIRCLE_ID, NODE_DATA_SOURCE_ID) {
         circleColor(match {
             get(MODE_KEY_PROPERTY)
