@@ -10,10 +10,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        browser()
-//    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
     js(IR) {
         browser()
     }

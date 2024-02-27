@@ -25,6 +25,10 @@ fun ComposeApplication() {
     KoinApplication(application = {
         modules(appModule + mockLocalDatasourceModule)
     }) {
+        // https://developer.android.com/jetpack/compose/side-effects?hl=en#remembercoroutinescope
+        // rememberCoroutineScope is a composable function that returns a CoroutineScope bound
+        // to the point of the Composition where it's called.
+        // The scope will be cancelled when the call leaves the Composition.
         val scope = rememberCoroutineScope()
 
         val getChunkedNodeWithTrace = koinInject<GetStreamChunkedNodeWithTraceUseCase>()
@@ -62,6 +66,14 @@ fun ComposeApplication() {
                     initialValue = emptySequence()
                 )
 
+        /* TODO produceState: convert non-Compose state into Compose state:
+
+           https://developer.android.com/jetpack/compose/side-effects?hl=en#producestate
+
+           Some example:
+           https://github.com/joreilly/PeopleInSpace/blob/724b1150b774d552adbfeb5ef97f3117036d1864/compose-web/src/jsMain/kotlin/Main.kt#L30
+
+         */
         StatusBarContainer(tracesUiState, nodeCounterUiState, connectionsUiState)
     }
 }

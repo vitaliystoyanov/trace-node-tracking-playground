@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 expect val appModule: Module
 
-val mockLocalDatasourceModule = module {
+val mockLocalDatasourceModule = module { // TODO Provide mock in core module
     single {
         object : LocalDataSource {
             override fun observeAllTraces(): Flow<List<TraceEntity>> = emptyFlow()

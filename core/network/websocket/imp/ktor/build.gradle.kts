@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.convention.android.library)
@@ -7,10 +9,10 @@ plugins {
 kotlin {
     // Apply the default hierarchy again
     applyDefaultHierarchyTemplate()
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        browser()
-//    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
     js(IR) {
         browser()
     }
