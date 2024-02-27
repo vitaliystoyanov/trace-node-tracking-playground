@@ -52,7 +52,7 @@ animationCoreAndroidVersion = "1.6.1"
 foundationLayoutAndroidVersion = "1.6.1"
 material3AndroidVersion = "1.2.0"
 uiGraphicsAndroidVersion = "1.6.1"
-ktorVersion = "3.0.0-wasm1"
+ktorVersion = "3.0.0-wasm2"
 #ktorVersion = "2.3.8"
 gson = "2.10.1"
 lifecycleAndroidVersion = "0.1.12"
@@ -187,10 +187,10 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 
 # Plugins of build-logic
 convention-android-library = { id = "io.architecture.android.library", version = "unspecified" }
+convention-multiplatform-target-default = { id = "io.architecture.multiplatform.target.preset.default", version = "unspecified" }
 
 # Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

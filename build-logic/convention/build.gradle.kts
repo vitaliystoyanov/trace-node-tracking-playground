@@ -38,4 +38,10 @@ gradlePlugin {
             implementationClass = "AndroidLibraryConventionPlugin"
         }
     }
+    plugins {
+        register("multiplatformDefaultTargetPreset") {
+            id = "io.architecture.multiplatform.target.preset.default"
+            implementationClass = "MultiplatformTargetPresetConventionPlugin"
+        }
+    }
 }
