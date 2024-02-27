@@ -31,6 +31,14 @@ dependencyResolutionManagement {
 }
 
 include(":ktor-server-app")
+// See more: https://docs.gradle.org/current/userguide/composite_builds.html
+// and Declaring dependencies substituted by an included build:
+// https://docs.gradle.org/current/userguide/composite_builds.html#included_build_declaring_substitutions
+includeBuild("compose-mapbox-library") {
+    dependencySubstitution {
+        substitute(module("ca.derekellis.mapbox:compose-mapbox-library")).using(project(":"))
+    }
+}
 
 include(":compose-android-app")
 include(":compose-desktop-app")

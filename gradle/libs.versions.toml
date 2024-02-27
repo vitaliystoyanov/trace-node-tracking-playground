@@ -17,6 +17,7 @@ serializationVersion = "1.6.3"
 kotlinxCoroutineAndroid = "1.8.0"
 kotlinxCoroutineCore = "1.8.0"
 kotlinxDatetimeVersion = "0.5.0"
+buildKonfig = "0.15.1"
 
 # ktor-server
 ktor = "2.3.8"
@@ -187,10 +188,13 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 
 # Plugins of build-logic
 convention-android-library = { id = "io.architecture.android.library", version = "unspecified" }
 convention-multiplatform-target-default = { id = "io.architecture.multiplatform.target.preset.default", version = "unspecified" }
+
+
 
 # Common
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
