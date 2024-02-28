@@ -1,5 +1,13 @@
 rootProject.name = "compose-mapbox-library"
 
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
         maven("https://androidx.dev/storage/compose-compiler/repository/")

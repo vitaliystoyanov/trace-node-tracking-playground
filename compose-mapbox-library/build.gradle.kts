@@ -1,4 +1,7 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
 }
@@ -7,6 +10,14 @@ group = "ca.derekellis.mapbox"
 version = "0.1.0-SNAPSHOT"
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs { browser() }
+    androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+    jvm()
     js(IR) {
         browser {
             commonWebpackConfig {
@@ -16,6 +27,7 @@ kotlin {
             }
         }
     }
+
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
@@ -32,5 +44,19 @@ kotlin {
             }
         }
         val jsTest by getting
+    }
+}
+
+android {
+    namespace = "io.architecture" + path.replace(":", ".")
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
