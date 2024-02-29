@@ -14,11 +14,10 @@ kotlin {
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
         ios.deploymentTarget = "16.0"
-        podfile = project.file("../compose-ios-app/Podfile")
+        podfile = project.file("../Podfile")
         framework {
             baseName = "shared"
             isStatic = true
-//            export("ca.derekellis.mapbox:compose-mapbox-library")
         }
         pod("MapboxMaps") {
             version = "11.1.0"

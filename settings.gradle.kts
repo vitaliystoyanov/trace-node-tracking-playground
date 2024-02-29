@@ -43,6 +43,7 @@ includeBuild(".")
 
 include(":compose-android-app")
 include(":compose-desktop-app")
+include(":compose-ios-app:shared")
 include(":compose-web-app")
 include(":compose-web-wasm-app")
 
@@ -64,5 +65,3 @@ include(":core:runtime:metrics")
 include(":core:ui")
 
 include(":feature:map")
-
-include(":shared")

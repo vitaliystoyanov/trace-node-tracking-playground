@@ -1,11 +1,11 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'compose_mapbox_library'
     spec.version                  = '11.1.0'
-    spec.homepage                 = 'Link to the Shared Module homepage'
+    spec.homepage                 = 'TBR'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Some description for the Shared Module'
+    spec.summary                  = 'Compose MapBox Library'
     spec.vendored_frameworks      = 'build/cocoapods/framework/compose_mapbox_library.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target = '16.0'
