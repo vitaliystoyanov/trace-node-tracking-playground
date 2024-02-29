@@ -17,7 +17,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from(files("../gradle/libs.mapbox-library.versions.toml"))
+            from(files("gradle/libs.mapbox-library.versions.toml"))
         }
     }
 }
