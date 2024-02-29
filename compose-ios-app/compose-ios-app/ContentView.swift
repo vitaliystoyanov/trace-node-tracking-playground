@@ -1,10 +1,9 @@
-import UIKit
 import SwiftUI
 import shared
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        ComposeUIController_iosKt.controller()
+        return ComposeUIControllerKt.controller()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

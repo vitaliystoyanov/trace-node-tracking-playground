@@ -5,6 +5,7 @@ kotlinxCoroutineCore = "1.8.0"
 # 1.5.X version throws kotlin.native.internal.IrLinkageError:
 # "No function found for symbol..: using rememberCoroutineScope
 compose = "1.6.0-beta02"
+kotlinCompilerExtensionVersion = "1.5.4"
 # Android
 agp = "8.2.2"
 minSdk = "23"
@@ -18,4 +19,5 @@ kotlinx-coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 

@@ -10,10 +10,10 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        maven("https://androidx.dev/storage/compose-compiler/repository/")
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
     versionCatalogs {
         create("libs") {

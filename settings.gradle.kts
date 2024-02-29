@@ -39,10 +39,10 @@ includeBuild("compose-mapbox-library") {
         substitute(module("ca.derekellis.mapbox:compose-mapbox-library")).using(project(":"))
     }
 }
+includeBuild(".")
 
 include(":compose-android-app")
 include(":compose-desktop-app")
-include(":compose-ios-app")
 include(":compose-web-app")
 include(":compose-web-wasm-app")
 
@@ -64,3 +64,5 @@ include(":core:runtime:metrics")
 include(":core:ui")
 
 include(":feature:map")
+
+include(":shared")

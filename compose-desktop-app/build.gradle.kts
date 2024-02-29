@@ -10,15 +10,18 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        val desktopMain by getting
-        desktopMain.dependencies {
-            implementation(projects.core.di)
-            implementation(projects.core.datasource.api)
-            implementation(projects.feature.map)
-
-            implementation(libs.koin.core)
-            implementation(libs.koin.mp.compose)
-            implementation(compose.desktop.currentOs)
+        val desktopMain by getting {
+            dependencies {
+                implementation(projects.core.di)
+                implementation(projects.core.datasource.api)
+                implementation(projects.feature.map)
+                // from Composite Gradle Build. See root setting.gradle.kts
+                //noinspection UseTomlInstead
+                implementation("ca.derekellis.mapbox:compose-mapbox-library") // TODO For testing
+                implementation(libs.koin.core)
+                implementation(libs.koin.mp.compose)
+                implementation(compose.desktop.currentOs)
+            }
         }
     }
 }

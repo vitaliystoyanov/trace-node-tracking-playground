@@ -70,6 +70,7 @@ Package.resolved
 #           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
 Pods/
 .build/
+/compose-ios-app/Podfile.lock
 
 ## Xcode 8 and earlier
 

@@ -189,6 +189,7 @@ kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.r
 modulegraph = { id = "dev.iurysouza.modulegraph", version.ref = "modulegraphMermaid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 
 # Plugins of build-logic
 convention-android-library = { id = "io.architecture.android.library", version = "unspecified" }
