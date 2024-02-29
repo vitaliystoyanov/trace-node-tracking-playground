@@ -1,5 +1,8 @@
 # PoC of design implementation for processing large GPS node trace data effectively
 
+> [!WARNING]
+> This branch in development. Project setup guide will be later. This has XCode projects, CocoaPods tool, different AndroidStudio plugins and run configuration that should be guided with instructions.
+
 [![.github/workflows/main.yml](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml/badge.svg?branch=gitworkflow)](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml)
  ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
 
