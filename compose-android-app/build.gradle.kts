@@ -4,15 +4,26 @@ import java.net.NetworkInterface
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.jetbrainsCompose)
 }
 
 kotlin {
     androidTarget()
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.koin.core.coroutine)
+
+
+
         }
         androidMain.dependencies {
+            implementation(libs.koin.core.coroutine)
+            implementation(projects.core.designsystem)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.components.resources)
+
             implementation(projects.core.database.imp.room)
             implementation(projects.core.di)
             implementation(projects.core.domain)
@@ -42,7 +53,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].res.srcDirs("src/commonMain/resources", "src/androidMain/res") // TODO
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     buildFeatures {

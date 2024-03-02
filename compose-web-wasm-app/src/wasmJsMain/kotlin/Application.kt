@@ -1,7 +1,7 @@
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
+import io.architecture.core.design.system.theme.UAVTheme
 import io.architecture.core.di.coreKoinModules
-import io.architecture.datasource.api.di.emptyMockLocalDatasourceModule
 import io.architecture.datasource.api.di.inMemoryLocalDatasourceModule
 import io.architecture.feature.common.map.MapScreen
 import io.architecture.feature.common.map.di.mapFeatureModule
@@ -13,7 +13,9 @@ fun main() {
         KoinApplication(application = {
             modules(coreKoinModules, mapFeatureModule, inMemoryLocalDatasourceModule)
         }) {
-            MapScreen()
+            UAVTheme {
+                MapScreen()
+            }
         }
     }
 }

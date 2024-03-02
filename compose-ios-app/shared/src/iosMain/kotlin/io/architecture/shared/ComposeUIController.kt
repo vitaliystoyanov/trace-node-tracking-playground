@@ -1,6 +1,7 @@
 package io.architecture.shared
 
 import androidx.compose.ui.window.ComposeUIViewController
+import io.architecture.core.design.system.theme.UAVTheme
 import io.architecture.core.di.coreKoinModules
 import io.architecture.datasource.api.di.inMemoryLocalDatasourceModule
 import io.architecture.feature.common.map.MapScreen
@@ -12,6 +13,8 @@ fun controller(): UIViewController = ComposeUIViewController {
     KoinApplication(application = {
         modules(coreKoinModules, mapFeatureModule, inMemoryLocalDatasourceModule)
     }) {
-        MapScreen()
+        UAVTheme {
+            MapScreen()
+        }
     }
 }

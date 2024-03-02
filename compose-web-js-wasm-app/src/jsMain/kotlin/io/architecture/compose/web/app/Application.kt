@@ -1,15 +1,12 @@
 package io.architecture.compose.web.app
 
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.window.CanvasBasedWindow
 import ca.derekellis.mapbox.MapboxMapInternal
 import ca.derekellis.mapbox.rememberMapboxStateInternal
 import io.architecture.compose.web.application.BuildKonfig
+import io.architecture.core.design.system.theme.UAVTheme
 import io.architecture.core.di.coreKoinModules
-import io.architecture.datasource.api.di.emptyMockLocalDatasourceModule
 import io.architecture.datasource.api.di.inMemoryLocalDatasourceModule
 import io.architecture.feature.common.map.MapScreen
 import io.architecture.feature.common.map.di.mapFeatureModule
@@ -34,9 +31,7 @@ fun main() {
             KoinApplication(application = {
                 modules(coreKoinModules, mapFeatureModule, inMemoryLocalDatasourceModule)
             }) {
-                CompositionLocalProvider(
-                    LocalDensity provides Density(1.2f)
-                ) {
+                UAVTheme {
                     MapScreen()
                 }
             }

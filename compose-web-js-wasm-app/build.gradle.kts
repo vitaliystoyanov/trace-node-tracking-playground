@@ -55,11 +55,14 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(projects.core.designsystem)
+
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.html.core)
-                implementation(compose.material3)
+                implementation(compose.material)
+
                 implementation(libs.skiko)
             }
         }

@@ -10,7 +10,10 @@ jvmTarget = "17"
 # Plugins
 # [1.6.0-rc03] IOS build fails because of org.jetbrains.compose.annotation-internal:annotation dependency #4277
 # See more: https://github.com/JetBrains/compose-multiplatform/issues/4277
+# compiles IOS
 composePlugin = "1.6.0-beta02"
+# compiles IOS, but not WASM
+#composePlugin = "1.6.0-rc03"
 androidTools = "31.2.0"
 geojsonVersion = "0.2.1"
 kotlinxSerializationJsonVersion = "1.6.3"

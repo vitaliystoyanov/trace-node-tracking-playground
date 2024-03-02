@@ -14,6 +14,7 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.eq
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.extension.style.expressions.dsl.generated.match
+import com.mapbox.maps.extension.style.image.image
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
@@ -23,6 +24,7 @@ import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.vectorSource
 import com.mapbox.maps.extension.style.style
+import io.architecture.playground.feature.map.R
 
 
 private const val CIRCLE_RADIUS = 2.8
@@ -47,7 +49,7 @@ const val BEARING_KEY_PROPERTY = "bearing"
 
 private const val TERRAIN_DATA_MAPBOX_URL = "mapbox://mapbox.mapbox-terrain-v2"
 
-fun createStyle(context: Context) = style(style = Style.LIGHT) {
+fun createStyle(context: Context) = style(style = "mapbox://styles/vitaliystoyanov/cltbcw2sk016g01pieyz68hqr") {
     +vectorSource(TERRAIN_DATA_SOURCE_ID) {
         url(TERRAIN_DATA_MAPBOX_URL)
     }
@@ -61,24 +63,24 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
         lineColor(Color.parseColor("#8C3C64"))
         lineWidth(1.9)
     }
-//  TODO maybe resource not included in source set
-//   +bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
-//        +image(TRIANGLE_IMAGE_ID, it)
-//    }
+    // TODO maybe resource not included in source set
+    bitmapFromDrawableRes(context, R.drawable.triangle)?.let {
+        +image(TRIANGLE_IMAGE_ID, it)
+    }
     +circleLayer(LAYER_CIRCLE_ID, NODE_DATA_SOURCE_ID) {
         circleColor(match {
             get(MODE_KEY_PROPERTY)
             stop {
                 literal(io.architecture.model.NodeMode.ACTIVE.toString())
-                color(Color.GREEN)
+                color(Color.parseColor("#A2F854"))
             }
             stop {
                 literal(io.architecture.model.NodeMode.INACTIVE.toString())
                 color(Color.RED)
             }
-            color(Color.BLACK)
+            color(Color.parseColor("#A2F854"))
         })
-        circleStrokeColor(Color.BLACK)
+        circleStrokeColor(Color.parseColor("#A2F854"))
         circleStrokeWidth(1.0)
         circleRadius(
             interpolate {
@@ -153,7 +155,8 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
         textAnchor(TextAnchor.TOP_RIGHT)
         textPadding(5.0)
         textOptional(true)
-        textColor(Color.BLACK)
+//        textFont(listOf("UAV OSD Sans Mono"))
+        textColor(Color.parseColor("#A2F854"))
         textEmissiveStrength(10.0)
         textSize(
             interpolate {
@@ -167,7 +170,7 @@ fun createStyle(context: Context) = style(style = Style.LIGHT) {
                 }
                 stop {
                     literal(9)
-                    literal(9.0)
+                    literal(11.0)
                 }
             }
         )

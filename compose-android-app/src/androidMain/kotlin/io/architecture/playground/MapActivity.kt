@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import io.architecture.core.design.system.theme.UAVTheme
 import io.architecture.feature.common.map.MapScreen
 
 class MapActivity : ComponentActivity() {
@@ -13,7 +14,9 @@ class MapActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MapScreen()
+            UAVTheme {
+                MapScreen()
+            }
         }
 
         Intent(this, NetworkForegroundService::class.java).also {

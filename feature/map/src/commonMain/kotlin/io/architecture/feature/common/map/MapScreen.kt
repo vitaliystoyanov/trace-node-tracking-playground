@@ -1,12 +1,14 @@
 package io.architecture.feature.common.map
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,6 +36,7 @@ fun MapScreen() {
     // rememberCoroutineScope is a composable function that returns a CoroutineScope bound
     // to the point of the Composition where it's called.
     // The scope will be cancelled when the call leaves the Composition.
+    @Suppress("unused")
     val scope = rememberCoroutineScope()
 
     with(viewModel) {
@@ -57,34 +60,40 @@ fun RootContent(
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
 
-    Scaffold(modifier = Modifier.background(Color.Black)) { contentPadding ->
-        MapComposable(
-            contentPadding,
-            tracesUiState.value,
-            null, // TODO
-            onNodeClick = { nodeId ->
-                viewModel.loadUpdatableNodeDetails(nodeId)
-                showBottomSheet = true
-            }
-        )
-        StatusBar(
-            modifier = Modifier
-                .wrapContentSize()
-                .fillMaxWidth()
-                .height(20.dp),
-            connectionsUiState.collectAsState().value,
-            tracesUiState.collectAsState().value.toList().size
-        )
+    Scaffold { contentPadding ->
+        Column {
+            StatusBar(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 20.dp),
+                connectionsUiState.collectAsState().value,
+                tracesUiState.collectAsState().value.toList().size
+            )
+            MapComposable(
+                contentPadding,
+                tracesUiState.value,
+                null, // TODO
+                onNodeClick = { nodeId ->
+                    viewModel.loadUpdatableNodeDetails(nodeId)
+                    showBottomSheet = true
+                }
+            )
+        }
     }
 
     if (showBottomSheet) {
         @OptIn(ExperimentalMaterial3Api::class)
         ModalBottomSheet(
+            sheetState = sheetState,
+            containerColor = Color.Transparent,
+            contentColor = Color.Transparent,
+            scrimColor = Color.Transparent,
+            shape = ShapeDefaults.ExtraLarge,
             onDismissRequest = {
                 showBottomSheet = false
                 viewModel.stopNodeDetailsUpdates()
             },
-            sheetState = sheetState
         ) {
             when (val traceLatest = detailsUiState.collectAsState().value.lastTrace) {
                 null -> NodeDetailsEmpty()

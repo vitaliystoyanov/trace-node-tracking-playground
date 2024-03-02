@@ -10,10 +10,13 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
+        commonMain.dependencies { implementation(compose.desktop.common) }
+
         val desktopMain by getting {
             dependencies {
                 implementation(projects.core.di)
                 implementation(projects.core.datasource.api)
+                implementation(projects.core.designsystem)
                 implementation(projects.feature.map)
                 // from Composite Gradle Build. See root setting.gradle.kts
                 //noinspection UseTomlInstead

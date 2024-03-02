@@ -1,7 +1,11 @@
 package io.architecture.feature.common.map
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import io.architecture.core.design.system.theme.black
 import io.architecture.model.Route
 import io.architecture.model.Trace
 
@@ -12,5 +16,7 @@ actual fun MapComposable(
     displayRoute: Route?,
     onNodeClick: (String) -> Unit,
 ) {
-    MapReplacement(nodeTraces, onNodeClick)
+    Box(modifier = Modifier.background(black)) {
+        MapReplacement(Modifier, nodeTraces, onNodeClick)
+    }
 }
