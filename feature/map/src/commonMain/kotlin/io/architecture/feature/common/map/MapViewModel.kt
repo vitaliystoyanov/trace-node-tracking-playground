@@ -66,11 +66,11 @@ class MapViewModel(
                 initialValue = emptySequence()
             )
 
-    fun clearDetails() {
+    fun stopNodeDetailsUpdates() {
         if (job.isActive) job.cancel() // TODO do it without cancel here in compose function
     }
 
-    fun loadDetails(nodeId: String) {
+    fun loadUpdatableNodeDetails(nodeId: String) {
         job = scope.launch {
             val route = routeRepository.getRouteBy(nodeId)
             getStreamTrace(nodeId).collect { lastTrace ->

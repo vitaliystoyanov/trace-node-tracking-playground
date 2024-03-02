@@ -13,6 +13,7 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutine.core)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

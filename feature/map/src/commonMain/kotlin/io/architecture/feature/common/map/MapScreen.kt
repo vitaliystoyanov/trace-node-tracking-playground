@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import io.architecture.model.Connection
 import io.architecture.model.Trace
 import io.architecture.ui.NodeDetailsContent
+import io.architecture.ui.NodeDetailsEmpty
 import io.architecture.ui.StatusBar
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.koinInject
@@ -37,24 +38,21 @@ fun MapScreen() {
 
     with(viewModel) {
         val connectionsUiState = connectionsUiState
-        val nodeCounterUiState: StateFlow<Int> = nodeCounterUiState
         val tracesUiState: StateFlow<Sequence<Trace>> = tracesUiState
 
-        RootContent(tracesUiState, nodeCounterUiState, connectionsUiState)
+        RootContent(tracesUiState, connectionsUiState)
     }
 }
 
 @Composable
 fun RootContent(
     tracesUiState: StateFlow<Sequence<Trace>>,
-    nodeCounterUiState: StateFlow<Int>,
     connectionsUiState: StateFlow<Connection>,
 ) {
     val viewModel = koinInject<MapViewModel>() // TODO ??? Danger
     val detailsUiState: StateFlow<NodeDetailsUiState> = viewModel.detailsUiState
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var selectedNodeId by remember { mutableStateOf("") }
 
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
@@ -65,8 +63,7 @@ fun RootContent(
             tracesUiState.value,
             null, // TODO
             onNodeClick = { nodeId ->
-                selectedNodeId = nodeId
-                viewModel.loadDetails(nodeId)
+                viewModel.loadUpdatableNodeDetails(nodeId)
                 showBottomSheet = true
             }
         )
@@ -84,13 +81,15 @@ fun RootContent(
         @OptIn(ExperimentalMaterial3Api::class)
         ModalBottomSheet(
             onDismissRequest = {
-                selectedNodeId = ""
                 showBottomSheet = false
-                viewModel.clearDetails()
+                viewModel.stopNodeDetailsUpdates()
             },
             sheetState = sheetState
         ) {
-            NodeDetailsContent(detailsUiState.value.lastTrace, selectedNodeId)
+            when (val traceLatest = detailsUiState.collectAsState().value.lastTrace) {
+                null -> NodeDetailsEmpty()
+                else -> NodeDetailsContent(traceLatest)
+            }
         }
     }
 }

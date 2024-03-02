@@ -12,7 +12,11 @@ open class TraceEntity(
     open var azimuth: Double,
     open var alt: Double,
     open var sentAtTime: LocalDateTime,
-)
+) {
+    override fun toString(): String {
+        return "TraceEntity(nodeId='$nodeId', lon=$lon, lat=$lat, speed=$speed, azimuth=$azimuth, alt=$alt, sentAtTime=$sentAtTime)"
+    }
+}
 
 fun <T : TraceEntity> T.toExternal(): Trace = Trace(
     nodeId = nodeId,
