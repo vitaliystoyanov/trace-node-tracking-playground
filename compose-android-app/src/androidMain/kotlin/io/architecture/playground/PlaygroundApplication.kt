@@ -5,7 +5,7 @@ import androidx.multidex.BuildConfig
 import io.architecture.core.di.coreKoinModules
 import io.architecture.database.imp.room.di.roomDaoModule
 import io.architecture.database.imp.room.di.roomDatabaseModule
-import io.architecture.map.featureMapModule
+import io.architecture.feature.common.map.di.mapFeatureModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -26,7 +26,7 @@ class PlaygroundApplication : Application() {
                 coreKoinModules,
                 roomDaoModule,
                 roomDatabaseModule,
-                featureMapModule
+                mapFeatureModule
             )
         }
 

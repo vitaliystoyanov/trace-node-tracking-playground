@@ -21,6 +21,8 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.mp.compose)
                 implementation(compose.desktop.currentOs)
+
+                implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.96")
             }
         }
     }

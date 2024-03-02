@@ -8,6 +8,8 @@ kotlinCompilerExtensionVersion = "1.5.7"
 jvmTarget = "17"
 
 # Plugins
+# [1.6.0-rc03] IOS build fails because of org.jetbrains.compose.annotation-internal:annotation dependency #4277
+# See more: https://github.com/JetBrains/compose-multiplatform/issues/4277
 composePlugin = "1.6.0-beta02"
 androidTools = "31.2.0"
 geojsonVersion = "0.2.1"
@@ -22,6 +24,9 @@ buildKonfig = "0.15.1"
 # ktor-server
 ktor = "2.3.8"
 logback = "1.5.0"
+
+skikoJsWasmRuntimeVersion = "0.7.96"
+skikoVersion = "0.7.96"
 
 # Dependencies
 androidxActivityCompose = "1.8.2"
@@ -137,8 +142,8 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktorVersion" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorVersion" }
 
-
-
+skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skikoVersion" }
+skiko-js-wasm-runtime = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skikoJsWasmRuntimeVersion" }
 
 # Mapbox SDK
 android = { module = "com.mapbox.maps:android", version.ref = "mapBox" }
