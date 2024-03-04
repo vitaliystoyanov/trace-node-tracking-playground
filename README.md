@@ -1,36 +1,55 @@
-# PoC of design implementation for processing large GPS node trace data effectively
+# Kotlin/Multiplatform + Compose/Multiplatform PoC of design implementation for processing large GPS node trace data effectively
 
-> [!WARNING]
-> This branch in development. Project setup guide will be later. This has XCode projects, CocoaPods tool, different AndroidStudio plugins and run configuration that should be guided with instructions.
 
 [![.github/workflows/main.yml](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml/badge.svg?branch=gitworkflow)](https://github.com/vitaliystoyanov/trace-node-tracking-playground/actions/workflows/main.yml)
- ![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+
+![badge][badge-android]
+![badge][badge-ios]
+![badge][badge-mac]
+![badge][badge-jvm]
+![badge][badge-js]
+![badge][badge-wasm]
+![badge][badge-windows]
+![badge][badge-linux]
 
 > [!WARNING]
-> This branch in development. Project setup guide will be later. This has XCode projects, CocoaPods tool, different AndroidStudio plugins and run configurations that should be guided with instructions.
+> This branch in development. The project setup guide will be later. This has XCode projects, CocoaPods tool, different AndroidStudio plugins and run configurations that should be guided with instructions.
 
-The application processes GPS node trace data using the Scarlet websocket client, deserializes it using Gson and writes the data to a local Room database for further data rendering based on Jetpack Compose and MapBox SDK built-in capabilities.
-On the other side, the Node.js backend generates sample data using the turf.js library. For each node, the route, direction and speed are generated at runtime.
+## Supported targets
 
-Some considerations:
-* The application processes 10 thousand websocket messages and then renders efficiently. The websocket message format is a string, but it is better to implement a binary message format. These nodes are dynamic moving, which is CPU and GPU-intensive to render and process highly frequently updated node movements. (However, there is a slight stuttering in UI rendering frames due to MapBox rendering on the native C++ side). All buffers have been disabled in the MapBox configuration.
-* At each layer of the architecture: db entity, external and network models have mappers for each other. Used object pool design pattern to avoid intensive allocation/deallocation of objects.
+- `android`.
+- `jvm`.
+- `js` (`IR`).
+- `wasmJs`.
+- `iosArm64`, `iosX64`, `iosSimulatorArm64`.
+- `macosX64`, `macosArm64`.
+- `mingwX64`
+- `linuxX64`, `linuxArm64`.
 
+# Demo
 
-<p align="center">
-  <img alt="Light" src="/docs/demo3.gif" width="45%">
-&nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="Dark" src="/docs/demo1.gif" width="45%">
-</p>
+[android_demo.webm](https://github.com/vitaliystoyanov/trace-node-tracking-playground/assets/9073014/07302946-b544-4078-b541-a0fe382d6969)
+
+[desktop_jvm_demo.webm](https://github.com/vitaliystoyanov/trace-node-tracking-playground/assets/9073014/f8e1b550-b688-4a76-94f6-f7aaed80972a)
+
+[ios_demo.webm](https://github.com/vitaliystoyanov/trace-node-tracking-playground/assets/9073014/76453330-0538-463e-9396-8a94163519b6)
+
+[web_wasm_demo.webm](https://github.com/vitaliystoyanov/trace-node-tracking-playground/assets/9073014/756f118f-5923-40dd-92fe-37ca7b03c941)
 
 ## Tech stack
 
 Nothing special :)
 
+* [Kotlin/Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/)
+* [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
+* [Kotlin/Multiplatform Skiko for Skia: The 2D Graphics Library](https://github.com/JetBrains/skiko?tab=readme-ov-file)
+* [KotlinX/Coroutine](https://github.com/Kotlin/kotlinx.coroutines)
+* [KotlinX/Multiplatform date/time library](https://github.com/Kotlin/kotlinx-datetime)
+* [Koin: Kotlin & Kotlin Multiplatform DI framework](https://insert-koin.io/)
 * Kotlin Channels & Flows APIs
 * (experimental) Kotlin multiplatform / multi-format reflectionless serialization 
   * [Kotlin Serialization ProtoBuf](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#protobuf-experimental)
-* Jetpack Compose with Material3 design
 * [Ktor.io Websocket Client](https://ktor.io/docs/websocket.html)
 * [MapBox SDK for Android](https://docs.mapbox.com/android/maps/guides/)
 * [Mapbox Maps Compose Extension](https://github.com/mapbox/mapbox-maps-android/tree/extension-compose-v0.1.0/extension-compose)
@@ -38,7 +57,6 @@ Nothing special :)
   * [Scarlet coroutines stream adapter](https://github.com/Tinder/Scarlet/tree/main/scarlet-stream-adapter-coroutines)
 * [Room database](https://developer.android.com/training/data-storage/room)
 * [OkHttp](http://square.github.io/okhttp/)
-* [Koin: Kotlin & Kotlin Multiplatform DI framework](https://insert-koin.io/)
 
 ## Functionality
 * Supports websocket connections in background
@@ -175,4 +193,13 @@ If your dev environment is emulator:
 ## Goals
 
 To be a part of ... you know :)
+
+[badge-android]: http://img.shields.io/badge/android-6EDB8D.svg?style=flat
+[badge-ios]: http://img.shields.io/badge/ios-CDCDCD.svg?style=flat
+[badge-js]: http://img.shields.io/badge/js-F8DB5D.svg?style=flat
+[badge-jvm]: http://img.shields.io/badge/jvm-DB413D.svg?style=flat
+[badge-linux]: http://img.shields.io/badge/linux-2D3F6C.svg?style=flat
+[badge-windows]: http://img.shields.io/badge/windows-4D76CD.svg?style=flat
+[badge-mac]: http://img.shields.io/badge/macos-111111.svg?style=flat
+[badge-wasm]: https://img.shields.io/badge/wasm-624FE8.svg?style=flat
 
