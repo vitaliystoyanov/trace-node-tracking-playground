@@ -17,8 +17,8 @@ class MultiplatformTargetPresetConventionPlugin : Plugin<Project> {
                 js(IR) { browser() }
                 androidTarget()
                 iosX64()
-                iosArm64()
-                iosSimulatorArm64()
+//                iosArm64()
+//                iosSimulatorArm64()
                 jvm()
             }
         }

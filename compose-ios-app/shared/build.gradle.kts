@@ -6,8 +6,8 @@ plugins {
 
 kotlin {
     iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+//    iosArm64()
+//    iosSimulatorArm64()
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -19,12 +19,12 @@ kotlin {
             baseName = "shared"
             isStatic = true
         }
-        pod("MapboxMaps") {
-            version = "11.1.0"
-            packageName = "MapBox"
-            // https://kotlinlang.org/docs/native-cocoapods-libraries.html#support-for-objective-c-headers-with-import-directives
-            extraOpts += listOf("-compiler-option", "-fmodules") // TODO look up in docs what it's
-        }
+//        pod("MapboxMaps") {
+//            version = "11.1.0"
+//            packageName = "MapBox"
+//            // https://kotlinlang.org/docs/native-cocoapods-libraries.html#support-for-objective-c-headers-with-import-directives
+//            extraOpts += listOf("-compiler-option", "-fmodules") // TODO look up in docs what it's
+//        }
     }
 
     sourceSets {
