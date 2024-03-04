@@ -8,7 +8,11 @@ import kotlin.jvm.JvmName
 open class RouteEntity(
     open var nodeId: String,
     open var route: List<CoordinateEntity>?,
-)
+) {
+    override fun toString(): String {
+        return "RouteEntity(nodeId='$nodeId', route=$route)"
+    }
+}
 
 fun <T : RouteEntity> T.toExternal() = Route(
     nodeId = nodeId,

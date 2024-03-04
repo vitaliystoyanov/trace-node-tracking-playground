@@ -7,22 +7,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import io.architecture.mapbox.compose.library.LngLat
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mapbox.Map
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.css.height
+import org.jetbrains.compose.web.css.vh
+import org.jetbrains.compose.web.css.vw
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
 
 @Composable
-fun MapboxMap(
+fun MapboxMapInternal(
     accessToken: String,
     style: String,
-    state: MapboxState = rememberMapboxState(),
+    state: MapboxStateInternal = rememberMapboxStateInternal(),
     hash: Boolean = false,
     projection: String = "mercator",
-    containerAttrs: AttrsScope<HTMLDivElement>.() -> Unit = {},
+    containerAttrs: AttrsScope<HTMLDivElement>.() -> Unit = {
+        style {
+            height(100.vh)
+            width(100.vw)
+        }
+    },
     events: EventsScope.() -> Unit = {},
     sources: @Composable MapScope.() -> Unit,
 ) {
@@ -79,11 +89,11 @@ fun MapboxMap(
 }
 
 @Composable
-fun rememberMapboxState(
+fun rememberMapboxStateInternal(
     center: LngLat = LngLat(0.0, 0.0),
     zoom: Double = 0.0,
     bearing: Double = 0.0,
     pitch: Double = 0.0,
-): MapboxState {
-    return remember { MapboxState(center, zoom, bearing, pitch) }
+): MapboxStateInternal {
+    return remember { MapboxStateInternal(center, zoom, bearing, pitch) }
 }

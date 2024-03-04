@@ -1,4 +1,3 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -36,15 +35,14 @@ kotlin {
             dependencies {
                 implementation(projects.core.di)
                 implementation(projects.core.datasource.api)
+                implementation(projects.core.designsystem)
                 implementation(projects.feature.map)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.ui)
-                @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-
 
                 // Koin
                 implementation(libs.koin.mp.compose)

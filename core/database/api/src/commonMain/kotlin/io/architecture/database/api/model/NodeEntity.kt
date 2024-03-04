@@ -8,7 +8,11 @@ import kotlin.jvm.JvmName
 open class NodeEntity(
     open var id: String,
     open var mode: Int,
-)
+) {
+    override fun toString(): String {
+        return "NodeEntity(id='$id', mode=$mode)"
+    }
+}
 
 fun <T : NodeEntity> T.toExternal(): Node = Node(id = id, mode = NodeMode.valueOf(mode))
 
