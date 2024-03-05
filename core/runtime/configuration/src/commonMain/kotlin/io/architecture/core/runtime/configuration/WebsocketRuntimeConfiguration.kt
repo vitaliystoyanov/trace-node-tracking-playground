@@ -1,7 +1,7 @@
 package io.architecture.core.runtime.configuration
 
 data class WebsocketRuntimeConfiguration(
-    val BASE_WS_HOST: String = "192.168.1.197",
+    val BASE_WS_HOST: String = "192.168.1.246",
     val BASE_WS_PORT: Int = 8080,
     val BASE_WS_URL: String = "ws://$BASE_WS_HOST}:$BASE_WS_PORT",
 

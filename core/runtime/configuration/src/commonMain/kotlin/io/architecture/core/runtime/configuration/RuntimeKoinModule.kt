@@ -6,9 +6,10 @@ val runtimeModule = module {
     single { WebsocketRuntimeConfiguration() }
     single {
         Runtime(
-            get<WebsocketRuntimeConfiguration>(),
-            platform,
-            WebsocketClientProvider.KTOR_PROTOBUF
+            websocketConfiguration = get<WebsocketRuntimeConfiguration>(),
+            platform = platform,
+            clientProvider = WebsocketClientProvider.KTOR_PROTOBUF,
+            httpAgent = "undefined"
         )
     }
 }
