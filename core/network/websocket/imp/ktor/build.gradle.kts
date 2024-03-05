@@ -1,36 +1,48 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
-    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.convention.android.library)
     alias(libs.plugins.kotlin.serialize)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.convention.multiplatform.target.default)
 }
 
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
-}
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.common)
+            implementation(projects.core.model)
+            implementation(projects.core.network.websocket.api)
+            implementation(projects.core.runtime.configuration)
+            implementation(projects.core.datasource.api)
+            implementation(projects.core.runtime.logging)
 
-dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.model)
-    implementation(projects.core.network.websocket.api)
-    implementation(projects.core.datasource.api)
-    implementation(projects.core.runtime.logging)
+            implementation(libs.koin.core)
 
-    // Koin
-    implementation(libs.koin.core)
-    ksp(libs.koin.ksp.compiler)
+            // https://ktor.io/docs/http-client-engines.html#default
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.protobuf)
+            implementation(libs.ktor.client.websockets)
 
-    // kotlinx-serialization
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.serialization.protobuf)
-
-    // Ktor for Android
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.websockets)
-    implementation(libs.ktor.client.serialization.jvm)
-    implementation(libs.ktor.serialization.kotlinx.protobuf)
-    implementation(libs.ktor.client.logging.jvm)
-
-    testImplementation(libs.junit.junit)
+            implementation(libs.kotlinx.coroutine.core)
+            implementation(libs.kotlinx.serialization.core)
+        }
+        commonTest.dependencies {
+            implementation(libs.junit.junit)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
+    }
 }

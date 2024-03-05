@@ -1,30 +1,27 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+import org.jetbrains.compose.ExperimentalComposeLibrary
+
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.convention.android.library)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.convention.multiplatform.target.default)
 }
 
-android {
-    namespace = "io.architecture.ui"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.designsystem)
+            implementation(projects.core.model)
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
+            implementation(libs.koin.core)
+            implementation(libs.koin.mp.compose)
+
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.components.resources)
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
-    }
-}
-
-dependencies {
-    implementation(libs.androidx.coreKtx)
-    testImplementation(libs.junit.junit)
-    androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
 }
