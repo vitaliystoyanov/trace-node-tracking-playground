@@ -2,12 +2,15 @@
 .idea
 .gradle/
 app/build/
+.gradle
+**/build/
 
 # Local configuration file (sdk path, etc)
 local.properties
 
 # Log/OS Files
 *.log
+.DS_Store
 
 # Android Studio generated files and folders
 captures/
@@ -33,14 +36,55 @@ google-services.json
 # Android Profiling
 *.hprof
 
+# Diagram backups
 *.drawio.bkp
-.DS_Store
+/docs/*.drawio.bkp
 
-server/
-ktor-server/build/
+build/
 
+# Android
+**/developer-config.xml
 
-app/src/main/res/values/developer-config.xml
-
+# Internal
 /TODO.md
-/docs/.$design.drawio.bkp
+
+
+# Xcode
+## Obj-C/Swift specific
+*.hmap
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+# Swift Package Manager
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+Packages/
+Package.pins
+Package.resolved
+
+# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
+# hence it is not needed unless you have added a package configuration file to your project
+.swiftpm
+# CocoaPods - Only use to conserve bandwidth / Save time on Pushing
+#           - Also handy if you have a large number of dependant pods
+#           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
+Pods/
+.build/
+/compose-ios-app/Podfile.lock
+
+## Xcode 8 and earlier
+
+### Xcode Patch ###
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
+**/xcshareddata/WorkspaceSettings.xcsettings
+
+xcuserdata
+!src/**/build/
+captures
+.externalNativeBuild
+.cxx

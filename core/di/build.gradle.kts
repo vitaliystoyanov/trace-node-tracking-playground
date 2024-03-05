@@ -1,35 +1,32 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.kotlinJvm)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.convention.android.library)
+    alias(libs.plugins.convention.multiplatform.target.default)
 }
 
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
-}
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.core.common)
+            api(projects.core.domain)
+            api(projects.core.data)
+            api(projects.core.model)
+            api(projects.core.network.websocket.imp.ktor)
+            api(projects.core.runtime.configuration)
 
-dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.domain)
-    implementation(projects.core.data)
-    implementation(projects.core.network.websocket.imp.ktor)
-    implementation(projects.core.runtime.configuration)
+            implementation(libs.kotlinx.coroutine.core)
+            implementation(libs.koin.core)
+            implementation(libs.koin.test)
+        }
+        commonTest.dependencies {
+            implementation(projects.core.datasource.api)
+            implementation(projects.core.network.websocket.api)
+            implementation(projects.core.database.api)
+            implementation(projects.core.model)
 
-    implementation(libs.kotlinx.coroutine.android)
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.annotations)
-    implementation(libs.koin.test)
-    ksp(libs.koin.ksp.compiler)
-
-    testImplementation(projects.core.datasource.api)
-
-    testImplementation(libs.ktor.client.core)
-    testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.websockets)
-    testImplementation(libs.ktor.client.serialization.jvm)
-    testImplementation(libs.ktor.serialization.kotlinx.protobuf)
-    testImplementation(libs.ktor.client.logging.jvm)
-
-    testImplementation(libs.junit.junit)
+            implementation(kotlin("reflect"))
+            implementation(kotlin("test"))
+        }
+    }
 }
